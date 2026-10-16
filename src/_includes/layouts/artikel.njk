@@ -5,6 +5,33 @@ layout: layouts/base.njk
 {% set liniObj = collections.lini | find("data.slug", lini) %}
 {% set nomor = liniObj.data.wa or site.waDefault %}
 
+{% if lintas %}
+  {% set crumbs = [
+    {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
+    {"@type": "ListItem", "position": 2, "name": "Artikel", "item": siteUrl + "/artikel/"},
+    {"@type": "ListItem", "position": 3, "name": title, "item": siteUrl + page.url}
+  ] %}
+{% else %}
+  {% set jenisObj = collections.jenis | find("data.slug", jenis[0]) %}
+  {% set crumbs = [
+    {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
+    {"@type": "ListItem", "position": 2, "name": liniObj.data.title, "item": siteUrl + liniObj.url},
+    {"@type": "ListItem", "position": 3, "name": jenisObj.data.title, "item": siteUrl + jenisObj.url},
+    {"@type": "ListItem", "position": 4, "name": title, "item": siteUrl + page.url}
+  ] %}
+{% endif %}
+<script type="application/ld+json">
+{{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
+</script>
+
+{% set tanggalIsoValue = tanggal | tanggalIso %}
+{% set urlArtikel = siteUrl + page.url %}
+{% set publisherObj = {"@type": "Organization", "name": site.nama, "url": siteUrl} %}
+{% set schemaArtikel = {"@context": "https://schema.org", "@type": "Article", "headline": title, "description": description, "datePublished": tanggalIsoValue, "mainEntityOfPage": urlArtikel, "publisher": publisherObj} %}
+<script type="application/ld+json">
+{{ schemaArtikel | dump | safe }}
+</script>
+
 <h1>{{ title }}</h1>
 <p>{{ tanggal | tanggalIndo }}</p>
 {{ content | safe }}

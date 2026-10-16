@@ -3,7 +3,30 @@ layout: layouts/base.njk
 ---
 {% from "partials/macros.njk" import kartu, tombolWa %}
 {% set liniObj = collections.lini | find("data.slug", lini) %}
+{% set jenisObj = collections.jenis | find("data.slug", jenis) %}
 {% set nomor = liniObj.data.wa or site.waDefault %}
+
+{% set crumbs = [
+  {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
+  {"@type": "ListItem", "position": 2, "name": liniObj.data.title, "item": siteUrl + liniObj.url},
+  {"@type": "ListItem", "position": 3, "name": jenisObj.data.title, "item": siteUrl + jenisObj.url},
+  {"@type": "ListItem", "position": 4, "name": title, "item": siteUrl + page.url}
+] %}
+<script type="application/ld+json">
+{{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
+</script>
+
+{% set urlProduk = siteUrl + page.url %}
+{% set brandObj = {"@type": "Brand", "name": liniObj.data.title} %}
+{% if foto %}
+  {% set imageUrl = siteUrl + foto %}
+  {% set schemaProduk = {"@context": "https://schema.org", "@type": "Product", "name": title, "description": description, "url": urlProduk, "image": imageUrl, "brand": brandObj} %}
+{% else %}
+  {% set schemaProduk = {"@context": "https://schema.org", "@type": "Product", "name": title, "description": description, "url": urlProduk, "brand": brandObj} %}
+{% endif %}
+<script type="application/ld+json">
+{{ schemaProduk | dump | safe }}
+</script>
 
 <h1>{{ title }}</h1>
 {% if foto %}<img src="{{ foto }}" alt="{{ title }}">{% endif %}

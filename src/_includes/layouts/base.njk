@@ -8,7 +8,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title }} | {{ site.nama }}</title>
   {% if description %}<meta name="description" content="{{ description }}">{% endif %}
-  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <link rel="canonical" href="{{ siteUrl }}{{ page.url }}">
+  {% if page.url == "/" %}
+  <script type="application/ld+json">
+  {{ {"@context": "https://schema.org", "@type": "Organization", "name": site.nama, "url": siteUrl + "/"} | dump | safe }}
+  </script>
+  {% endif %}
 </head>
 <body>
   <header>
