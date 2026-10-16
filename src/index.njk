@@ -1,0 +1,17 @@
+---
+layout: layouts/base.njk
+title: Beranda
+description: Katalog produk dan artikel dari lini-lini kami.
+permalink: /
+---
+
+<h1>Selamat datang</h1>
+<p>Pilih lini di bawah ini.</p>
+
+{% for l in collections.lini %}
+  <article>
+    <h2><a href="{{ l.url }}">{{ l.data.title }}</a></h2>
+    <p>{{ l.data.description }}</p>
+    {% if l.data.status != "aktif" %}<p><em>Segera Hadir</em></p>{% endif %}
+  </article>
+{% endfor %}

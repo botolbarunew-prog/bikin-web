@@ -1,0 +1,40 @@
+---
+layout: layouts/base.njk
+---
+{% from "partials/macros.njk" import kartu, tombolWa %}
+{% set liniObj = collections.lini | find("data.slug", lini) %}
+{% set nomor = liniObj.data.wa or site.waDefault %}
+
+<h1>{{ title }}</h1>
+{% if foto %}<img src="{{ foto }}" alt="{{ title }}">{% endif %}
+<p>{{ description }}</p>
+{{ content | safe }}
+
+{% if varian and varian.length %}
+  <h2>Pilihan</h2>
+  {% for g in varian %}
+    <h3>{{ g.nama }}</h3>
+    <ul>
+      {% for o in g.opsi %}<li>{{ o }}</li>{% endfor %}
+    </ul>
+  {% endfor %}
+{% endif %}
+
+{{ tombolWa(nomor, "Halo, saya tertarik dengan " + title + ". Mohon info lebih lanjut.", "Pesan via WA") }}
+
+<h2>Produk serupa</h2>
+{% for p in collections.produk | where("data.jenis", jenis) | exclude(page.url) | limit(3) %}
+  {{ kartu(p) }}
+{% endfor %}
+
+<h2>Artikel terkait</h2>
+{% for a in collections.artikel | whereIncludes("data.jenis", jenis) | limit(2) %}
+  {{ kartu(a) }}
+{% endfor %}
+
+{% if produkLintas and produkLintas.length %}
+  <h2>Dari lini lain</h2>
+  {% for p in collections.produk | whereIn("data.slug", produkLintas) | limit(2) %}
+    {{ kartu(p) }}
+  {% endfor %}
+{% endif %}

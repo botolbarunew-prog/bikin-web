@@ -1,0 +1,15 @@
+---
+layout: layouts/base.njk
+title: Artikel
+description: Artikel panduan dan informasi lintas lini.
+permalink: /artikel/
+---
+
+<h1>Artikel</h1>
+
+{% for a in collections.artikel | where("data.lintas", true) %}
+  <article>
+    <h2><a href="{{ a.url }}">{{ a.data.title }}</a></h2>
+    <p>{{ a.data.description }}</p>
+  </article>
+{% endfor %}

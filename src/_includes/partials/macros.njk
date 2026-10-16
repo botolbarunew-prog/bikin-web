@@ -1,0 +1,10 @@
+{% macro tombolWa(nomor, pesan, label) -%}
+<a class="tombol-wa" href="https://wa.me/{{ nomor }}?text={{ pesan | urlencode }}">{{ label }}</a>
+{%- endmacro %}
+
+{% macro kartu(item) -%}
+<article>
+  <h3><a href="{{ item.url }}">{{ item.data.title }}</a></h3>
+  <p>{{ item.data.description }}</p>
+</article>
+{%- endmacro %}

@@ -1,0 +1,24 @@
+---
+layout: layouts/base.njk
+---
+{% from "partials/macros.njk" import kartu, tombolWa %}
+{% set liniObj = collections.lini | find("data.slug", lini) %}
+{% set nomor = liniObj.data.wa or site.waDefault %}
+
+<h1>{{ title }}</h1>
+<p>{{ tanggal | tanggalIndo }}</p>
+{{ content | safe }}
+
+{% if produkTerkait and produkTerkait.length %}
+  <h2>Produk yang dibahas</h2>
+  {% for p in collections.produk | whereIn("data.slug", produkTerkait) %}
+    {{ kartu(p) }}
+  {% endfor %}
+{% endif %}
+
+{{ tombolWa(nomor, "Halo, saya habis membaca artikel " + title + " dan ingin bertanya.", "Tanya via WA") }}
+
+<h2>Artikel terkait</h2>
+{% for a in collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) | limit(2) %}
+  {{ kartu(a) }}
+{% endfor %}

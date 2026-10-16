@@ -1,0 +1,49 @@
+{% set liniObj = collections.lini | find("data.slug", lini or slug) %}
+{% set nomor = liniObj.data.wa or site.waDefault %}
+{% set pesanFloat = liniObj.data.pesanWa or site.pesanDefault %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} | {{ site.nama }}</title>
+  {% if description %}<meta name="description" content="{{ description }}">{% endif %}
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+</head>
+<body>
+  <header>
+    <a href="/">{{ site.nama }}</a>
+    <nav>
+      <a href="/">Beranda</a>
+      {% for l in collections.lini %}
+        <a href="{{ l.url }}">{{ l.data.title }}</a>
+      {% endfor %}
+      <a href="/artikel/">Artikel</a>
+      <a href="/tentang-kami/">Tentang Kami</a>
+    </nav>
+  </header>
+
+  <main>
+    {{ content | safe }}
+  </main>
+
+  <footer>
+    <p>{{ site.nama }}</p>
+    <ul>
+      {% for l in collections.lini %}
+        <li>
+          <a href="{{ l.url }}">{{ l.data.title }}</a>
+          {% if l.data.wa %}· WA: {{ l.data.wa }}{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    <p>
+      <a href="/kebijakan-privasi/">Kebijakan Privasi</a> ·
+      <a href="/syarat/">Syarat &amp; Ketentuan</a>
+    </p>
+    <p>&copy; {{ year }} {{ site.nama }}</p>
+  </footer>
+
+  <a class="wa-float" href="https://wa.me/{{ nomor }}?text={{ pesanFloat | urlencode }}">Chat WA</a>
+</body>
+</html>

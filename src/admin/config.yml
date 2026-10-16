@@ -1,0 +1,84 @@
+backend:
+  name: github
+  repo: GANTI/NAMA-REPO
+  branch: main
+
+media_folder: "src/assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: lini
+    label: "Lini"
+    folder: "src/lini"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    extension: md
+    format: frontmatter
+    fields:
+      - {label: "Nama lini", name: title, widget: string}
+      - {label: "Slug (URL)", name: slug, widget: string, hint: "Huruf kecil dan tanda hubung, contoh: grosir-botol-kebumen"}
+      - {label: "Deskripsi singkat (untuk SEO)", name: description, widget: text}
+      - {label: "Nomor WA (format 62...)", name: wa, widget: string}
+      - {label: "Pesan WA default", name: pesanWa, widget: text}
+      - {label: "Status", name: status, widget: select, options: [aktif, segera], default: segera}
+      - {label: "Isi halaman", name: body, widget: markdown, required: false}
+
+  - name: jenis
+    label: "Jenis Produk"
+    folder: "src/jenis"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    extension: md
+    format: frontmatter
+    fields:
+      - {label: "Nama jenis", name: title, widget: string}
+      - {label: "Slug (URL)", name: slug, widget: string}
+      - {label: "Lini", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Deskripsi singkat (untuk SEO)", name: description, widget: text}
+      - {label: "Isi halaman", name: body, widget: markdown, required: false}
+
+  - name: produk
+    label: "Produk"
+    folder: "src/produk"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    extension: md
+    format: frontmatter
+    fields:
+      - {label: "Nama produk", name: title, widget: string}
+      - {label: "Slug (URL)", name: slug, widget: string}
+      - {label: "Lini", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Jenis", name: jenis, widget: relation, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Deskripsi singkat (untuk SEO dan kartu)", name: description, widget: text}
+      - {label: "Foto", name: foto, widget: image, required: false}
+      - label: "Pilihan varian"
+        name: varian
+        widget: list
+        required: false
+        fields:
+          - {label: "Nama grup (misal: Ukuran)", name: nama, widget: string}
+          - {label: "Opsi", name: opsi, widget: list}
+      - {label: "Produk dari lini lain (opsional)", name: produkLintas, widget: relation, collection: produk, multiple: true, required: false, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Isi halaman", name: body, widget: markdown, required: false}
+
+  - name: artikel
+    label: "Artikel"
+    folder: "src/artikel"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    extension: md
+    format: frontmatter
+    fields:
+      - {label: "Judul", name: title, widget: string}
+      - {label: "Slug (URL)", name: slug, widget: string}
+      - {label: "Lini utama", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Jenis terkait (bisa lebih dari satu)", name: jenis, widget: relation, multiple: true, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Artikel lintas lini? (tayang di /artikel/)", name: lintas, widget: boolean, default: false}
+      - {label: "Meta description (untuk SEO)", name: description, widget: text}
+      - {label: "Tanggal terbit", name: tanggal, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
+      - {label: "Produk yang dibahas", name: produkTerkait, widget: relation, multiple: true, required: false, collection: produk, search_fields: [title], value_field: slug, display_fields: [title]}
+      - {label: "Isi artikel", name: body, widget: markdown}

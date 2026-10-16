@@ -1,0 +1,22 @@
+---
+layout: layouts/base.njk
+---
+{% from "partials/macros.njk" import kartu %}
+{% set liniObj = collections.lini | find("data.slug", lini) %}
+
+<nav>
+  <a href="/{{ lini }}/">{{ liniObj.data.title }}</a>
+</nav>
+
+<h1>{{ title }}</h1>
+{{ content | safe }}
+
+<h2>Produk</h2>
+{% for p in collections.produk | where("data.jenis", slug) %}
+  {{ kartu(p) }}
+{% endfor %}
+
+<h2>Artikel</h2>
+{% for a in collections.artikel | whereIncludes("data.jenis", slug) %}
+  {{ kartu(a) }}
+{% endfor %}
