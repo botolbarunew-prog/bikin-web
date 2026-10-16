@@ -3,8 +3,10 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/admin/config.yml");
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
 
-  eleventyConfig.addCollection("lini", (c) => c.getFilteredByGlob("src/lini/*.md"));
-  eleventyConfig.addCollection("jenis", (c) => c.getFilteredByGlob("src/jenis/*.md"));
+  // Urutan manual dari field "urutan"; yang tidak diisi ditaruh di belakang
+  const urutkan = (a, b) => (a.data.urutan ?? 999) - (b.data.urutan ?? 999);
+  eleventyConfig.addCollection("lini", (c) => c.getFilteredByGlob("src/lini/*.md").sort(urutkan));
+  eleventyConfig.addCollection("jenis", (c) => c.getFilteredByGlob("src/jenis/*.md").sort(urutkan));
   eleventyConfig.addCollection("produk", (c) => c.getFilteredByGlob("src/produk/*.md"));
   eleventyConfig.addCollection("artikel", (c) =>
     c.getFilteredByGlob("src/artikel/*.md").sort((a, b) => new Date(b.data.tanggal) - new Date(a.data.tanggal))
