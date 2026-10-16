@@ -2,6 +2,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin/config.yml");
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
+  // Netlify mengisi process.env.URL otomatis saat build (domain custom ikut terbaca)
+  eleventyConfig.addGlobalData("siteUrl", () => (process.env.URL || "https://GANTI-DOMAIN").replace(/\/$/, ""));
 
   // Urutan manual dari field "urutan"; yang tidak diisi ditaruh di belakang
   const urutkan = (a, b) => (a.data.urutan ?? 999) - (b.data.urutan ?? 999);
@@ -26,6 +28,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("find", (items = [], key, value) => items.find((i) => get(i, key) === value));
   eleventyConfig.addFilter("exclude", (items = [], url) => items.filter((i) => i.url !== url));
   eleventyConfig.addFilter("limit", (items = [], n) => items.slice(0, n));
+  eleventyConfig.addFilter("tanggalIso", (d) => new Date(d).toISOString().slice(0, 10));
   eleventyConfig.addFilter("tanggalIndo", (d) =>
     new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
   );
