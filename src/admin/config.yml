@@ -7,6 +7,47 @@ media_folder: "src/assets/uploads"
 public_folder: "/assets/uploads"
 
 collections:
+  - name: pengaturan
+    label: "Pengaturan Situs"
+    files:
+      - name: site
+        label: "Data perusahaan, kontak, dan WhatsApp"
+        file: "src/_data/site.json"
+        fields:
+          - {label: "Nama payung (induk)", name: nama, widget: string}
+          - {label: "Tagline", name: tagline, widget: text}
+          - {label: "Alamat fisik resmi", name: address, widget: string}
+          - {label: "Email resmi", name: email, widget: string}
+          - {label: "Nama penulis default", name: author, widget: string}
+          - {label: "Peran penulis default", name: authorRole, widget: string}
+          - label: "WhatsApp 1 (Grosir Botol & Gizi Prima)"
+            name: whatsapp_1
+            widget: object
+            fields:
+              - {label: "Label", name: label, widget: string}
+              - {label: "Peran", name: role, widget: string}
+              - {label: "Nomor (format 62...)", name: number, widget: string}
+              - {label: "Tampilan nomor", name: display, widget: string}
+              - {label: "Lini yang dilayani (slug)", name: units, widget: list}
+          - label: "WhatsApp 2 (Jas Hujan Topi & Digital Marketing)"
+            name: whatsapp_2
+            widget: object
+            fields:
+              - {label: "Label", name: label, widget: string}
+              - {label: "Peran", name: role, widget: string}
+              - {label: "Nomor (format 62...)", name: number, widget: string}
+              - {label: "Tampilan nomor", name: display, widget: string}
+              - {label: "Lini yang dilayani (slug)", name: units, widget: list}
+          - label: "Pesan WA default"
+            name: pesanDefault
+            widget: text
+          - label: "Poin kepercayaan di halaman produk"
+            name: tepercaya
+            widget: list
+          - label: "Langkah pemesanan (3 langkah)"
+            name: langkah
+            widget: list
+
   - name: lini
     label: "Lini"
     folder: "src/lini"
@@ -19,9 +60,9 @@ collections:
       - {label: "Nama lini", name: title, widget: string}
       - {label: "Slug (URL)", name: slug, widget: string, hint: "Huruf kecil dan tanda hubung, contoh: grosir-botol-kebumen"}
       - {label: "Urutan tampil (1 = paling depan)", name: urutan, widget: number, value_type: int, default: 99}
-      - {label: "Deskripsi singkat (untuk SEO)", name: description, widget: text}
-      - {label: "Nomor WA (format 62...)", name: wa, widget: string}
-      - {label: "Pesan WA default", name: pesanWa, widget: text}
+      - {label: "Deskripsi singkat (untuk SEO dan kartu)", name: description, widget: text}
+      - {label: "Gambar lini (opsional)", name: gambar, widget: image, required: false}
+      - {label: "Pesan WA default untuk lini ini", name: pesanWa, widget: text}
       - {label: "Status", name: status, widget: select, options: [aktif, segera], default: segera}
       - {label: "Isi halaman", name: body, widget: markdown, required: false}
 
@@ -54,8 +95,16 @@ collections:
       - {label: "Slug (URL)", name: slug, widget: string}
       - {label: "Lini", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Jenis", name: jenis, widget: relation, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
-      - {label: "Deskripsi singkat (untuk SEO dan kartu)", name: description, widget: text}
+      - {label: "Deskripsi singkat (untuk SEO dan halaman produk)", name: description, widget: text}
+      - {label: "Spesifikasi kunci untuk kartu (contoh: PET · 250ml – 1L)", name: spek, widget: string, required: false}
       - {label: "Foto", name: foto, widget: image, required: false}
+      - label: "Spesifikasi (tabel di halaman produk)"
+        name: spesifikasi
+        widget: list
+        required: false
+        fields:
+          - {label: "Nama spesifikasi (misal: Bahan)", name: label, widget: string}
+          - {label: "Nilai", name: nilai, widget: string}
       - label: "Pilihan varian"
         name: varian
         widget: list
@@ -79,8 +128,12 @@ collections:
       - {label: "Slug (URL)", name: slug, widget: string}
       - {label: "Lini utama", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Jenis terkait (bisa lebih dari satu)", name: jenis, widget: relation, multiple: true, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
-      - {label: "Artikel lintas lini? (tayang di /artikel/)", name: lintas, widget: boolean, default: false}
+      - {label: "Artikel lintas lini? (URL di /artikel/)", name: lintas, widget: boolean, default: false}
       - {label: "Meta description (untuk SEO)", name: description, widget: text}
       - {label: "Tanggal terbit", name: tanggal, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
+      - {label: "Tanggal diperbarui (opsional)", name: updatedDate, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false}
+      - {label: "Penulis (kosongkan untuk tim redaksi)", name: author, widget: string, required: false}
+      - {label: "Peran penulis (kosongkan untuk default)", name: authorRole, widget: string, required: false}
+      - {label: "Foto sampul (opsional)", name: foto, widget: image, required: false}
       - {label: "Produk yang dibahas", name: produkTerkait, widget: relation, multiple: true, required: false, collection: produk, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Isi artikel", name: body, widget: markdown}
