@@ -1,0 +1,26 @@
+---
+layout: layouts/base.njk
+title: Katalog Produk
+description: Katalog produk Laju Official, dikelompokkan per unit bisnis.
+permalink: /katalog/
+---
+{% from "partials/macros.njk" import kartuProduk, breadcrumb %}
+
+{{ breadcrumb([{"name": "Beranda", "url": "/"}, {"name": "Katalog Produk", "url": "/katalog/"}]) }}
+
+<h1>Katalog Produk</h1>
+<p class="lead">Semua produk dari unit bisnis kami. Pilih produk untuk melihat spesifikasi dan memesan lewat WhatsApp.</p>
+
+{% for l in collections.lini %}
+  {% set produkLini = collections.produk | where("data.lini", l.data.slug) %}
+  {% if produkLini.length %}
+    <section>
+      <h2>{{ l.data.title }}</h2>
+      <div class="grid">
+        {% for p in produkLini %}
+          {{ kartuProduk(p, l.data.title) }}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endfor %}

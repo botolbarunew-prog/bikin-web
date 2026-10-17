@@ -1,15 +1,18 @@
 ---
 layout: layouts/base.njk
-title: Artikel
-description: Artikel panduan dan informasi lintas lini.
+title: Artikel dan Panduan
+description: Artikel panduan dari Laju Official untuk membantu Anda memilih produk.
 permalink: /artikel/
 ---
+{% from "partials/macros.njk" import kartuArtikel, breadcrumb %}
 
-<h1>Artikel</h1>
+{{ breadcrumb([{"name": "Beranda", "url": "/"}, {"name": "Artikel", "url": "/artikel/"}]) }}
 
-{% for a in collections.artikel | where("data.lintas", true) %}
-  <article>
-    <h2><a href="{{ a.url }}">{{ a.data.title }}</a></h2>
-    <p>{{ a.data.description }}</p>
-  </article>
-{% endfor %}
+<h1>Artikel dan Panduan</h1>
+<p class="lead">Panduan singkat untuk membantu Anda memilih produk dengan lebih yakin.</p>
+
+<div class="grid">
+  {% for a in collections.artikel %}
+    {{ kartuArtikel(a) }}
+  {% endfor %}
+</div>

@@ -1,17 +1,50 @@
 ---
 layout: layouts/base.njk
 title: Beranda
-description: Katalog produk dan artikel dari lini-lini kami.
+description: Katalog produk dan artikel dari Laju Official. Pesan langsung lewat WhatsApp.
 permalink: /
 ---
+{% from "partials/macros.njk" import tombolWa, kartuLini, kartuArtikel %}
 
-<h1>Selamat datang</h1>
-<p>Pilih lini di bawah ini.</p>
+<section class="hero">
+  <p class="eyebrow">{{ site.nama }}</p>
+  <h1>Produk pilihan untuk <span class="accent">kebutuhan usaha</span> Anda</h1>
+  <p>Pilih produk di katalog, lalu lanjutkan pemesanan langsung lewat WhatsApp. Tanpa keranjang, tanpa ribet.</p>
+  <div class="hero-aksi">
+    <a class="tombol-wa" href="#lini">Lihat lini kami</a>
+    <a class="tombol-outline" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}">Tanya via WA</a>
+  </div>
+</section>
 
-{% for l in collections.lini %}
-  <article>
-    <h2><a href="{{ l.url }}">{{ l.data.title }}</a></h2>
-    <p>{{ l.data.description }}</p>
-    {% if l.data.status != "aktif" %}<p><em>Segera Hadir</em></p>{% endif %}
-  </article>
-{% endfor %}
+<section class="trust" aria-label="Keunggulan">
+  <div>
+    <strong>Pesan langsung</strong>
+    <span>Lanjut ke WhatsApp dari setiap produk.</span>
+  </div>
+  <div>
+    <strong>Siap pakai atau custom</strong>
+    <span>Sesuai kebutuhan dan jumlah Anda.</span>
+  </div>
+  <div>
+    <strong>Panduan lengkap</strong>
+    <span>Artikel untuk membantu memilih produk.</span>
+  </div>
+</section>
+
+<section id="lini">
+  <h2>Lini kami</h2>
+  <div class="grid">
+    {% for l in collections.lini %}
+      {{ kartuLini(l) }}
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2>Artikel terbaru</h2>
+  <div class="grid">
+    {% for a in collections.artikel | limit(3) %}
+      {{ kartuArtikel(a) }}
+    {% endfor %}
+  </div>
+</section>
