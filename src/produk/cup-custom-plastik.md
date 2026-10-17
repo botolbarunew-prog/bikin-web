@@ -4,6 +4,7 @@ slug: cup-custom-plastik
 lini: grosir-botol-kebumen
 jenis: cup-custom
 description: Cup plastik yang bisa dicetak dengan desain sesuai kebutuhan.
+spek: "Plastik · Cetak custom"
 foto: ""
 ---
-(Teks contoh, perlu diganti.)
+Cup plastik yang bisa dicetak dengan desain dan logo sesuai kebutuhan.
