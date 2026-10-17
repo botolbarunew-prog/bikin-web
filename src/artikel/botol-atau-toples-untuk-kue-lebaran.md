@@ -12,4 +12,4 @@ produkTerkait:
   - botol-pet-bening
   - toples-tabung-kue-lebaran
 ---
-Keduanya bisa dipakai untuk kue lebaran dengan kelebihan masing-masing. (Teks contoh, perlu diganti.)
+Keduanya bisa dipakai untuk kue lebaran dengan kelebihan masing-masing. Berikut perbandingan singkat untuk membantu Anda memilih.

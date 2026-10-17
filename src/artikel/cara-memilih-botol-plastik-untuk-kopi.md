@@ -11,4 +11,4 @@ produkTerkait:
   - botol-pet-bening
   - botol-hdpe-putih
 ---
-Memilih botol untuk kopi perlu memperhatikan bahan, ketahanan terhadap suhu, dan jenis tutup. (Teks contoh, perlu diganti dengan isi artikel asli.)
+Memilih botol untuk kopi perlu memperhatikan bahan, ketahanan terhadap suhu, dan jenis tutup. Artikel ini membahas ketiganya secara singkat agar Anda bisa memilih dengan lebih yakin.
