@@ -7,4 +7,4 @@ wa: "6200000000000"
 pesanWa: Halo, saya ingin tanya tentang produk Grosir Botol Kebumen.
 status: aktif
 ---
-Lini ini menyediakan produk berbahan plastik untuk kebutuhan grosir dan custom. (Teks contoh, perlu diganti.)
+Lini ini menyediakan produk berbahan plastik untuk kebutuhan grosir dan custom.
