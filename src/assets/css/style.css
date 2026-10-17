@@ -160,6 +160,12 @@ main.wrap { padding-block: var(--sp-7) var(--sp-9); }
 
 .menu-check:checked ~ .site-nav { display: flex; flex-direction: column; }
 
+/* Fokus keyboard pada checkbox menu tampil di label-nya */
+.menu-check:focus-visible + .menu-btn {
+  outline: 2px solid var(--yellow-accent);
+  outline-offset: 2px;
+}
+
 .site-nav > a,
 .dropdown > summary {
   display: flex;
