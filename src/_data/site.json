@@ -1,6 +1,38 @@
 {
   "nama": "Laju Official",
+  "tagline": "Payung untuk beberapa lini usaha: grosir kemasan, jas hujan & topi, produk gizi, dan layanan digital.",
   "url": "https://GANTI-DOMAIN",
-  "waDefault": "6200000000000",
-  "pesanDefault": "Halo, saya ingin bertanya tentang produk kami."
+  "author": "Tim Redaksi Laju Official",
+  "authorRole": "Tim redaksi katalog produk",
+  "address": "Jl. Karangsambung No. 65, Kemitir, Bumirejo, Kecamatan Kebumen, Kabupaten Kebumen, Jawa Tengah 54316, Indonesia",
+  "email": "hrdlajudigitalmarketing@gmail.com",
+  "whatsapp_1": {
+    "label": "CS 1: Grosir Botol & Gizi Prima",
+    "units": ["grosir-botol-kebumen", "gizi-prima"],
+    "role": "Kemasan botol, toples, cup, dan produk gizi",
+    "number": "6285339479962",
+    "display": "+62 853-3947-9962"
+  },
+  "whatsapp_2": {
+    "label": "CS 2: Jas Hujan Topi & Digital Marketing",
+    "units": ["jas-hujan-topi", "digital-marketing"],
+    "role": "Jas hujan, topi, dan layanan digital",
+    "number": "6287824594327",
+    "display": "+62 878-2459-4327"
+  },
+  "divisi": [
+    {"nama": "Divisi Kemasan & Pangan", "units": ["grosir-botol-kebumen", "gizi-prima"]},
+    {"nama": "Divisi Produk & Layanan", "units": ["jas-hujan-topi", "digital-marketing"]}
+  ],
+  "pesanDefault": "Halo, saya ingin bertanya tentang produk Laju Official.",
+  "tepercaya": [
+    "Kualitas produk dijaga sesuai spesifikasi",
+    "Pengiriman ke berbagai kota di Indonesia",
+    "Admin merespons melalui WhatsApp"
+  ],
+  "langkah": [
+    "Pilih produk dan spesifikasi",
+    "Konfirmasi kuota dan ongkir via WhatsApp",
+    "Pengiriman dari gudang"
+  ]
 }
