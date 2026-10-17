@@ -1,8 +1,14 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "partials/macros.njk" import kartu %}
+{% from "partials/macros.njk" import kartuProduk, kartuArtikel, breadcrumb %}
 {% set liniObj = collections.lini | find("data.slug", lini) %}
+
+{% set navCrumbs = [
+  {"name": "Beranda", "url": "/"},
+  {"name": liniObj.data.title, "url": liniObj.url},
+  {"name": title, "url": page.url}
+] %}
 
 {% set crumbs = [
   {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
@@ -13,19 +19,29 @@ layout: layouts/base.njk
 {{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
 </script>
 
-<nav>
-  <a href="/{{ lini }}/">{{ liniObj.data.title }}</a>
-</nav>
+{{ breadcrumb(navCrumbs) }}
 
 <h1>{{ title }}</h1>
+{% if description %}<p class="lead">{{ description }}</p>{% endif %}
 {{ content | safe }}
 
-<h2>Produk</h2>
-{% for p in collections.produk | where("data.jenis", slug) %}
-  {{ kartu(p) }}
-{% endfor %}
+<section>
+  <h2>Produk</h2>
+  <div class="grid">
+    {% for p in collections.produk | where("data.jenis", slug) %}
+      {{ kartuProduk(p, liniObj.data.title) }}
+    {% endfor %}
+  </div>
+</section>
 
-<h2>Artikel</h2>
-{% for a in collections.artikel | whereIncludes("data.jenis", slug) %}
-  {{ kartu(a) }}
-{% endfor %}
+{% set artikelJenis = collections.artikel | whereIncludes("data.jenis", slug) %}
+{% if artikelJenis.length %}
+<section>
+  <h2>Artikel</h2>
+  <div class="grid">
+    {% for a in artikelJenis %}
+      {{ kartuArtikel(a) }}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

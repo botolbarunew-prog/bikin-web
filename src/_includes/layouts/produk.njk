@@ -1,23 +1,31 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "partials/macros.njk" import kartu, tombolWa %}
+{% from "partials/macros.njk" import kartuProduk, kartuArtikel, tombolWa, breadcrumb, gambar %}
 {% set liniObj = collections.lini | find("data.slug", lini) %}
 {% set jenisObj = collections.jenis | find("data.slug", jenis) %}
-{% set nomor = liniObj.data.wa or site.waDefault %}
+{% set nomor = lini | waFor(site) %}
+{% set urlProduk = siteUrl + page.url %}
+{% set pesanProduk = "Halo Admin, saya tertarik memesan " + title + " di website. Bisa info stok dan harga grosirnya?" %}
+{% set brandObj = {"@type": "Brand", "name": liniObj.data.title} %}
+
+{% set navCrumbs = [
+  {"name": "Beranda", "url": "/"},
+  {"name": liniObj.data.title, "url": liniObj.url},
+  {"name": jenisObj.data.title, "url": jenisObj.url},
+  {"name": title, "url": page.url}
+] %}
 
 {% set crumbs = [
   {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
   {"@type": "ListItem", "position": 2, "name": liniObj.data.title, "item": siteUrl + liniObj.url},
   {"@type": "ListItem", "position": 3, "name": jenisObj.data.title, "item": siteUrl + jenisObj.url},
-  {"@type": "ListItem", "position": 4, "name": title, "item": siteUrl + page.url}
+  {"@type": "ListItem", "position": 4, "name": title, "item": urlProduk}
 ] %}
 <script type="application/ld+json">
 {{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
 </script>
 
-{% set urlProduk = siteUrl + page.url %}
-{% set brandObj = {"@type": "Brand", "name": liniObj.data.title} %}
 {% if foto %}
   {% set imageUrl = siteUrl + foto %}
   {% set schemaProduk = {"@context": "https://schema.org", "@type": "Product", "name": title, "description": description, "url": urlProduk, "image": imageUrl, "brand": brandObj} %}
@@ -28,36 +36,94 @@ layout: layouts/base.njk
 {{ schemaProduk | dump | safe }}
 </script>
 
-<h1>{{ title }}</h1>
-{% if foto %}<img src="{{ foto }}" alt="{{ title }}">{% endif %}
-<p>{{ description }}</p>
-{{ content | safe }}
+{{ breadcrumb(navCrumbs) }}
 
-{% if varian and varian.length %}
-  <h2>Pilihan</h2>
-  {% for g in varian %}
-    <h3>{{ g.nama }}</h3>
-    <ul>
-      {% for o in g.opsi %}<li>{{ o }}</li>{% endfor %}
+<div class="produk-layout">
+  <div class="produk-visual">
+    <div class="foto">
+      {{ gambar(foto, title, spek) }}
+    </div>
+
+    {% if spesifikasi and spesifikasi.length %}
+      <h2>Spesifikasi</h2>
+      <table class="spec">
+        <tbody>
+          {% for s in spesifikasi %}
+            <tr><th scope="row">{{ s.label }}</th><td>{{ s.nilai }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if varian and varian.length %}
+      <div class="varian">
+        <h2>Pilihan</h2>
+        {% for g in varian %}
+          <h3>{{ g.nama }}</h3>
+          <ul>
+            {% for o in g.opsi %}<li>{{ o }}</li>{% endfor %}
+          </ul>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if content %}
+      <div class="prose">{{ content | safe }}</div>
+    {% endif %}
+  </div>
+
+  <aside class="order-box" aria-label="Pesan produk">
+    <span class="badge">{{ liniObj.data.title }}</span>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+    {% if spek %}<p class="spek">{{ spek }}</p>{% endif %}
+    <p><span class="badge badge-outline">Tanya harga grosir</span></p>
+
+    {{ tombolWa(nomor, pesanProduk, "Pesan / Tanya Harga via WhatsApp") }}
+
+    <ul class="kepercayaan">
+      {% for item in site.tepercaya %}
+        <li><span aria-hidden="true">&#10003;</span> {{ item }}</li>
+      {% endfor %}
     </ul>
-  {% endfor %}
-{% endif %}
+    <p class="catatan">Tanpa keranjang. Pesanan diproses langsung di WhatsApp.</p>
+  </aside>
+</div>
 
-{{ tombolWa(nomor, "Halo, saya tertarik dengan " + title + ". Mohon info lebih lanjut.", "Pesan via WA") }}
+<section class="langkah" aria-labelledby="langkah-judul">
+  <h2 id="langkah-judul">3 langkah mudah pemesanan</h2>
+  <ol class="langkah-list">
+    {% for item in site.langkah %}
+      <li><span class="langkah-no">0{{ loop.index }}</span><span>{{ item }}</span></li>
+    {% endfor %}
+  </ol>
+</section>
 
-<h2>Produk serupa</h2>
-{% for p in collections.produk | where("data.jenis", jenis) | exclude(page.url) | limit(3) %}
-  {{ kartu(p) }}
-{% endfor %}
+<section class="related">
+  <h2>Produk sejenis</h2>
+  <div class="grid">
+    {% for p in collections.produk | where("data.jenis", jenis) | exclude(page.url) | limit(3) %}
+      {{ kartuProduk(p, liniObj.data.title) }}
+    {% endfor %}
+  </div>
 
-<h2>Artikel terkait</h2>
-{% for a in collections.artikel | whereIncludes("data.jenis", jenis) | limit(2) %}
-  {{ kartu(a) }}
-{% endfor %}
+  {% set artikelTerkait = collections.artikel | whereIncludes("data.jenis", jenis) | limit(2) %}
+  {% if artikelTerkait.length %}
+    <h2>Artikel terkait</h2>
+    <div class="grid">
+      {% for a in artikelTerkait %}
+        {{ kartuArtikel(a) }}
+      {% endfor %}
+    </div>
+  {% endif %}
 
-{% if produkLintas and produkLintas.length %}
-  <h2>Dari lini lain</h2>
-  {% for p in collections.produk | whereIn("data.slug", produkLintas) | limit(2) %}
-    {{ kartu(p) }}
-  {% endfor %}
-{% endif %}
+  {% if produkLintas and produkLintas.length %}
+    <h2>Dari lini lain</h2>
+    <div class="grid">
+      {% for p in collections.produk | whereIn("data.slug", produkLintas) | limit(2) %}
+        {% set liniLain = collections.lini | find("data.slug", p.data.lini) %}
+        {{ kartuProduk(p, liniLain.data.title) }}
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>

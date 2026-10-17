@@ -1,51 +1,132 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "partials/macros.njk" import kartu, tombolWa %}
+{% from "partials/macros.njk" import kartuProduk, kartuArtikel, tombolWa, breadcrumb, gambar as fotoArtikel %}
 {% set liniObj = collections.lini | find("data.slug", lini) %}
-{% set nomor = liniObj.data.wa or site.waDefault %}
+{% set urlArtikel = siteUrl + page.url %}
+{% set penulis = author or site.author %}
+{% set peranPenulis = authorRole or site.authorRole %}
+{% set nomorArtikel = (lini | waFor(site)) if lini else site.whatsapp_1.number %}
+{% set pesanBagikan = title + " " + urlArtikel %}
+{% set tanggalTerbit = tanggal | isoDate %}
+{% set tanggalUbah = (updatedDate or tanggal) | isoDate %}
+{% set publisherObj = {"@type": "Organization", "name": site.nama, "url": siteUrl} %}
+{% set penulisObj = {"@type": "Organization", "name": penulis} %}
+{% set schemaArtikel = {"@context": "https://schema.org", "@type": "Article", "headline": title, "description": description, "datePublished": tanggalTerbit, "dateModified": tanggalUbah, "mainEntityOfPage": urlArtikel, "author": penulisObj, "publisher": publisherObj} %}
+<script type="application/ld+json">
+{{ schemaArtikel | dump | safe }}
+</script>
 
 {% if lintas %}
+  {% set navCrumbs = [
+    {"name": "Beranda", "url": "/"},
+    {"name": "Artikel", "url": "/artikel/"},
+    {"name": title, "url": page.url}
+  ] %}
   {% set crumbs = [
     {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
     {"@type": "ListItem", "position": 2, "name": "Artikel", "item": siteUrl + "/artikel/"},
-    {"@type": "ListItem", "position": 3, "name": title, "item": siteUrl + page.url}
+    {"@type": "ListItem", "position": 3, "name": title, "item": urlArtikel}
   ] %}
 {% else %}
   {% set jenisObj = collections.jenis | find("data.slug", jenis[0]) %}
+  {% set navCrumbs = [
+    {"name": "Beranda", "url": "/"},
+    {"name": liniObj.data.title, "url": liniObj.url},
+    {"name": jenisObj.data.title, "url": jenisObj.url},
+    {"name": title, "url": page.url}
+  ] %}
   {% set crumbs = [
     {"@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl + "/"},
     {"@type": "ListItem", "position": 2, "name": liniObj.data.title, "item": siteUrl + liniObj.url},
     {"@type": "ListItem", "position": 3, "name": jenisObj.data.title, "item": siteUrl + jenisObj.url},
-    {"@type": "ListItem", "position": 4, "name": title, "item": siteUrl + page.url}
+    {"@type": "ListItem", "position": 4, "name": title, "item": urlArtikel}
   ] %}
 {% endif %}
 <script type="application/ld+json">
 {{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
 </script>
 
-{% set tanggalIsoValue = tanggal | tanggalIso %}
-{% set urlArtikel = siteUrl + page.url %}
-{% set publisherObj = {"@type": "Organization", "name": site.nama, "url": siteUrl} %}
-{% set schemaArtikel = {"@context": "https://schema.org", "@type": "Article", "headline": title, "description": description, "datePublished": tanggalIsoValue, "mainEntityOfPage": urlArtikel, "publisher": publisherObj} %}
-<script type="application/ld+json">
-{{ schemaArtikel | dump | safe }}
+{{ breadcrumb(navCrumbs) }}
+
+<header class="artikel-head">
+  <h1>{{ title }}</h1>
+  {% if description %}<p class="lead">{{ description }}</p>{% endif %}
+
+  <div class="byline">
+    <div class="penulis">
+      <span class="avatar" aria-hidden="true">{{ penulis | initial }}</span>
+      <div>
+        <p class="penulis-nama">{{ penulis }}</p>
+        <p class="penulis-peran">{{ peranPenulis }}</p>
+      </div>
+    </div>
+    <div class="byline-meta">
+      <time class="badge-mono" datetime="{{ tanggalTerbit }}">{{ tanggal | readableDate }}</time>
+      {% if updatedDate %}
+        <time class="badge-mono" datetime="{{ tanggalUbah }}">Diperbarui {{ updatedDate | readableDate }}</time>
+      {% endif %}
+      <span class="badge-mono">{{ content | readingTime }}</span>
+    </div>
+    <div class="bagikan">
+      <a class="tombol-outline tombol-kecil" href="https://wa.me/?text={{ pesanBagikan | urlencode }}">Bagikan via WhatsApp</a>
+      <button type="button" class="tombol-outline tombol-kecil" data-salin="{{ urlArtikel }}">Salin link</button>
+    </div>
+  </div>
+</header>
+
+<figure class="artikel-cover">
+  {{ fotoArtikel(foto, title, null) }}
+</figure>
+
+<div class="artikel-layout">
+  <div class="artikel-main">
+    <div class="prose article-content">
+      {{ content | safe }}
+    </div>
+
+    <aside class="bio" aria-labelledby="bio-judul">
+      <h2 id="bio-judul">Tentang penulis</h2>
+      <p><strong>{{ penulis }}</strong>. {{ peranPenulis }}.</p>
+      <p>Artikel ini ditulis dan ditinjau oleh tim redaksi {{ site.nama }}. Untuk pertanyaan produk, hubungi tim kami langsung melalui WhatsApp.</p>
+    </aside>
+
+    <section class="related">
+      <h2>Artikel terkait</h2>
+      <div class="grid">
+        {% for a in collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) | limit(2) %}
+          {{ kartuArtikel(a) }}
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <aside class="artikel-aside" aria-label="Produk terkait">
+    {% if produkTerkait and produkTerkait.length %}
+      <div class="sidebar-kotak">
+        <h2>Produk terkait yang dibahas</h2>
+        {% for p in collections.produk | whereIn("data.slug", produkTerkait) %}
+          {{ kartuProduk(p, liniObj.data.title) }}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="sidebar-kotak nudge">
+      <p>Masih ragu memilih? Tanyakan langsung kebutuhan Anda ke tim kami.</p>
+      {{ tombolWa(nomorArtikel, "Halo, saya habis membaca artikel " + title + " dan ingin bertanya.", "Tanya via WhatsApp") }}
+    </div>
+  </aside>
+</div>
+
+<script>
+  document.querySelectorAll('[data-salin]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      try {
+        navigator.clipboard.writeText(b.dataset.salin);
+        b.textContent = 'Tersalin';
+      } catch (e) {
+        b.textContent = 'Gagal menyalin';
+      }
+    });
+  });
 </script>
-
-<h1>{{ title }}</h1>
-<p>{{ tanggal | tanggalIndo }}</p>
-{{ content | safe }}
-
-{% if produkTerkait and produkTerkait.length %}
-  <h2>Produk yang dibahas</h2>
-  {% for p in collections.produk | whereIn("data.slug", produkTerkait) %}
-    {{ kartu(p) }}
-  {% endfor %}
-{% endif %}
-
-{{ tombolWa(nomor, "Halo, saya habis membaca artikel " + title + " dan ingin bertanya.", "Tanya via WA") }}
-
-<h2>Artikel terkait</h2>
-{% for a in collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) | limit(2) %}
-  {{ kartu(a) }}
-{% endfor %}

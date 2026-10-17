@@ -1,21 +1,52 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "partials/macros.njk" import tombolWa %}
+{% from "partials/macros.njk" import kartuJenis, kartuArtikel, tombolWa, breadcrumb, gambar as fotoLini %}
+{% set nomor = slug | waFor(site) %}
+{% set pesanLini = pesanWa or site.pesanDefault %}
 
-<h1>{{ title }}</h1>
-{{ content | safe }}
+{{ breadcrumb([{"name": "Beranda", "url": "/"}, {"name": title, "url": page.url}]) }}
 
-{% if status == "aktif" %}
-  <h2>Jenis produk</h2>
-  {% for j in collections.jenis | where("data.lini", slug) %}
-    <article>
-      <h3><a href="{{ j.url }}">{{ j.data.title }}</a></h3>
-      <p>{{ j.data.description }}</p>
-    </article>
-  {% endfor %}
-{% else %}
-  <p>Lini ini segera hadir.</p>
+<div class="lini-hero">
+  <div>
+    <h1>{{ title }}</h1>
+    {% if description %}<p class="lead">{{ description }}</p>{% endif %}
+    {% if status == "aktif" %}
+      <p>{{ tombolWa(nomor, pesanLini, "Hubungi via WhatsApp") }}</p>
+    {% else %}
+      <p class="status-segera"><span class="badge badge-outline">Segera hadir</span></p>
+      <p>Lini ini sedang disiapkan. Hubungi kami untuk informasi terbaru.</p>
+      <p>{{ tombolWa(nomor, pesanLini, "Tanya via WhatsApp") }}</p>
+    {% endif %}
+  </div>
+  <div class="foto lini-foto">
+    {{ fotoLini(gambar, title, null) }}
+  </div>
+</div>
+
+{% if content %}
+  <div class="prose">{{ content | safe }}</div>
 {% endif %}
 
-{{ tombolWa(wa, pesanWa, "Hubungi via WA") }}
+{% if status == "aktif" %}
+  <section>
+    <h2>Jenis produk</h2>
+    <div class="grid">
+      {% for j in collections.jenis | where("data.lini", slug) %}
+        {{ kartuJenis(j) }}
+      {% endfor %}
+    </div>
+  </section>
+
+  {% set artikelLini = collections.artikel | where("data.lini", slug) %}
+  {% if artikelLini.length %}
+  <section>
+    <h2>Artikel</h2>
+    <div class="grid">
+      {% for a in artikelLini %}
+        {{ kartuArtikel(a) }}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+{% endif %}
