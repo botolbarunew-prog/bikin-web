@@ -1,10 +1,82 @@
+{# Tombol utama ke WhatsApp. Satu per area agar fokus pada aksi utama. #}
 {% macro tombolWa(nomor, pesan, label) -%}
 <a class="tombol-wa" href="https://wa.me/{{ nomor }}?text={{ pesan | urlencode }}">{{ label }}</a>
 {%- endmacro %}
 
-{% macro kartu(item) -%}
-<article>
-  <h3><a href="{{ item.url }}">{{ item.data.title }}</a></h3>
-  <p>{{ item.data.description }}</p>
-</article>
+{# Breadcrumb visual. Item terakhir ditandai aria-current. #}
+{% macro breadcrumb(items) -%}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    {% for it in items %}
+      <li>{% if loop.last %}<span aria-current="page">{{ it.name }}</span>{% else %}<a href="{{ it.url }}">{{ it.name }}</a>{% endif %}</li>
+    {% endfor %}
+  </ol>
+</nav>
+{%- endmacro %}
+
+{# Gambar dengan fallback. Jika belum ada foto, tampil placeholder teknis (ikon garis navy dan label mono). #}
+{% macro gambar(src, alt, label) -%}
+{% if src %}
+<img src="{{ src }}" alt="{{ alt }}" loading="lazy" width="800" height="600">
+{% else %}
+<div class="placeholder" role="img" aria-label="{{ alt or 'Foto belum tersedia' }}">
+  <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <rect x="10" y="14" width="44" height="36" rx="3" fill="none" stroke="#0A192F" stroke-width="3"/>
+    <circle cx="24" cy="27" r="4" fill="none" stroke="#0A192F" stroke-width="3"/>
+    <path d="M14 46l13-13 8 8 6-6 9 11" fill="none" stroke="#0A192F" stroke-width="3" stroke-linejoin="round"/>
+  </svg>
+  {% if label %}<span class="badge-mono">{{ label }}</span>{% endif %}
+</div>
+{% endif %}
+{%- endmacro %}
+
+{# Kartu produk: tepat 4 elemen (visual, badge lini, judul + panah, spesifikasi kunci). Tanpa tombol WA. #}
+{% macro kartuProduk(p, liniTitle) -%}
+<a class="kartu-produk" href="{{ p.url }}">
+  <div class="foto">
+    {{ gambar(p.data.foto, p.data.title, p.data.spek) }}
+  </div>
+  <div class="isi">
+    <span class="badge">{{ liniTitle }}</span>
+    <h3>{{ p.data.title }} <span class="panah" aria-hidden="true">&rarr;</span></h3>
+    {% if p.data.spek %}<span class="badge-mono">{{ p.data.spek }}</span>{% endif %}
+  </div>
+</a>
+{%- endmacro %}
+
+{# Kartu lini untuk beranda. #}
+{% macro kartuLini(l) -%}
+<a class="kartu-lini" href="{{ l.url }}">
+  <div class="foto">
+    {{ gambar(l.data.gambar, l.data.title, null) }}
+  </div>
+  <div class="isi">
+    {% if l.data.status == "aktif" %}
+      <span class="badge">Tersedia</span>
+    {% else %}
+      <span class="badge badge-outline">Segera hadir</span>
+    {% endif %}
+    <h3>{{ l.data.title }}</h3>
+    <p>{{ l.data.description }}</p>
+  </div>
+</a>
+{%- endmacro %}
+
+{# Kartu jenis produk di halaman lini. #}
+{% macro kartuJenis(j) -%}
+<a class="kartu-teks" href="{{ j.url }}">
+  <div class="isi">
+    <h3>{{ j.data.title }} <span class="panah" aria-hidden="true">&rarr;</span></h3>
+    <p>{{ j.data.description }}</p>
+  </div>
+</a>
+{%- endmacro %}
+
+{# Kartu artikel: tanggal, judul, ringkasan. #}
+{% macro kartuArtikel(a) -%}
+<a class="kartu-artikel" href="{{ a.url }}">
+  <time class="meta" datetime="{{ a.data.tanggal | isoDate }}">{{ a.data.tanggal | readableDate }}</time>
+  <h3>{{ a.data.title }}</h3>
+  <p>{{ a.data.description }}</p>
+</a>
 {%- endmacro %}
