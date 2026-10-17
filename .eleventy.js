@@ -2,6 +2,7 @@ module.exports = function (eleventyConfig) {
   // Aset statis: CSS, gambar, dan konfigurasi admin
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin/config.yml");
+  eleventyConfig.addPassthroughCopy({"src/_redirects": "_redirects"});
 
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
   // Netlify mengisi process.env.URL saat build, jadi domain baru ikut terbaca otomatis
