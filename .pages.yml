@@ -1,0 +1,177 @@
+media: src/assets/uploads
+
+content:
+  - name: lini
+    label: Lini
+    type: collection
+    path: src/lini
+    format: yaml-frontmatter
+    filename: "{slug}.md"
+    view:
+      primary: slug
+    fields:
+      - name: title
+        label: Nama lini
+        type: string
+        required: true
+      - name: slug
+        label: Slug (URL)
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Huruf kecil, angka, dan tanda hubung saja"
+      - name: urutan
+        label: Urutan tampil (1 = paling depan)
+        type: number
+      - name: description
+        label: Deskripsi singkat (untuk SEO dan kartu)
+        type: text
+      - name: gambar
+        label: Gambar lini (opsional)
+        type: image
+      - name: pesanWa
+        label: Pesan WA default untuk lini ini
+        type: text
+      - name: status
+        label: Status (aktif atau segera)
+        type: string
+        pattern:
+          regex: "^(aktif|segera)$"
+          message: "Isi aktif atau segera"
+      - name: body
+        type: rich-text
+
+  - name: jenis
+    label: Jenis produk
+    type: collection
+    path: src/jenis
+    format: yaml-frontmatter
+    filename: "{slug}.md"
+    view:
+      primary: slug
+    fields:
+      - name: title
+        label: Nama jenis
+        type: string
+        required: true
+      - name: slug
+        label: Slug (URL)
+        type: string
+        required: true
+      - name: urutan
+        label: Urutan tampil (1 = paling depan)
+        type: number
+      - name: lini
+        type: reference
+        collection: lini
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: description
+        label: Deskripsi singkat (untuk SEO)
+        type: text
+      - name: body
+        type: rich-text
+
+  - name: produk
+    label: Produk
+    type: collection
+    path: src/produk
+    format: yaml-frontmatter
+    filename: "{slug}.md"
+    view:
+      primary: slug
+    fields:
+      - name: title
+        label: Nama produk
+        type: string
+        required: true
+      - name: slug
+        label: Slug (URL)
+        type: string
+        required: true
+      - name: lini
+        type: reference
+        collection: lini
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: jenis
+        type: reference
+        collection: jenis
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: description
+        label: Deskripsi singkat (untuk SEO dan halaman produk)
+        type: text
+      - name: spek
+        label: Spesifikasi kunci untuk kartu (contoh PET · 250ml – 1L)
+        type: string
+      - name: foto
+        label: Foto
+        type: image
+      - name: produkLintas
+        type: reference
+        collection: produk
+        multiple: true
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: body
+        type: rich-text
+
+  - name: artikel
+    label: Artikel
+    type: collection
+    path: src/artikel
+    format: yaml-frontmatter
+    filename: "{slug}.md"
+    view:
+      primary: slug
+    fields:
+      - name: title
+        label: Judul
+        type: string
+        required: true
+      - name: slug
+        label: Slug (URL)
+        type: string
+        required: true
+      - name: lini
+        type: reference
+        collection: lini
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: jenis
+        type: reference
+        collection: jenis
+        multiple: true
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: lintas
+        label: Artikel lintas lini? (URL di /artikel/)
+        type: boolean
+      - name: description
+        label: Meta description (untuk SEO)
+        type: text
+      - name: tanggal
+        label: Tanggal terbit
+        type: date
+      - name: updatedDate
+        label: Tanggal diperbarui (opsional)
+        type: date
+      - name: author
+        label: Penulis (kosongkan untuk tim redaksi)
+        type: string
+      - name: authorRole
+        label: Peran penulis (kosongkan untuk default)
+        type: string
+      - name: foto
+        label: Foto sampul (opsional)
+        type: image
+      - name: produkTerkait
+        type: reference
+        collection: produk
+        multiple: true
+        value: "{primary}"
+        label: "{fields.title}"
+      - name: body
+        type: rich-text

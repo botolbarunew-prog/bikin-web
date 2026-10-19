@@ -1,12 +1,14 @@
 module.exports = function (eleventyConfig) {
   // Aset statis: CSS, gambar, dan konfigurasi admin
   eleventyConfig.addPassthroughCopy("src/assets");
-  eleventyConfig.addPassthroughCopy("src/admin/config.yml");
   eleventyConfig.addPassthroughCopy({"src/_redirects": "_redirects"});
 
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
-  // Netlify mengisi process.env.URL saat build, jadi domain baru ikut terbaca otomatis
-  eleventyConfig.addGlobalData("siteUrl", () => (process.env.URL || "https://GANTI-DOMAIN").replace(/\/$/, ""));
+  // Alamat situs: SITE_URL (diisi di Cloudflare saat pakai domain sendiri),
+  // lalu URL bawaan Cloudflare Pages, lalu alamat cadangan
+  eleventyConfig.addGlobalData("siteUrl", () =>
+    (process.env.SITE_URL || process.env.CF_PAGES_URL || "https://laju-official.pages.dev").replace(/\/$/, "")
+  );
 
   // Koleksi. Urutan manual dari field "urutan"; yang kosong ditaruh di belakang
   const urutkan = (a, b) => (a.data.urutan ?? 999) - (b.data.urutan ?? 999);
