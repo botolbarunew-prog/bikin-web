@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Foto belum tersedia">
-  <rect width="800" height="600" fill="#F1F5F9"/>
-  <rect x="330" y="220" width="140" height="110" rx="4" fill="none" stroke="#1E3A8A" stroke-width="6"/>
-  <circle cx="370" cy="262" r="12" fill="none" stroke="#1E3A8A" stroke-width="6"/>
-  <path d="M344 320 L378 286 L402 306 L424 288 L456 320" fill="none" stroke="#1E3A8A" stroke-width="6" stroke-linejoin="round"/>
-  <rect x="32" y="32" width="84" height="32" rx="4" fill="#0A192F"/>
-  <text x="74" y="54" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="16" font-weight="600" fill="#FFFFFF">FOTO</text>
-  <text x="400" y="400" text-anchor="middle" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="24" fill="#64748B">Foto belum tersedia</text>
-</svg>
