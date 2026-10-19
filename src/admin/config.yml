@@ -91,7 +91,12 @@ collections:
       - {label: "Jenis", name: jenis, widget: relation, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Deskripsi singkat (untuk SEO dan halaman produk)", name: description, widget: text}
       - {label: "Spesifikasi kunci untuk kartu (contoh: PET · 250ml – 1L)", name: spek, widget: string, required: false}
-      - {label: "Foto", name: foto, widget: image, required: false}
+      - {label: "Foto utama", name: foto, widget: image, required: false}
+      - label: "Galeri foto (3 sampai 5 foto)"
+        name: galeri
+        widget: list
+        required: false
+        field: {label: "Foto", name: foto, widget: image}
       - label: "Spesifikasi (tabel di halaman produk)"
         name: spesifikasi
         widget: list
@@ -105,7 +110,13 @@ collections:
         required: false
         fields:
           - {label: "Nama grup (misal: Ukuran)", name: nama, widget: string}
-          - {label: "Opsi", name: opsi, widget: list}
+          - {label: "Tampilan pilihan", name: tampilan, widget: select, options: [teks, gambar], default: teks}
+          - label: "Opsi"
+            name: opsi
+            widget: list
+            fields:
+              - {label: "Nama opsi (misal: 500ml atau putih)", name: nama, widget: string}
+              - {label: "Gambar opsi (isi jika tampilan gambar)", name: gambar, widget: image, required: false}
       - {label: "Produk dari lini lain (opsional)", name: produkLintas, widget: relation, collection: produk, multiple: true, required: false, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Isi halaman", name: body, widget: markdown, required: false}
 
