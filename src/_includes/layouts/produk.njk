@@ -77,9 +77,7 @@ layout: layouts/base.njk
     <h1>{{ title }}</h1>
     <p>{{ description }}</p>
     {% if spek %}<p class="spek">{{ spek }}</p>{% endif %}
-    <p><span class="badge badge-outline">Tanya harga grosir</span></p>
-
-    {{ tombolWa(nomor, pesanProduk, "Pesan / Tanya Harga via WhatsApp") }}
+    {{ tombolWa(nomor, pesanProduk, "Pesan via WhatsApp") }}
 
     <ul class="kepercayaan">
       {% for item in site.tepercaya %}
