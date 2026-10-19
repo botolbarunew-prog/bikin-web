@@ -3,8 +3,9 @@ title: Botol PET Bening
 slug: botol-pet-bening
 lini: grosir-botol-kebumen
 jenis: botol-plastik
-description: Botol PET bening dengan pilihan ukuran dan tutup, cocok untuk minuman dan saus.
-spek: "PET · 250ml – 1L"
+description: Botol PET Bening dengan pilihan ukuran dan tutup, cocok untuk minuman dan saus.
+spek: PET · 250ml – 1L
+foto: ""
 spesifikasi:
   - label: Bahan
     nilai: PET bening
@@ -12,7 +13,6 @@ spesifikasi:
     nilai: 250ml, 500ml, 1L
   - label: Tutup
     nilai: hitam, putih, bening
-foto: ""
 varian:
   - nama: Ukuran
     opsi:
