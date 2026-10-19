@@ -1,6 +1,6 @@
 backend:
-  name: github
-  repo: botolbarunew-prog/bikin-web
+  name: turbo-github
+  turbo_site_id: 24cb80a6-1699-4126-ad2a-0b6aa6527a3d
   branch: main
 
 media_folder: "src/assets/uploads"
@@ -38,15 +38,9 @@ collections:
               - {label: "Nomor (format 62...)", name: number, widget: string}
               - {label: "Tampilan nomor", name: display, widget: string}
               - {label: "Lini yang dilayani (slug)", name: units, widget: list}
-          - label: "Pesan WA default"
-            name: pesanDefault
-            widget: text
-          - label: "Poin kepercayaan di halaman produk"
-            name: tepercaya
-            widget: list
-          - label: "Langkah pemesanan (3 langkah)"
-            name: langkah
-            widget: list
+          - {label: "Pesan WA default", name: pesanDefault, widget: text}
+          - {label: "Poin kepercayaan di halaman produk", name: tepercaya, widget: list}
+          - {label: "Langkah pemesanan (3 langkah)", name: langkah, widget: list}
 
   - name: lini
     label: "Lini"
