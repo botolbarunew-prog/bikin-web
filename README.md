@@ -14,7 +14,7 @@ Situs statis (Eleventy) dengan halaman admin Decap CMS di `/admin`.
 
 1. Upload file proyek ke repository GitHub `botolbarunew-prog/bikin-web`. Jangan upload `node_modules`, `_site`, atau `jalankan-preview.bat`.
 2. Cloudflare Pages membangun ulang otomatis setiap ada commit ke branch utama. Pengaturan build: `npm run build`, output `_site`, dan variabel `NODE_VERSION` = `22`.
-3. Edit konten lewat Pages CMS di pagescms.org, yang terhubung ke repository ini.
+3. Edit konten dengan mengunggah file yang sudah diubah ke folder yang sesuai di repository ini.
 
 ## Preview lokal
 
@@ -23,4 +23,4 @@ Klik dua kali `jalankan-preview.bat`, lalu buka http://localhost:8080. Membutuhk
 ## Catatan
 
 - Nomor WA, alamat, dan email ada di `src/_data/site.json`. Diedit langsung di file itu sampai masuk ke Pages CMS.
-- Login ke Pages CMS memakai akun GitHub yang punya akses ke repository ini.
+- Editor berbasis web (Pages CMS atau admin lain) belum digunakan. Semua konten diedit lewat file di repository ini.
