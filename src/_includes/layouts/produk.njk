@@ -44,6 +44,14 @@ layout: layouts/base.njk
       {{ gambar(foto, title, spek) }}
     </div>
 
+    {% if galeri and galeri.length %}
+      <div class="galeri" aria-label="Galeri foto {{ title }}">
+        {% for g in galeri %}
+          <img src="{{ g }}" alt="{{ title }} (foto {{ loop.index }})" loading="lazy" width="800" height="600">
+        {% endfor %}
+      </div>
+    {% endif %}
+
     {% if spesifikasi and spesifikasi.length %}
       <h2>Spesifikasi</h2>
       <table class="spec">
@@ -61,7 +69,12 @@ layout: layouts/base.njk
         {% for g in varian %}
           <h3>{{ g.nama }}</h3>
           <ul>
-            {% for o in g.opsi %}<li>{{ o }}</li>{% endfor %}
+            {% for o in g.opsi %}
+              <li>
+                {% if o.gambar %}<img src="{{ o.gambar }}" alt="{{ g.nama }} {{ o.nama }}" loading="lazy" width="200" height="200">{% endif %}
+                {{ o.nama }}
+              </li>
+            {% endfor %}
           </ul>
         {% endfor %}
       </div>
