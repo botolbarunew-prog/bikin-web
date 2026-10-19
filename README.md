@@ -8,7 +8,7 @@ Situs statis (Eleventy) untuk Laju Official. Konten diedit lewat halaman admin D
 - `src/jenis/`: jenis produk di dalam lini
 - `src/produk/`: produk, terhubung ke lini dan jenis
 - `src/artikel/`: artikel, bisa terhubung ke beberapa jenis
-- `src/_data/site.json`: nama, alamat, email, dan nomor WA
+- `src/_data/site.json`: nama, alamat, email, dan nomor WA.
 
 ## Publikasi
 
