@@ -604,6 +604,23 @@ main.wrap { padding-block: var(--sp-7) var(--sp-9); }
 
 .produk-visual h2 { font-size: 1.25rem; margin-top: var(--sp-7); }
 
+.galeri {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.galeri img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-ui);
+  background: var(--placeholder);
+}
+
 .spec {
   width: 100%;
   border-collapse: collapse;
