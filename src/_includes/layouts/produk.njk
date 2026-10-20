@@ -1,12 +1,13 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "partials/macros.njk" import kartuProduk, kartuArtikel, tombolWa, breadcrumb, gambar %}
+{% from "partials/macros.njk" import kartuProduk, kartuArtikel, breadcrumb, gambar %}
 {% set liniObj = collections.lini | find("data.slug", lini) %}
 {% set jenisObj = collections.jenis | find("data.slug", jenis) %}
 {% set nomor = lini | waFor(site) %}
 {% set urlProduk = siteUrl + page.url %}
-{% set pesanProduk = "Halo Admin, saya tertarik memesan " + title + " di website. Bisa info stok dan harga grosirnya?" %}
+{% set fotoUtama = foto or (galeri[0] if galeri else "") %}
+{% set pesanDasar = "Halo Admin, saya ingin memesan " + title + "." %}
 {% set brandObj = {"@type": "Brand", "name": liniObj.data.title} %}
 
 {% set navCrumbs = [
@@ -26,7 +27,8 @@ layout: layouts/base.njk
 {{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
 </script>
 
-{% if foto %}
+{# Gambar hanya dicantumkan jika foto asli, bukan placeholder "Foto segera hadir" #}
+{% if foto and ("/assets/placeholder/" not in foto) %}
   {% set imageUrl = siteUrl + foto %}
   {% set schemaProduk = {"@context": "https://schema.org", "@type": "Product", "name": title, "description": description, "url": urlProduk, "image": imageUrl, "brand": brandObj} %}
 {% else %}
@@ -40,16 +42,67 @@ layout: layouts/base.njk
 
 <div class="produk-layout">
   <div class="produk-visual">
-    <div class="foto">
-      {{ gambar(foto, title, spek) }}
+    <div class="galeri-produk" data-galeri>
+      <div class="slider" data-slider tabindex="0" role="region" aria-roledescription="carousel" aria-label="Foto produk {{ title }}">
+        {% for g in varian %}
+          {% for o in g.opsi %}
+            {% if o.gambar %}
+              <figure class="slide" data-src="{{ o.gambar }}">
+                <img src="{{ o.gambar }}" alt="{{ title }}, {{ g.nama }} {{ o.nama }}" loading="lazy" width="800" height="800">
+              </figure>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        {% if fotoUtama %}
+          <figure class="slide" data-src="{{ fotoUtama }}">
+            <img src="{{ fotoUtama }}" alt="{{ title }}" loading="lazy" width="800" height="800">
+          </figure>
+        {% endif %}
+        {% for g in galeri %}
+          <figure class="slide" data-src="{{ g }}">
+            <img src="{{ g }}" alt="{{ title }} (foto {{ loop.index }})" loading="lazy" width="800" height="800">
+          </figure>
+        {% endfor %}
+        {% if not fotoUtama and not (galeri and galeri.length) %}
+          <figure class="slide">{{ gambar(null, title, spek) }}</figure>
+        {% endif %}
+      </div>
+      <span class="penanda-angka" data-angka aria-live="polite"></span>
+      <div class="titik-daftar" data-titik aria-hidden="true"></div>
+      <div class="thumbs-wrap">
+        <button type="button" class="galeri-panah" data-thumb-panah data-arah="-1" aria-label="Thumbnail sebelumnya">&#8249;</button>
+        <div class="thumbs" data-thumbs></div>
+        <button type="button" class="galeri-panah" data-thumb-panah data-arah="1" aria-label="Thumbnail berikutnya">&#8250;</button>
+      </div>
     </div>
 
-    {% if galeri and galeri.length %}
-      <div class="galeri" aria-label="Galeri foto {{ title }}">
-        {% for g in galeri %}
-          <img src="{{ g }}" alt="{{ title }} (foto {{ loop.index }})" loading="lazy" width="800" height="600">
-        {% endfor %}
+    <dialog class="penuh" data-penuh aria-label="Foto produk {{ title }}">
+      <div class="penuh-isi">
+        <div class="penuh-area" data-penuh-area>
+          <img class="penuh-foto" data-penuh-img alt="" role="button" tabindex="0" aria-label="Perbesar atau kecilkan foto">
+        </div>
+        <button type="button" class="penuh-tutup" data-penuh-tutup aria-label="Tutup">&times;</button>
+        <button type="button" class="penuh-panah kiri" data-penuh-geser="-1" aria-label="Foto sebelumnya">&#8249;</button>
+        <button type="button" class="penuh-panah kanan" data-penuh-geser="1" aria-label="Foto berikutnya">&#8250;</button>
+        <span class="penuh-angka" data-penuh-angka></span>
       </div>
+    </dialog>
+
+    {% if varian and varian.length %}
+      <form class="pilihan" id="pilihan-produk" aria-label="Pilihan {{ title }}">
+        {% for g in varian %}
+          {% set gi = loop.index %}
+          <fieldset class="grup-pilihan">
+            <legend>{{ g.nama }}</legend>
+            <div class="opsi-daftar">
+              {% for o in g.opsi %}
+                <input class="opsi-input" type="radio" id="g{{ gi }}-o{{ loop.index }}" name="grup-{{ gi }}" value="{{ o.nama }}" data-grup="{{ g.nama }}" data-index="{{ gi }}" data-gambar="{{ o.gambar or '' }}"{% if loop.first %} checked{% endif %}>
+                <label class="opsi-label" for="g{{ gi }}-o{{ loop.index }}">{{ o.nama }}</label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% endfor %}
+      </form>
     {% endif %}
 
     {% if spesifikasi and spesifikasi.length %}
@@ -62,35 +115,22 @@ layout: layouts/base.njk
         </tbody>
       </table>
     {% endif %}
-
-    {% if varian and varian.length %}
-      <div class="varian">
-        <h2>Pilihan</h2>
-        {% for g in varian %}
-          <h3>{{ g.nama }}</h3>
-          <ul>
-            {% for o in g.opsi %}
-              <li>
-                {% if o.gambar %}<img src="{{ o.gambar }}" alt="{{ g.nama }} {{ o.nama }}" loading="lazy" width="200" height="200">{% endif %}
-                {{ o.nama }}
-              </li>
-            {% endfor %}
-          </ul>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    {% if content %}
-      <div class="prose">{{ content | safe }}</div>
-    {% endif %}
   </div>
 
   <aside class="order-box" aria-label="Pesan produk">
     <span class="badge">{{ liniObj.data.title }}</span>
     <h1>{{ title }}</h1>
     <p>{{ description }}</p>
-    {% if spek %}<p class="spek">{{ spek }}</p>{% endif %}
-    {{ tombolWa(nomor, pesanProduk, "Pesan via WhatsApp") }}
+
+    {% if varian and varian.length %}
+      <p class="pilihan-terpilih">
+        {% for g in varian %}
+          <span class="pilihan-item"><span class="pilihan-label">{{ g.nama }}:</span> <strong data-hasil="{{ loop.index }}">{{ g.opsi[0].nama }}</strong></span>{% if not loop.last %}<span class="pilihan-pemisah" aria-hidden="true">&middot;</span>{% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+
+    <a class="tombol-wa" id="tombol-pesan" href="https://wa.me/{{ nomor }}?text={{ (pesanDasar + ' Bisa info stok dan harga grosirnya?') | urlencode }}" target="_blank" rel="noopener" data-nomor="{{ nomor }}" data-pesan-dasar="{{ pesanDasar }}">Pesan via WhatsApp</a>
 
     <ul class="kepercayaan">
       {% for item in site.tepercaya %}
@@ -101,6 +141,10 @@ layout: layouts/base.njk
   </aside>
 </div>
 
+{% if content %}
+  <div class="prose">{{ content | safe }}</div>
+{% endif %}
+
 <section class="langkah" aria-labelledby="langkah-judul">
   <h2 id="langkah-judul">3 langkah mudah pemesanan</h2>
   <ol class="langkah-list">
@@ -110,17 +154,35 @@ layout: layouts/base.njk
   </ol>
 </section>
 
-<section class="related">
-  <h2>Produk sejenis</h2>
-  <div class="grid">
-    {% for p in collections.produk | where("data.jenis", jenis) | exclude(page.url) | limit(3) %}
-      {{ kartuProduk(p, liniObj.data.title) }}
-    {% endfor %}
-  </div>
+{% set produkSemua = collections.produk | where("data.jenis", jenis) | exclude(page.url) %}
+{% set produkSejenis = produkSemua | limit(3) %}
+{% set artikelSemua = collections.artikel | whereIncludes("data.jenis", jenis) %}
+{% set artikelTerkait = artikelSemua | limit(3) %}
+{% set produkLintasTampil = collections.produk | whereIn("data.slug", produkLintas or []) | limit(2) %}
 
-  {% set artikelTerkait = collections.artikel | whereIncludes("data.jenis", jenis) | limit(2) %}
+{% if produkSejenis.length or artikelTerkait.length or produkLintasTampil.length %}
+<section class="related">
+  {% if produkSejenis.length %}
+    <div class="bagian-judul">
+      <h2>Produk sejenis</h2>
+      {% if produkSemua.length > 3 %}
+        <a class="tombol-outline tombol-kecil" href="{{ jenisObj.url }}">Lihat semua</a>
+      {% endif %}
+    </div>
+    <div class="grid">
+      {% for p in produkSejenis %}
+        {{ kartuProduk(p, liniObj.data.title) }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {% if artikelTerkait.length %}
-    <h2>Artikel terkait</h2>
+    <div class="bagian-judul">
+      <h2>Artikel terkait</h2>
+      {% if artikelSemua.length > 3 %}
+        <a class="tombol-outline tombol-kecil" href="/artikel/">Lihat semua</a>
+      {% endif %}
+    </div>
     <div class="grid">
       {% for a in artikelTerkait %}
         {{ kartuArtikel(a) }}
@@ -128,13 +190,18 @@ layout: layouts/base.njk
     </div>
   {% endif %}
 
-  {% if produkLintas and produkLintas.length %}
-    <h2>Dari lini lain</h2>
+  {% if produkLintasTampil.length %}
+    <div class="bagian-judul">
+      <h2>Dari lini lain</h2>
+    </div>
     <div class="grid">
-      {% for p in collections.produk | whereIn("data.slug", produkLintas) | limit(2) %}
+      {% for p in produkLintasTampil %}
         {% set liniLain = collections.lini | find("data.slug", p.data.lini) %}
         {{ kartuProduk(p, liniLain.data.title) }}
       {% endfor %}
     </div>
   {% endif %}
 </section>
+{% endif %}
+
+<script src="/assets/js/produk.js" defer></script>

@@ -91,14 +91,6 @@ layout: layouts/base.njk
       <p>Artikel ini ditulis dan ditinjau oleh tim redaksi {{ site.nama }}. Untuk pertanyaan produk, hubungi tim kami langsung melalui WhatsApp.</p>
     </aside>
 
-    <section class="related">
-      <h2>Artikel terkait</h2>
-      <div class="grid">
-        {% for a in collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) | limit(2) %}
-          {{ kartuArtikel(a) }}
-        {% endfor %}
-      </div>
-    </section>
   </div>
 
   <aside class="artikel-aside" aria-label="Produk terkait">
@@ -117,6 +109,23 @@ layout: layouts/base.njk
     </div>
   </aside>
 </div>
+
+{% set artikelSerupa = collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) %}
+{% if artikelSerupa.length %}
+<section class="related">
+  <div class="bagian-judul">
+    <h2>Artikel terkait</h2>
+    {% if artikelSerupa.length > 3 %}
+      <a class="tombol-outline tombol-kecil" href="/artikel/">Lihat semua</a>
+    {% endif %}
+  </div>
+  <div class="grid">
+    {% for a in artikelSerupa | limit(3) %}
+      {{ kartuArtikel(a) }}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
 <script>
   document.querySelectorAll('[data-salin]').forEach(function (b) {

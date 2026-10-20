@@ -25,13 +25,18 @@ layout: layouts/base.njk
 {% if description %}<p class="lead">{{ description }}</p>{% endif %}
 {{ content | safe }}
 
+{% set produkJenis = collections.produk | where("data.jenis", slug) %}
 <section>
   <h2>Produk</h2>
-  <div class="grid">
-    {% for p in collections.produk | where("data.jenis", slug) %}
-      {{ kartuProduk(p, liniObj.data.title) }}
-    {% endfor %}
-  </div>
+  {% if produkJenis.length %}
+    <div class="grid">
+      {% for p in produkJenis %}
+        {{ kartuProduk(p, liniObj.data.title) }}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Produk untuk jenis ini sedang disiapkan. Silakan hubungi kami untuk informasi terbaru.</p>
+  {% endif %}
 </section>
 
 {% set artikelJenis = collections.artikel | whereIncludes("data.jenis", slug) %}
