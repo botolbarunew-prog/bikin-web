@@ -3,6 +3,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin/config.yml");
   eleventyConfig.addPassthroughCopy({"src/_redirects": "_redirects"});
+  eleventyConfig.addPassthroughCopy({"src/_headers": "_headers"});
 
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
   // Alamat situs: SITE_URL (diisi di Cloudflare saat pakai domain sendiri),
