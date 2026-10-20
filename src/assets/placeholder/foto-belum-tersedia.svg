@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Foto belum tersedia">
+  <rect width="800" height="800" fill="#F1F5F9"/>
+  <g transform="translate(0 0)">
+    <text x="400" y="390" text-anchor="middle" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="36" font-weight="700" fill="#0A192F">Foto belum tersedia</text>
+    <text x="400" y="440" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="18" fill="#64748B">Coba muat ulang halaman</text>
+  </g>
+</svg>
