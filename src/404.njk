@@ -1,0 +1,17 @@
+---
+layout: layouts/polos.njk
+title: Halaman tidak ditemukan
+description: Halaman yang Anda cari tidak ditemukan. Hubungi kami lewat WhatsApp atau kembali ke beranda.
+permalink: /404.html
+---
+{% from "partials/macros.njk" import tombolWa %}
+
+<section class="error-halaman">
+  <p class="error-kode" aria-hidden="true">404</p>
+  <h1>Halaman ini tidak ditemukan</h1>
+  <p class="lead">Alamat yang Anda buka mungkin salah ketik atau sudah dipindahkan. Anda tetap bisa bertanya langsung kepada kami.</p>
+  <div class="error-aksi">
+    {{ tombolWa(site.whatsapp_1.number, site.pesanDefault, "Tanya via WhatsApp") }}
+    <a class="tombol-outline" href="/">Kembali ke beranda</a>
+  </div>
+</section>
