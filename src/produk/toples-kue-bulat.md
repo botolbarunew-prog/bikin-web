@@ -10,8 +10,6 @@ spesifikasi:
     nilai: PP (plastik)
   - label: Bentuk
     nilai: Bulat bundar
-  - label: Kapasitas
-    nilai: 250 gram, 500 gram
 foto: "/assets/placeholder/toples-kue-bulat-1.svg"
 galeri:
   - "/assets/placeholder/toples-kue-bulat-1.svg"

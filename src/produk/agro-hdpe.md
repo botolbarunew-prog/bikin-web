@@ -3,7 +3,7 @@ title: Botol Agro HDPE
 slug: agro-hdpe
 lini: grosir-botol-kebumen
 jenis: botol-plastik
-description: Botol Agro HDPE untuk kemasan cairan, tersedia dalam ukuran 100 ml hingga 1000 ml dengan pilihan tutup putih dan hitam.
+description: Botol Agro HDPE untuk kemasan cairan, tersedia dalam ukuran 100 ml hingga 1000 ml dengan pilihan warna putih dan hitam.
 spek: "HDPE · 100ml – 1L"
 spesifikasi:
   - label: Bahan

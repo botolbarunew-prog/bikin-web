@@ -8,7 +8,7 @@ spek: "Botol plastik · 500ml"
 spesifikasi:
   - label: Bahan
     nilai: PET (plastik bening)
-  - label: Kapasitas
+  - label: Ukuran
     nilai: 500 ml
 foto: "/assets/placeholder/botol-juice-1.svg"
 galeri:

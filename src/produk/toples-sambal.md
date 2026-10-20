@@ -8,8 +8,6 @@ spek: "Toples plastik · 150gr – 350gr"
 spesifikasi:
   - label: Bahan
     nilai: PP (plastik)
-  - label: Kapasitas
-    nilai: 150 gram, 200 gram, 250 gram, 350 gram
 foto: "/assets/placeholder/toples-sambal-1.svg"
 galeri:
   - "/assets/placeholder/toples-sambal-1.svg"

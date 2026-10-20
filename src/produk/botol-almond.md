@@ -8,7 +8,7 @@ spek: "Botol plastik · 250ml"
 spesifikasi:
   - label: Bahan
     nilai: PET (plastik bening)
-  - label: Kapasitas
+  - label: Ukuran
     nilai: 250 ml
 foto: "/assets/placeholder/botol-almond-1.svg"
 galeri:

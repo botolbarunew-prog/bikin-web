@@ -10,8 +10,6 @@ spesifikasi:
     nilai: PP (plastik)
   - label: Bentuk
     nilai: Tabung tebal
-  - label: Kapasitas
-    nilai: 200 ml sampai 1300 ml
 foto: "/assets/placeholder/toples-tabung-tebal-1.svg"
 galeri:
   - "/assets/placeholder/toples-tabung-tebal-1.svg"

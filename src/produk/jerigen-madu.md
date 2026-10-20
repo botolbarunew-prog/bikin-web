@@ -8,8 +8,6 @@ spek: "Jerigen plastik · 500ml – 1L"
 spesifikasi:
   - label: Bahan
     nilai: HDPE (High-Density Polyethylene)
-  - label: Kapasitas
-    nilai: 500 ml, 1000 ml
 foto: "/assets/placeholder/jerigen-madu-1.svg"
 galeri:
   - "/assets/placeholder/jerigen-madu-1.svg"
