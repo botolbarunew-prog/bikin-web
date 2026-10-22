@@ -1,10 +1,10 @@
 ---
 layout: layouts/base.njk
-title: Beranda
-description: Katalog produk dan artikel dari Laju Official. Pesan langsung lewat WhatsApp.
+title: Grosir Botol Plastik dan Kemasan
+description: Grosir botol plastik, toples, cup, dan kantong dari Laju Official. Pilih produk di katalog, lalu pesan langsung lewat WhatsApp. Jas hujan & topi, Gizi Prima, dan Digital Marketing segera hadir.
 permalink: /
 ---
-{% from "partials/macros.njk" import tombolWa, kartuLini, kartuArtikel %}
+{% from "partials/macros.njk" import tombolWa, kartuLini, kartuArtikel, formPembeli with context %}
 
 <section class="hero">
   <p class="eyebrow">{{ site.nama }}</p>
@@ -12,7 +12,7 @@ permalink: /
   <p>Pilih produk di katalog, lalu lanjutkan pemesanan langsung lewat WhatsApp. Tanpa keranjang, tanpa ribet.</p>
   <div class="hero-aksi">
     <a class="tombol-wa" href="#lini">Lihat lini kami</a>
-    <a class="tombol-outline" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}">Tanya via WA</a>
+    <a class="tombol-outline" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}" target="_blank" rel="noopener">Tanya via WA</a>
   </div>
 </section>
 
@@ -40,11 +40,20 @@ permalink: /
   </div>
 </section>
 
+{% set artikelTerbaru = collections.artikel | limit(3) %}
+{% if artikelTerbaru.length %}
 <section>
   <h2>Artikel terbaru</h2>
   <div class="grid">
-    {% for a in collections.artikel | limit(3) %}
+    {% for a in artikelTerbaru %}
       {{ kartuArtikel(a) }}
     {% endfor %}
   </div>
+</section>
+{% endif %}
+
+<section class="layanan-penuh" id="layanan-pembeli" aria-labelledby="layanan-pembeli-judul">
+  <h2 id="layanan-pembeli-judul">Layanan Pembeli</h2>
+  <p class="lead">Tanyakan stok, harga grosir, atau pemesanan produk. Tim kami akan membantu Anda.</p>
+  {{ formPembeli(true) }}
 </section>
