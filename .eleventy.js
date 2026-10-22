@@ -2,6 +2,7 @@ module.exports = function (eleventyConfig) {
   // Aset statis: CSS, gambar, dan konfigurasi admin
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin/config.yml");
+  eleventyConfig.addPassthroughCopy("src/admin/admin.css");
   eleventyConfig.addPassthroughCopy({"src/_redirects": "_redirects"});
   eleventyConfig.addPassthroughCopy({"src/_headers": "_headers"});
 
