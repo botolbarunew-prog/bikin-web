@@ -4,56 +4,220 @@ title: Grosir Botol Plastik dan Kemasan
 description: Grosir botol plastik, toples, cup, dan kantong dari Laju Official. Pilih produk di katalog, lalu pesan langsung lewat WhatsApp. Jas hujan & topi, Gizi Prima, dan Digital Marketing segera hadir.
 permalink: /
 ---
-{% from "partials/macros.njk" import tombolWa, kartuLini, kartuArtikel, formPembeli with context %}
+{% from "partials/macros.njk" import tombolWa, kartuLiniPratinjau, kartuArtikel, kartuProduk, gambar, formPembeli with context %}
 
-<section class="hero">
-  <p class="eyebrow">{{ site.nama }}</p>
-  <h1>Produk pilihan untuk <span class="accent">kebutuhan usaha</span> Anda</h1>
-  <p>Pilih produk di katalog, lalu lanjutkan pemesanan langsung lewat WhatsApp. Tanpa keranjang, tanpa ribet.</p>
-  <div class="hero-aksi">
-    <a class="tombol-wa" href="#lini">Lihat lini kami</a>
-    <a class="tombol-outline" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}" target="_blank" rel="noopener">Tanya via WA</a>
+<section class="hero hero-grid">
+  <div>
+    <p class="eyebrow">{{ site.nama }}</p>
+    <h1>Produk pilihan untuk kebutuhan usaha Anda</h1>
+    <p>Pilih produk di katalog, lalu lanjutkan pemesanan langsung lewat WhatsApp. Tanpa keranjang, tanpa ribet.</p>
+    <div class="hero-aksi">
+      <a class="tombol-wa" href="#produk">Lihat produk</a>
+      <a class="tombol-outline" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}" target="_blank" rel="noopener">Tanya via WA</a>
+    </div>
   </div>
+  <figure class="hero-visual">
+    {{ gambar(null, "Produk unggulan", "Foto produk unggulan") }}
+  </figure>
 </section>
 
-<section class="trust" aria-label="Keunggulan">
-  <div>
-    <strong>Pesan langsung</strong>
-    <span>Lanjut ke WhatsApp dari setiap produk.</span>
-  </div>
-  <div>
-    <strong>Siap pakai atau custom</strong>
-    <span>Sesuai kebutuhan dan jumlah Anda.</span>
-  </div>
-  <div>
-    <strong>Panduan lengkap</strong>
-    <span>Artikel untuk membantu memilih produk.</span>
-  </div>
-</section>
+<section id="produk" class="produk-beranda judul-tengah">
+  <h2>Temukan produk yang sesuai kebutuhan usaha Anda.</h2>
 
-<section id="lini">
-  <h2>Lini kami</h2>
-  <div class="grid">
-    {% for l in collections.lini %}
-      {{ kartuLini(l) }}
+  <div class="produk-cari">
+    <label class="sr-saja" for="cari-beranda">Cari produk</label>
+    <input id="cari-beranda" type="search" placeholder="Cari produk, misalnya botol atau toples" autocomplete="off">
+  </div>
+
+  <div class="filter-baris">
+    <div class="filter-track" role="group" aria-label="Jenis produk">
+      <button type="button" class="filter-chip" data-jenis="" aria-pressed="true">Semua</button>
+      {% for j in collections.jenis %}
+        {% set produkJenis = collections.produk | where("data.jenis", j.data.slug) %}
+        {% if produkJenis.length %}
+          <button type="button" class="filter-chip" data-jenis="{{ j.data.slug }}" aria-pressed="false">{{ j.data.title }}</button>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <button type="button" class="filter-lainnya" aria-expanded="false" aria-label="Lihat semua jenis" hidden>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div class="grid" data-produk>
+    {% for p in collections.produk %}
+      {% set liniProduk = collections.lini | find("data.slug", p.data.lini) %}
+      <div class="produk-item" data-jenis="{{ p.data.jenis }}" data-teks="{{ (p.data.title + ' ' + (p.data.spek or '') + ' ' + liniProduk.data.title) | lower }}">
+        {{ kartuProduk(p, liniProduk.data.title) }}
+      </div>
     {% endfor %}
+  </div>
+
+  <p class="produk-kosong" data-kosong hidden>Produk yang Anda cari belum ada. Coba kata lain, atau tanyakan langsung kepada kami lewat WhatsApp.</p>
+</section>
+
+<section class="langkah judul-tengah" aria-labelledby="langkah-judul">
+  <h2 id="langkah-judul">Pesan dalam tiga langkah.</h2>
+  <ol class="langkah-list">
+    {% for item in site.langkah %}
+      <li><span class="langkah-no">0{{ loop.index }}</span><span>{{ item }}</span></li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section id="lini" class="lini-bagian judul-tengah">
+  <h2>Satu payung untuk beberapa lini usaha.</h2>
+  <p class="lead">Setiap lini punya produk dan cara pemesanannya sendiri.</p>
+  <div class="lini-berjalan">
+    <div class="lini-jalur">
+      {% for l in collections.lini %}
+        {{ kartuLiniPratinjau(l) }}
+      {% endfor %}
+      <div class="lini-salinan" aria-hidden="true">
+        {% for l in collections.lini %}
+          {{ kartuLiniPratinjau(l) }}
+        {% endfor %}
+      </div>
+    </div>
   </div>
 </section>
 
 {% set artikelTerbaru = collections.artikel | limit(3) %}
 {% if artikelTerbaru.length %}
-<section>
-  <h2>Artikel terbaru</h2>
-  <div class="grid">
-    {% for a in artikelTerbaru %}
-      {{ kartuArtikel(a) }}
-    {% endfor %}
+<section class="judul-tengah">
+  <h2>Panduan untuk memilih kemasan yang tepat.</h2>
+  <div class="artikel-wadah">
+    <div class="grid artikel-geser" data-geser>
+      {% for a in artikelTerbaru %}
+        {{ kartuArtikel(a) }}
+      {% endfor %}
+      <a class="artikel-lihat artikel-lihat-hp" href="/artikel/" aria-label="Lihat semua artikel">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="artikel-titik" role="group" aria-label="Pilih artikel">
+      {% for a in artikelTerbaru %}
+        <button type="button" aria-label="Artikel {{ loop.index }}"></button>
+      {% endfor %}
+    </div>
+    <div class="artikel-lihat-bawah">
+      <a class="artikel-lihat" href="/artikel/" aria-label="Lihat semua artikel">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
   </div>
 </section>
 {% endif %}
 
 <section class="layanan-penuh" id="layanan-pembeli" aria-labelledby="layanan-pembeli-judul">
-  <h2 id="layanan-pembeli-judul">Layanan Pembeli</h2>
-  <p class="lead">Tanyakan stok, harga grosir, atau pemesanan produk. Tim kami akan membantu Anda.</p>
-  {{ formPembeli(true) }}
+  <div class="layanan-kolom">
+    <div class="layanan-kiri">
+      <h2 id="layanan-pembeli-judul">Tanyakan stok, harga grosir, atau pemesanan produk.</h2>
+      <p class="lead">Tim kami akan membantu Anda.</p>
+    </div>
+    <div class="layanan-kanan">
+      {{ formPembeli(true) }}
+    </div>
+  </div>
 </section>
+
+<script>
+  (function () {
+    // Pencarian dan filter jenis produk di beranda. Daftar tampil maksimal 3 produk.
+    var BATAS = 3;
+    var cari = document.getElementById('cari-beranda');
+    var chips = document.querySelectorAll('.filter-chip');
+    var items = document.querySelectorAll('[data-produk] .produk-item');
+    var kosong = document.querySelector('[data-kosong]');
+    var track = document.querySelector('.filter-track');
+    var lainnya = document.querySelector('.filter-lainnya');
+    var jenisAktif = '';
+
+    function pilih(chip) {
+      jenisAktif = chip.getAttribute('data-jenis');
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
+      segarkan();
+    }
+
+    function segarkan() {
+      var kata = cari.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      var n = 0;
+      items.forEach(function (el) {
+        var cocokJenis = !jenisAktif || el.getAttribute('data-jenis') === jenisAktif;
+        var cocokKata = kata.every(function (k) { return el.getAttribute('data-teks').indexOf(k) !== -1; });
+        var cocok = cocokJenis && cocokKata;
+        if (cocok) n++;
+        el.hidden = !cocok || n > BATAS;
+      });
+      kosong.hidden = n !== 0;
+    }
+
+    cari.addEventListener('input', segarkan);
+
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () { pilih(chip); });
+    });
+
+    // Tertutup: chip yang turun ke baris kedua disembunyikan. Tombol ikon muncul hanya jika ada yang disembunyikan.
+    function cekBaris() {
+      var buka = track.classList.contains('terbuka');
+      var awal = chips[0].offsetTop;
+      var adaBarisKedua = false;
+      chips.forEach(function (c) {
+        var turun = c.offsetTop > awal;
+        if (turun) adaBarisKedua = true;
+        c.classList.toggle('sembunyi', !buka && turun);
+      });
+      lainnya.hidden = !adaBarisKedua;
+    }
+
+    lainnya.addEventListener('click', function () {
+      var buka = track.classList.toggle('terbuka');
+      lainnya.classList.toggle('terbuka', buka);
+      lainnya.setAttribute('aria-expanded', String(buka));
+      lainnya.setAttribute('aria-label', buka ? 'Tutup daftar jenis' : 'Lihat semua jenis');
+      cekBaris();
+      // Jika jenis yang dipilih ikut tersembunyi, kembali ke "Semua" agar yang tampil sesuai dengan yang dipilih
+      var aktif = track.querySelector('[aria-pressed="true"]');
+      if (!buka && aktif.classList.contains('sembunyi')) pilih(chips[0]);
+    });
+
+    window.addEventListener('resize', cekBaris);
+    cekBaris();
+    segarkan();
+
+    // Artikel di HP: titik penanda mengikuti kartu yang terlihat, dan titik bisa diklik
+    var geserArtikel = document.querySelector('[data-geser]');
+    if (geserArtikel) {
+      var kartuArtikel = geserArtikel.querySelectorAll('.kartu-artikel');
+      var titikArtikel = document.querySelectorAll('.artikel-titik button');
+      function tandaiTitik() {
+        var awal = geserArtikel.getBoundingClientRect().left + 16;
+        var dekat = 0;
+        var jarakTerkecil = Infinity;
+        kartuArtikel.forEach(function (c, i) {
+          var jarak = Math.abs(c.getBoundingClientRect().left - awal);
+          if (jarak < jarakTerkecil) { jarakTerkecil = jarak; dekat = i; }
+        });
+        titikArtikel.forEach(function (b, i) { b.setAttribute('aria-current', String(i === dekat)); });
+      }
+      geserArtikel.addEventListener('scroll', tandaiTitik, { passive: true });
+      titikArtikel.forEach(function (b, i) {
+        b.addEventListener('click', function () {
+          kartuArtikel[i].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+        });
+      });
+      tandaiTitik();
+    }
+
+    // Lini kami: kursor di atas kartu menjeda (lewat CSS). Di HP, jari yang menekan kartu menjeda sampai diangkat.
+    var jalurLini = document.querySelector('.lini-berjalan');
+    var bagianLini = document.querySelector('.lini-bagian');
+    jalurLini.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') bagianLini.classList.add('jeda');
+    });
+    ['pointerup', 'pointercancel'].forEach(function (nama) {
+      document.addEventListener(nama, function () { bagianLini.classList.remove('jeda'); });
+    });
+  })();
+</script>
