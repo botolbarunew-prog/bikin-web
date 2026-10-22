@@ -18,7 +18,7 @@
 {# Gambar dengan fallback. Jika belum ada foto, tampil placeholder teknis (ikon garis navy dan label mono). #}
 {% macro gambar(src, alt, label) -%}
 {% if src %}
-<img src="{{ src }}" alt="{{ alt }}" loading="lazy" width="800" height="800">
+<img src="{{ src }}" alt="{{ alt }}" loading="lazy" decoding="async" width="800" height="800">
 {% else %}
 <div class="placeholder" role="img" aria-label="{{ alt or 'Foto belum tersedia' }}">
   <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
@@ -39,7 +39,7 @@
   </div>
   <div class="isi">
     <span class="badge">{{ liniTitle }}</span>
-    <h3>{{ p.data.title }} <span class="panah" aria-hidden="true">&rarr;</span></h3>
+    <h3>{{ p.data.title }}</h3>
     {% if p.data.spek %}<span class="badge-mono">{{ p.data.spek }}</span>{% endif %}
   </div>
 </a>
@@ -80,4 +80,68 @@
   <h3>{{ a.data.title }}</h3>
   <p>{{ a.data.description }}</p>
 </a>
+{%- endmacro %}
+{# Form layanan pembeli. penuh = false: di footer, tertutup dan dibuka di tempat. penuh = true: di beranda, semua isian terlihat. #}
+{% macro formPembeli(penuh) -%}
+<form class="form-pembeli{% if penuh %} form-penuh{% endif %}" data-form-pembeli data-pesan-awal="Halo Admin, saya" novalidate>
+  {% if not penuh %}<div class="form-isi" id="form-isi" hidden>{% endif %}
+  <div class="form-baris combo" data-combo>
+    <label for="fp-produk">Produk</label>
+    <input id="fp-produk" name="produk" type="text" role="combobox" aria-expanded="false" aria-controls="daftar-produk" aria-autocomplete="list" aria-describedby="fp-pesan" autocomplete="off" placeholder="Ketik atau pilih produk">
+    <ul id="daftar-produk" class="combo-daftar" role="listbox" hidden>
+      {% for j in collections.jenis %}
+        {% set produkJenis = collections.produk | where("data.jenis", j.data.slug) %}
+        {% if produkJenis.length %}
+          <li role="option" id="opsi-{{ j.data.slug }}" data-nomor="{{ produkJenis[0].data.lini | waFor(site) }}">{{ j.data.title }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <p class="form-pesan" id="fp-pesan" role="alert" hidden>Pilih produk dari daftar.</p>
+  </div>
+  {% if penuh %}
+    <div class="form-baris">
+      <label for="fp-nama">Nama <span class="form-opsional">(opsional)</span></label>
+      <input id="fp-nama" name="nama" type="text" autocomplete="name" maxlength="60">
+    </div>
+    <div class="form-baris">
+      <label for="fp-catatan">Catatan <span class="form-opsional">(opsional)</span></label>
+      <textarea id="fp-catatan" name="catatan" rows="3" maxlength="300"></textarea>
+    </div>
+  {% else %}
+    <div class="isian-tambahan" data-isian>
+      <div class="isian-baris">
+        <label class="isian-judul" for="fp-nama">Nama <span class="form-opsional">(opsional)</span></label>
+        <button type="button" class="isian-ikon" data-ikon aria-expanded="false" aria-controls="isi-nama" aria-label="Tambah nama">
+          <svg class="ikon-tambah" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="ikon-kurang" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="ikon-hapus" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="isian-isi" id="isi-nama" hidden>
+        <input id="fp-nama" name="nama" type="text" autocomplete="name" maxlength="60">
+      </div>
+    </div>
+
+    <div class="isian-tambahan" data-isian>
+      <div class="isian-baris">
+        <label class="isian-judul" for="fp-catatan">Catatan <span class="form-opsional">(opsional)</span></label>
+        <button type="button" class="isian-ikon" data-ikon aria-expanded="false" aria-controls="isi-catatan" aria-label="Tambah catatan">
+          <svg class="ikon-tambah" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="ikon-kurang" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="ikon-hapus" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="isian-isi" id="isi-catatan" hidden>
+        <textarea id="fp-catatan" name="catatan" rows="2" maxlength="300"></textarea>
+      </div>
+    </div>
+  {% endif %}
+  {% if not penuh %}</div>{% endif %}
+
+  {% if penuh %}
+    <button type="submit" class="tombol-wa tombol-form">Kirim ke WhatsApp</button>
+  {% else %}
+    <button type="submit" class="tombol-wa tombol-form" aria-expanded="false" aria-controls="form-isi">Buka form</button>
+  {% endif %}
+</form>
 {%- endmacro %}

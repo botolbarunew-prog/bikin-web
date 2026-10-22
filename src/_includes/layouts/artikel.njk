@@ -49,6 +49,7 @@ layout: layouts/base.njk
 
 {{ breadcrumb(navCrumbs) }}
 
+<article>
 <header class="artikel-head">
   <h1>{{ title }}</h1>
   {% if description %}<p class="lead">{{ description }}</p>{% endif %}
@@ -109,6 +110,7 @@ layout: layouts/base.njk
     </div>
   </aside>
 </div>
+</article>
 
 {% set artikelSerupa = collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) %}
 {% if artikelSerupa.length %}
