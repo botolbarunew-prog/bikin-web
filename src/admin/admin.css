@@ -1,0 +1,49 @@
+/* Tampilan admin: hitam dan putih dengan palet netral. Navy dan kuning proyek hanya dipakai sedikit untuk fokus dan penanda. */
+:root {
+  --latar: #F5F5F7;
+  --permukaan: #FFFFFF;
+  --teks: #1D1D1F;
+  --teks-redup: #6E6E73;
+  --garis: #D2D2D7;
+  --navy-900: #0A192F;
+  --yellow-accent: #F59E0B;
+  --yellow-bright: #FACC15;
+}
+
+body {
+  background: var(--latar);
+  color: var(--teks);
+  font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+body,
+input,
+textarea,
+select,
+button {
+  font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Kolom isian putih dengan garis tipis */
+input[type="text"],
+input[type="search"],
+input[type="url"],
+input[type="email"],
+textarea,
+select {
+  min-height: 44px;
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+  border-radius: 4px;
+}
+
+/* Fokus: garis kuning proyek, jelas di semua kontrol */
+:focus-visible {
+  outline: 2px solid var(--yellow-accent);
+  outline-offset: 2px;
+}
+
+button {
+  min-height: 44px;
+}
