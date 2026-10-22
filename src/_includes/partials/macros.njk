@@ -76,6 +76,9 @@
 {# Kartu artikel: tanggal, judul, ringkasan. #}
 {% macro kartuArtikel(a) -%}
 <a class="kartu-artikel" href="{{ a.url }}">
+  <div class="foto">
+    {{ gambar(a.data.foto, a.data.title, null) }}
+  </div>
   <time class="meta" datetime="{{ a.data.tanggal | isoDate }}">{{ a.data.tanggal | readableDate }}</time>
   <h3>{{ a.data.title }}</h3>
   <p>{{ a.data.description }}</p>
@@ -144,4 +147,13 @@
     <button type="submit" class="tombol-wa tombol-form" aria-expanded="false" aria-controls="form-isi">Buka form</button>
   {% endif %}
 </form>
+{%- endmacro %}
+
+{# Kartu lini untuk pratinjau yang berjalan di beranda. Tidak bisa diklik, hanya tampilan. #}
+{% macro kartuLiniPratinjau(l) -%}
+<div class="lini-kartu">
+  <div class="foto">{{ gambar(l.data.gambar, l.data.title, null) }}</div>
+  <h3>{{ l.data.title }}</h3>
+  <p>{{ l.data.description }}</p>
+</div>
 {%- endmacro %}
