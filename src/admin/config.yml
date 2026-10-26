@@ -9,6 +9,7 @@ public_folder: "/assets/uploads"
 collections:
   - name: pengaturan
     label: "Pengaturan Situs"
+    sortable_fields: ["commit_date"]
     files:
       - name: site
         label: "Data perusahaan, kontak, dan WhatsApp"

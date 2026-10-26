@@ -1135,6 +1135,11 @@ body {
     flex: 0 0 20px;
   }
 
+  /* Titik status Deployed disembunyikan saat tidak aktif, karena ikon roket sudah tampil di tempatnya */
+  #nc-root header nav a[href*="deploy"]:not([aria-current="page"]) [class*="DotIcon"] {
+    display: none !important;
+  }
+
   #nc-root header nav a:not([aria-current="page"]) {
     display: inline-flex;
     align-items: center;
@@ -1461,9 +1466,20 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     padding: 0 var(--jarak-2) 0 40px;
   }
 
-  /* Di bawah 349px, bar bawah hanya ikon, termasuk menu yang aktif (tooltip tetap ada) */
+  /* Di bawah 349px, bar bawah hanya ikon, termasuk menu yang aktif (tooltip tetap ada).
+     Tingginya 56px, ikon dan penanda aktif ada di tengah. */
   .tab-bawah a[aria-current="page"] span {
     font-size: 0;
+  }
+
+  .tab-bawah {
+    height: 56px;
+  }
+
+  .tab-bawah a {
+    gap: 0;
+    padding-top: 0;
+    justify-content: center;
   }
 }
 
@@ -2152,10 +2168,6 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   #nc-root [class*="CollectionControlsContainer"] > [class*="ViewControlsSection"] {
     order: 2;
     margin-left: auto;
-  }
-
-  html.halaman-pengaturan #nc-root [class*="ViewControlsSection"] {
-    display: none;
   }
 
   #nc-root .filter-pasangan {
