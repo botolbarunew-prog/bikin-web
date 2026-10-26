@@ -1117,7 +1117,8 @@ body {
 
 /* 399–483px: tab atas (Contents, Media, Deployed) tampil dua baris, ikon di atas dan teks di bawah. Search dan roda gigi tetap sebaris di kanan. */
 @media (min-width: 399px) and (max-width: 483px) {
-  #nc-root header nav a {
+  #nc-root header nav a,
+  #nc-root header nav button {
     display: flex;
     flex-direction: column;
     align-items: center;
