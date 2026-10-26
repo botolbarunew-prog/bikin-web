@@ -96,7 +96,7 @@ ul, ol { margin: 0; }
   padding: 0 var(--sp-4);
 }
 
-main.wrap { padding-block: var(--sp-7) var(--sp-9); }
+main.wrap { padding-block: var(--sp-7) var(--sp-8); }
 
 .badge-mono,
 .spek,
@@ -338,7 +338,7 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 
 /* ---------- 4. Footer ---------- */
 .site-footer {
-  margin-top: var(--sp-9);
+  margin-top: 0;
   background: var(--navy-900);
   color: #CBD5E1;
   font-size: .875rem;
@@ -1142,7 +1142,10 @@ button,
   white-space: nowrap;
 }
 
-.breadcrumb li:last-child { flex: 1 1 auto; }
+/* Basis 0: item terakhir hanya mengambil sisa ruang (tidak mengikuti panjang teksnya).
+   Span dibuat block agar lebarnya mengikuti sisa ruang, sehingga titik-tiga muncul di tepi konten */
+.breadcrumb li:last-child { flex: 1 1 0; min-width: 0; overflow: hidden; display: flex; align-items: center; }
+.breadcrumb li:last-child span { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .breadcrumb li a,
 .breadcrumb li span {
@@ -1163,14 +1166,20 @@ button,
   .breadcrumb ol { min-height: 44px; }
   .breadcrumb li a,
   .breadcrumb li span { padding: 12px 0; margin: -12px 0; }
-  .bc-tengah { display: none; }
-  .bc-elipsis { display: block; }
+  /* Mode ringkas (produk dan artikel): di HP, item di atas induk disembunyikan dan diganti titik-tiga */
+  .breadcrumb-ringkas li.bc-jauh { display: none; }
+  .breadcrumb-ringkas .bc-elipsis { display: block; }
 }
 
 .breadcrumb li + li::before {
   content: "/";
   margin: 0 var(--sp-2);
   color: var(--border-subtle);
+}
+
+/* Item yang tepat setelah titik-tiga (ellipsis) tidak diberi pemisah, supaya tidak ada "/" di awal breadcrumb */
+.breadcrumb li.bc-elipsis + li::before {
+  content: none;
 }
 
 .breadcrumb a { color: var(--text-muted); text-decoration: none; }
@@ -2033,8 +2042,9 @@ button,
     transform: rotate(45deg) translateY(-2px);
   }
 
+  /* Hover dan fokus sama dengan menu lain (garis putih tipis); kuning hanya untuk menu aktif */
   .dropdown:hover > .dropdown-tombol,
-  .dropdown:focus-within > .dropdown-tombol { border-bottom-color: var(--yellow-bright); }
+  .dropdown:focus-within > .dropdown-tombol { border-bottom-color: rgba(255, 255, 255, .4); }
 
   .dropdown-panel {
     display: none;
