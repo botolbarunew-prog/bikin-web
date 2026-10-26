@@ -3,13 +3,15 @@
 <a class="tombol-wa" href="https://wa.me/{{ nomor }}?text={{ pesan | urlencode }}" target="_blank" rel="noopener">{{ label }}</a>
 {%- endmacro %}
 
-{# Breadcrumb visual. Item terakhir ditandai aria-current. #}
-{% macro breadcrumb(items) -%}
-<nav class="breadcrumb" aria-label="Breadcrumb">
+{# Breadcrumb visual. Item terakhir ditandai aria-current.
+   ringkas = true (dipakai di produk dan artikel): di ponsel, item di atas induk diganti titik-tiga,
+   sehingga yang tampil "… > Induk > Halaman ini". Di desktop jalur lengkap tetap tampil. #}
+{% macro breadcrumb(items, ringkas) -%}
+<nav class="breadcrumb{% if ringkas %} breadcrumb-ringkas{% endif %}" aria-label="Breadcrumb">
   <ol>
     {% for it in items %}
-      {% if loop.index == 2 and items.length > 2 %}<li class="bc-elipsis" aria-hidden="true">&hellip;</li>{% endif %}
-      <li class="{% if not loop.first and not loop.last %}bc-tengah{% endif %}" title="{{ it.name }}">{% if loop.last %}<span aria-current="page">{{ it.name }}</span>{% else %}<a href="{{ it.url }}">{{ it.name }}</a>{% endif %}</li>
+      {% if ringkas and loop.first and items.length > 2 %}<li class="bc-elipsis" aria-hidden="true">&hellip;</li>{% endif %}
+      <li class="{% if ringkas and loop.revindex > 2 %}bc-jauh{% endif %}" title="{{ it.name }}">{% if loop.last %}<span aria-current="page">{{ it.name }}</span>{% else %}<a href="{{ it.url }}">{{ it.name }}</a>{% endif %}</li>
     {% endfor %}
   </ol>
 </nav>
