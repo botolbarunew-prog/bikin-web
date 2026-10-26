@@ -1,7 +1,7 @@
 ---
 title: Kantong dan toples untuk usaha kerupuk dan kripik di Bangkalan
 slug: kemasan-kerupuk-bangkalan
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - kantong-plastik
   - toples
@@ -21,9 +21,9 @@ Di pasar sembako, produk sering diletakkan di tempat yang ramai dan berpindah ta
 
 ## Toples untuk kerupuk dan kripik
 
-Toples tabung tebal cocok untuk kerupuk atau kripik yang disimpan dalam jumlah banyak. Tersedia dari 200 ml sampai 1300 ml. Lihat [toples tabung tebal](/grosir-botol-kebumen/toples/toples-tabung-tebal/).
+Toples tabung tebal cocok untuk kerupuk atau kripik yang disimpan dalam jumlah banyak. Tersedia dari 200 ml sampai 1300 ml. Lihat [toples tabung tebal](/grosir-botol/toples/toples-tabung-tebal/).
 
-Untuk kemasan yang lebih kecil dan mudah dipajang, [toples kue bulat](/grosir-botol-kebumen/toples/toples-kue-bulat/) dalam ukuran 250 gram bisa dipertimbangkan.
+Untuk kemasan yang lebih kecil dan mudah dipajang, [toples kue bulat](/grosir-botol/toples/toples-kue-bulat/) dalam ukuran 250 gram bisa dipertimbangkan.
 
 ## Kantong untuk pengemasan
 
@@ -31,7 +31,7 @@ Kantong pengemasan dipilih sesuai ukuran porsi dan jenis produk. Tanyakan piliha
 
 ## Penanganan sampah kemasan
 
-Kemasan bekas sebaiknya tidak dibiarkan menumpuk di tempat usaha. Gunakan kantong sampah yang cukup besar untuk menampung sampah harian. Kantong sampah jumbo berukuran 90 × 110 cm bisa dipakai untuk keperluan ini. Lihat [kantong sampah jumbo](/grosir-botol-kebumen/kantong-plastik/kantong-sampah-jumbo/).
+Kemasan bekas sebaiknya tidak dibiarkan menumpuk di tempat usaha. Gunakan kantong sampah yang cukup besar untuk menampung sampah harian. Kantong sampah jumbo berukuran 90 × 110 cm bisa dipakai untuk keperluan ini. Lihat [kantong sampah jumbo](/grosir-botol/kantong-plastik/kantong-sampah-jumbo/).
 
 Pelaku usaha juga bisa bekerja sama dengan pengepul yang ada di sekitar untuk memilah dan mengolah kemasan bekas, supaya sampahnya tidak berakhir sembarangan.
 

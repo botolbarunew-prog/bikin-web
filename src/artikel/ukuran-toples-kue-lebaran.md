@@ -1,7 +1,7 @@
 ---
 title: Toples kue lebaran, pilih 250 gram atau 500 gram?
 slug: ukuran-toples-kue-lebaran
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - toples
 lintas: false
@@ -27,9 +27,9 @@ Untuk kue yang lebih besar, misalnya kastangel atau kue sagu keju, toples 500 gr
 
 ## Bentuk toples juga berpengaruh
 
-Toples bulat bundar mudah disusun dalam lingkaran, sehingga kue tampak rapi dan rata saat dibuka. Bentuk ini juga mudah diletakkan di meja yang sempit. Lihat [toples kue bulat](/grosir-botol-kebumen/toples/toples-kue-bulat/) yang tersedia dalam 250 gram dan 500 gram.
+Toples bulat bundar mudah disusun dalam lingkaran, sehingga kue tampak rapi dan rata saat dibuka. Bentuk ini juga mudah diletakkan di meja yang sempit. Lihat [toples kue bulat](/grosir-botol/toples/toples-kue-bulat/) yang tersedia dalam 250 gram dan 500 gram.
 
-Kalau Anda membutuhkan toples yang lebih tinggi untuk camilan panjang atau kue berbentuk batang, [toples tabung tebal](/grosir-botol-kebumen/toples/toples-tabung-tebal/) bisa dipertimbangkan.
+Kalau Anda membutuhkan toples yang lebih tinggi untuk camilan panjang atau kue berbentuk batang, [toples tabung tebal](/grosir-botol/toples/toples-tabung-tebal/) bisa dipertimbangkan.
 
 ## Tips menjaga kue tetap renyah
 

@@ -1,7 +1,7 @@
 ---
 title: Memilih ukuran toples sambal untuk usaha rumahan
 slug: ukuran-toples-sambal-untuk-usaha
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - toples
 lintas: false
@@ -26,7 +26,7 @@ Kemasan yang lebih besar biasanya dipilih pembeli yang sudah cocok dengan rasany
 
 ## Pilih toples yang tertutup rapat
 
-Apa pun ukurannya, toples sambal sebaiknya memiliki tutup yang rapat. Ini membantu sambal lebih awet dan mencegah tumpahan saat dibawa. Lihat [toples sambal](/grosir-botol-kebumen/toples/toples-sambal/) yang tersedia dalam 150, 200, 250, dan 350 gram.
+Apa pun ukurannya, toples sambal sebaiknya memiliki tutup yang rapat. Ini membantu sambal lebih awet dan mencegah tumpahan saat dibawa. Lihat [toples sambal](/grosir-botol/toples/toples-sambal/) yang tersedia dalam 150, 200, 250, dan 350 gram.
 
 ## Jangan lupa label
 

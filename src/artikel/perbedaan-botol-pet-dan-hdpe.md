@@ -1,7 +1,7 @@
 ---
 title: Botol PET atau HDPE, mana yang cocok untuk cairan Anda?
 slug: perbedaan-botol-pet-dan-hdpe
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - botol-plastik
 lintas: false
@@ -24,13 +24,13 @@ HDPE biasanya buram atau putih susu. Bahannya lebih tebal dan cenderung tahan be
 
 Pilih PET kalau isi botol punya warna yang ingin dipamerkan, misalnya sirup, juice, atau jamu cair. Pembeli langsung bisa melihat produk di dalamnya, dan itu sering membantu keputusan membeli.
 
-Botol Cantik yang kami sediakan dapat dilihat di [halaman botol Cantik](/grosir-botol-kebumen/botol-plastik/botol-cantik/). Untuk kemasan juice dan jamu, ada juga [botol juice](/grosir-botol-kebumen/botol-plastik/botol-juice/).
+Botol Cantik yang kami sediakan dapat dilihat di [halaman botol Cantik](/grosir-botol/botol-plastik/botol-cantik/). Untuk kemasan juice dan jamu, ada juga [botol juice](/grosir-botol/botol-plastik/botol-juice/).
 
 ## Kapan memilih HDPE
 
 Pilih HDPE kalau cairannya kental, atau kalau Anda tidak ingin isi botol terlihat dari luar. Bahan ini juga cenderung lebih kuat saat botol terbentur, jadi cocok untuk pemakaian yang sering berpindah tempat.
 
-Untuk pilihan HDPE, lihat [botol Agro HDPE](/grosir-botol-kebumen/botol-plastik/agro-hdpe/) dengan ukuran 100 ml sampai 1000 ml.
+Untuk pilihan HDPE, lihat [botol Agro HDPE](/grosir-botol/botol-plastik/agro-hdpe/) dengan ukuran 100 ml sampai 1000 ml.
 
 ## Cara cepat memutuskan
 

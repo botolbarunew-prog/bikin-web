@@ -1,7 +1,7 @@
 ---
 title: Kemasan takeaway untuk kafe dan restoran di Badung
 slug: kemasan-horeca-badung
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - botol-plastik
   - toples
@@ -25,15 +25,15 @@ Karena aturan ini, banyak usaha mulai mencari kemasan yang tetap praktis tapi ti
 
 ## Botol untuk minuman takeaway
 
-Botol bening cocok untuk minuman yang ingin terlihat warnanya. Botol juice dengan tutup putih atau hitam bisa dipilih sesuai tampilan kafe. Lihat [botol Cantik](/grosir-botol-kebumen/botol-plastik/botol-cantik/) dan [botol juice](/grosir-botol-kebumen/botol-plastik/botol-juice/).
+Botol bening cocok untuk minuman yang ingin terlihat warnanya. Botol juice dengan tutup putih atau hitam bisa dipilih sesuai tampilan kafe. Lihat [botol Cantik](/grosir-botol/botol-plastik/botol-cantik/) dan [botol juice](/grosir-botol/botol-plastik/botol-juice/).
 
 ## Toples untuk camilan dan kue
 
-Toples kue bulat bisa dipakai untuk camilan atau kue yang dijual di meja kasir. Bentuknya rapi dan mudah dipajang. Lihat [toples kue bulat](/grosir-botol-kebumen/toples/toples-kue-bulat/) dalam ukuran 250 gram dan 500 gram.
+Toples kue bulat bisa dipakai untuk camilan atau kue yang dijual di meja kasir. Bentuknya rapi dan mudah dipajang. Lihat [toples kue bulat](/grosir-botol/toples/toples-kue-bulat/) dalam ukuran 250 gram dan 500 gram.
 
 ## Kantong untuk sampah di tempat usaha
 
-Untuk tempat sampah di dapur atau area makan, kantong sampah jumbo berukuran 90 × 110 cm bisa dipakai. Pilihan warnanya hitam dan orange. Lihat [kantong sampah jumbo](/grosir-botol-kebumen/kantong-plastik/kantong-sampah-jumbo/).
+Untuk tempat sampah di dapur atau area makan, kantong sampah jumbo berukuran 90 × 110 cm bisa dipakai. Pilihan warnanya hitam dan orange. Lihat [kantong sampah jumbo](/grosir-botol/kantong-plastik/kantong-sampah-jumbo/).
 
 ## Sebelum memesan
 

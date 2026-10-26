@@ -1,7 +1,7 @@
 ---
 title: Kantong sampah jumbo, kapan dibutuhkan dan cara memilih
 slug: memilih-kantong-sampah-jumbo
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - kantong-plastik
 lintas: false
@@ -24,7 +24,7 @@ Kantong sampah jumbo yang kami sediakan berukuran 90 × 110 cm. Ukuran ini cukup
 
 Warna hitam adalah pilihan yang paling umum untuk sampah rumah tangga, karena menutupi isi dengan baik. Warna orange sering dipilih untuk membedakan jenis sampah atau area tertentu, misalnya di tempat usaha yang punya beberapa tempat sampah.
 
-Lihat pilihan warnanya di [halaman kantong sampah jumbo](/grosir-botol-kebumen/kantong-plastik/kantong-sampah-jumbo/).
+Lihat pilihan warnanya di [halaman kantong sampah jumbo](/grosir-botol/kantong-plastik/kantong-sampah-jumbo/).
 
 ## Dijual per kilogram
 

@@ -1,7 +1,7 @@
 ---
 title: Botol Plastik atau Toples Tabung untuk Kue Lebaran?
 slug: botol-atau-toples-untuk-kue-lebaran
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - botol-plastik
   - toples

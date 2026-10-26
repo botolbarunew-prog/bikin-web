@@ -1,7 +1,7 @@
 ---
 title: Botol dan jerigen untuk madu, juice, dan jamu di Jambi
 slug: botol-madu-juice-jambi
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - botol-plastik
   - toples
@@ -17,15 +17,15 @@ Madu hutan dan minuman segar punya kebutuhan kemasan yang berbeda. Madu kental b
 
 ## Madu: jerigen yang kuat dan mudah dituang
 
-Madu biasanya dijual dalam jumlah yang lebih banyak, sehingga jerigen sering menjadi pilihan. Tersedia dalam ukuran 500 ml dan 1000 ml. Lihat [jerigen madu](/grosir-botol-kebumen/botol-plastik/jerigen-madu/).
+Madu biasanya dijual dalam jumlah yang lebih banyak, sehingga jerigen sering menjadi pilihan. Tersedia dalam ukuran 500 ml dan 1000 ml. Lihat [jerigen madu](/grosir-botol/botol-plastik/jerigen-madu/).
 
 Pilih ukuran yang sesuai dengan kebiasaan pembeli. Ukuran kecil lebih mudah dicoba, dan ukuran besar cocok untuk pembeli yang membeli untuk stok.
 
 ## Juice dan jamu: botol yang rapat dan mudah dibawa
 
-Botol Juice dan jamu tersedia dalam ukuran 500 ml dengan pilihan tutup putih dan hitam. Ukuran ini praktis dibawa dan pas untuk satu kali minum. Lihat [botol juice](/grosir-botol-kebumen/botol-plastik/botol-juice/).
+Botol Juice dan jamu tersedia dalam ukuran 500 ml dengan pilihan tutup putih dan hitam. Ukuran ini praktis dibawa dan pas untuk satu kali minum. Lihat [botol juice](/grosir-botol/botol-plastik/botol-juice/).
 
-Untuk produk yang berbeda, misalnya botol dengan ukuran 250 ml, [botol Almond](/grosir-botol-kebumen/botol-plastik/botol-almond/) juga bisa dipertimbangkan.
+Untuk produk yang berbeda, misalnya botol dengan ukuran 250 ml, [botol Almond](/grosir-botol/botol-plastik/botol-almond/) juga bisa dipertimbangkan.
 
 ## Cek tutupnya sebelum memesan
 

@@ -1,7 +1,7 @@
 ---
 title: Cara memesan cup custom dengan sablon dua sisi
 slug: cara-pesan-cup-custom-dengan-sablon
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - cup-custom
 lintas: false
@@ -16,7 +16,7 @@ Cup custom dengan sablon sering dipakai untuk minuman, usaha kopi, atau acara ya
 
 ## Pilih ukuran cup dulu
 
-Cup yang kami sediakan tersedia dalam ukuran 12, 14, dan 16 oz untuk berat 5 dan 7 gram, serta 18 oz untuk berat 8 gram. Pilih ukuran yang sesuai dengan porsi minuman Anda, lalu lihat [cup datar 12 sampai 16 oz dengan berat 5 gram](/grosir-botol-kebumen/cup-custom/cup-datar-5gr/) atau [cup datar 18 oz](/grosir-botol-kebumen/cup-custom/cup-datar-18oz-8gr/) untuk perbandingannya.
+Cup yang kami sediakan tersedia dalam ukuran 12, 14, dan 16 oz untuk berat 5 dan 7 gram, serta 18 oz untuk berat 8 gram. Pilih ukuran yang sesuai dengan porsi minuman Anda, lalu lihat [cup datar 12 sampai 16 oz dengan berat 5 gram](/grosir-botol/cup-custom/cup-datar-5gr/) atau [cup datar 18 oz](/grosir-botol/cup-custom/cup-datar-18oz-8gr/) untuk perbandingannya.
 
 ## Siapkan desain sebelum memesan
 

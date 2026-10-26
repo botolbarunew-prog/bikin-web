@@ -1,7 +1,7 @@
 ---
 title: Cara Memilih Botol Plastik untuk Kopi
 slug: cara-memilih-botol-plastik-untuk-kopi
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - botol-plastik
 lintas: false

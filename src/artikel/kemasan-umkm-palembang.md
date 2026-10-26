@@ -1,7 +1,7 @@
 ---
 title: Kemasan toples dan botol untuk UMKM kuliner di Palembang
 slug: kemasan-umkm-palembang
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis:
   - toples
   - botol-plastik
@@ -23,13 +23,13 @@ Kue basah dan makanan yang masih lembap butuh pertimbangan lain. Ruang di dalam 
 
 ## Toples untuk produk kering
 
-Toples kue bulat cocok untuk kerupuk dan kue kering yang disusun rapi. Bentuknya mudah dipajang di etalase toko atau meja jualan. Lihat [toples kue bulat](/grosir-botol-kebumen/toples/toples-kue-bulat/) dalam ukuran 250 gram dan 500 gram.
+Toples kue bulat cocok untuk kerupuk dan kue kering yang disusun rapi. Bentuknya mudah dipajang di etalase toko atau meja jualan. Lihat [toples kue bulat](/grosir-botol/toples/toples-kue-bulat/) dalam ukuran 250 gram dan 500 gram.
 
-Kalau produknya lebih panjang atau perlu ruang tinggi, [toples tabung tebal](/grosir-botol-kebumen/toples/toples-tabung-tebal/) bisa dipertimbangkan. Tersedia dari 200 ml sampai 1300 ml.
+Kalau produknya lebih panjang atau perlu ruang tinggi, [toples tabung tebal](/grosir-botol/toples/toples-tabung-tebal/) bisa dipertimbangkan. Tersedia dari 200 ml sampai 1300 ml.
 
 ## Botol untuk cairan dan bumbu
 
-Untuk sambal atau minuman, botol plastik lebih praktis dibanding toples. Botol bening memperlihatkan warna isinya, dan cocok untuk produk yang ingin tampil menarik di etalase. Lihat [botol Cantik](/grosir-botol-kebumen/botol-plastik/botol-cantik/).
+Untuk sambal atau minuman, botol plastik lebih praktis dibanding toples. Botol bening memperlihatkan warna isinya, dan cocok untuk produk yang ingin tampil menarik di etalase. Lihat [botol Cantik](/grosir-botol/botol-plastik/botol-cantik/).
 
 ## Kalau pesanannya rutin
 
