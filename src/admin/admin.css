@@ -1115,6 +1115,20 @@ body {
   }
 }
 
+/* 399–483px: tab atas (Contents, Media, Deployed) tampil dua baris, ikon di atas dan teks di bawah. Search dan roda gigi tetap sebaris di kanan. */
+@media (min-width: 399px) and (max-width: 483px) {
+  #nc-root header nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 56px;
+    min-height: 56px;
+    padding: 0 var(--jarak-1);
+  }
+}
+
 /* Di bawah 399px tab atas (Contents, Media, Deployed) dan tab bawah jadi ikon saja, kecuali yang aktif (tetap berteks).
    Nama tampil sebagai tooltip. Tiap ikon berada di kotak 44px agar pas di jari dan posisinya rata. */
 @media (max-width: 398px) {
@@ -1444,6 +1458,24 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   #nc-root header nav li {
     display: flex;
     align-items: center;
+    height: var(--tinggi-kontrol);
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Semua ikon di kiri berukuran 44px dan jaraknya sama (8px), tanpa padding bawaan Decap */
+  #nc-root header nav li > a:not([aria-current="page"]),
+  #nc-root header .menu-koleksi,
+  #nc-root header .menu-aksi {
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    margin: 0;
+    padding: 0;
+  }
+
+  #nc-root header .menu-pemicu {
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
   }
 
   /* Cari dari menu titik tiga: kolom cari melebar di atas bar, sama seperti saat ikon cari disentuh */
@@ -1480,31 +1512,6 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     gap: 0;
     padding-top: 0;
     justify-content: center;
-  }
-}
-
-/* 399–483px: bar atas ponsel dibiarkan membungkus. Contents, Media, dan Deployed turun ke baris kedua (seperti bawaan Decap).
-   Aturan tinggi 64px dan nowrap di blok ponsel dilepas khusus di rentang ini. */
-@media (min-width: 399px) and (max-width: 483px) {
-  #nc-root header {
-    height: auto;
-    min-height: 64px;
-    max-height: none;
-    padding-block: var(--jarak-1);
-  }
-
-  #nc-root header > div {
-    flex-wrap: wrap;
-    row-gap: var(--jarak-1);
-  }
-
-  #nc-root header nav {
-    flex-wrap: wrap;
-    row-gap: var(--jarak-1);
-  }
-
-  #nc-root header nav a {
-    white-space: normal;
   }
 }
 
