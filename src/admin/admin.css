@@ -1396,6 +1396,13 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   cursor: pointer;
 }
 
+/* Cari tidak dipakai di halaman Deploys: item-nya abu-abu dan tidak bisa diklik */
+#nc-root header .popover-menu .menu-item:disabled {
+  color: var(--teks-redup);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 #nc-root header .popover-menu .menu-item.aktif {
   background: var(--latar);
 }
@@ -1410,6 +1417,15 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   #nc-root header .menu-koleksi,
   #nc-root header .menu-aksi {
     display: inline-flex;
+  }
+
+  /* Koleksi dan Deployed sejajar dalam satu baris */
+  #nc-root header nav ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--jarak-1);
   }
 
   /* Cari dari menu titik tiga: kolom cari melebar di atas bar, sama seperti saat ikon cari disentuh */

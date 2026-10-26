@@ -554,8 +554,9 @@
       function tandaiLabelIkon() {
         var header = document.querySelector("#nc-root header");
         if (!header) return;
+        // Decap menulis ulang class-nya saat merender, jadi class ini dipasang lagi setiap kali
         cariLabelKoleksi(header).forEach(function (el) {
-          el.classList.add("ikon-saja-398");
+          el.classList.add("ikon-saja-398", "ada-di-menu");
           if (!el.title) el.title = el.textContent.trim();
         });
       }
@@ -569,16 +570,17 @@
         var aksi = header && header.querySelector('[class*="AppHeaderActions"]');
         if (!nav || !aksi) return;
         if (!nav.querySelector(".menu-koleksi")) {
-          var koleksi = document.createElement("div");
+          var koleksi = document.createElement("li");
           koleksi.className = "menu-koleksi";
           koleksi.innerHTML =
             '<button type="button" class="menu-pemicu" aria-label="Koleksi" title="Koleksi" aria-expanded="false">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg></button>' +
             '<div class="popover-menu" hidden></div>';
-          nav.insertBefore(koleksi, nav.firstChild);
+          // Masuk ke daftar menu Decap (ul), supaya sejajar dengan Deployed
+          var daftar = nav.querySelector("ul") || nav;
+          daftar.insertBefore(koleksi, daftar.firstChild);
           var isiKoleksi = koleksi.querySelector(".popover-menu");
           cariLabelKoleksi(header).forEach(function (el) {
-            el.classList.add("ada-di-menu");
             isiKoleksi.appendChild(buatItemMenu(el.textContent.trim(), el));
           });
         }
@@ -592,6 +594,8 @@
             '<button type="button" class="menu-item" data-aksi="pengaturan">Pengaturan Situs</button></div>';
           aksi.insertBefore(menuAksi, aksi.lastElementChild);
         }
+        var cariMenu = aksi.querySelector(".menu-cari");
+        if (cariMenu) cariMenu.disabled = /deploy/i.test(location.hash);
       }
 
       // Item di popover menu ringkas. Contents dan Media diteruskan ke tombol aslinya (klik ditiru), supaya Decap tetap menanganinya.
@@ -641,7 +645,11 @@
 
       // Halaman Deploys tidak punya kolom cari. Kelas di <html> dipakai CSS untuk menyembunyikannya, termasuk saat halaman dimuat ulang.
       function tandaiHalamanDeploy() {
-        document.documentElement.classList.toggle("tanpa-cari", /deploy/i.test(location.hash));
+        var deploy = /deploy/i.test(location.hash);
+        document.documentElement.classList.toggle("tanpa-cari", deploy);
+        // Di menu titik tiga, Cari ikut dimatikan di halaman Deploys
+        var cariMenu = document.querySelector("#nc-root header .menu-cari");
+        if (cariMenu) cariMenu.disabled = deploy;
       }
       tandaiHalamanDeploy();
       window.addEventListener("hashchange", tandaiHalamanDeploy);
