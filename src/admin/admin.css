@@ -623,7 +623,7 @@ body {
   width: max-content;
   min-width: 0;
   margin-top: var(--jarak-1);
-  padding: var(--jarak-1) var(--jarak-2) var(--jarak-1) var(--jarak-3);
+  padding: var(--jarak-1) 0;
 }
 
 #nc-root header [class*="DropdownList"] [class*="dropdownItem"],
@@ -1027,7 +1027,7 @@ body {
 }
 
 /* ---------- Tablet (768–1023px): sidebar lebih sempit, kolom cari lebih kecil ---------- */
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 800px) and (max-width: 1023px) {
   /* Decap menyusun bar atas dari bawah ke atas di lebar ini. Dikembalikan ke satu baris seperti desktop. */
   #nc-root header > div {
     flex-direction: row;
@@ -1068,9 +1068,53 @@ body {
   }
 }
 
-/* ---------- Ponsel (sampai 767px) ----------
+/* ---------- Ponsel (sampai 799px) ----------
    Bar atas satu baris setinggi 56px: Contents dan Media di kiri; cari (ikon), Quick add (+), dan profil di kanan.
    Menu koleksi pindah ke bar bawah. Tombol tetap 44px agar mudah disentuh. Tepi kiri-kanan 16px. */
+/* Tahap 2 (800–882px): kolom cari jadi ikon saja, quick add masih tampil. Batas 882px dari hasil ukur tabrakan.
+   Saat ikon disentuh, kolom cari melebar dan menimpa bar atas (lewat kelas cari-buka di index.html). */
+@media (min-width: 800px) and (max-width: 882px) {
+  #nc-root header [class*="SearchContainer"] {
+    flex: 0 0 var(--tinggi-kontrol);
+    width: var(--tinggi-kontrol);
+    margin: 0 0 0 auto;
+  }
+
+  #nc-root header [class*="SearchContainer"] input {
+    width: 0;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #nc-root header.cari-buka [class*="SearchContainer"] {
+    position: absolute;
+    top: 10px;
+    left: var(--jarak-2);
+    right: 104px;
+    width: auto;
+    flex: none;
+    margin: 0;
+    z-index: 60;
+  }
+
+  #nc-root header.cari-buka [class*="SearchContainer"] input {
+    width: 100%;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0 var(--jarak-2) 0 40px;
+  }
+}
+
+/* Halaman Deploys di ponsel: kartu tabel bisa digeser ke samping, semua kolom tetap tampil */
+@media (max-width: 799px) {
+  #nc-root [class*="DeploysContainer"] > div:last-child {
+    overflow-x: auto;
+  }
+}
+
 /* Layar sangat sempit (di bawah 375px): bar atas jadi dua baris, dan Published/Publish jadi ikon.
    Baris pertama: panah dan status. Baris kedua: Published dan hapus, rata kanan. */
 @media (max-width: 374px) {
@@ -1132,7 +1176,7 @@ body {
 }
 
 /* Tablet dan desktop: area tombol kembali hanya selebar isinya, tidak melebar memenuhi bar */
-@media (min-width: 768px) {
+@media (min-width: 800px) {
   #nc-root [class*="ToolbarSectionBackLink"] {
     flex: 0 0 auto;
     width: auto;
@@ -1141,7 +1185,7 @@ body {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 799px) {
   /* Kolom isian 16px di ponsel: di iPhone, teks di bawah 16px membuat layar membesar saat kolom diketuk */
   #nc-root input[type="search"],
   #nc-root input[type="text"],

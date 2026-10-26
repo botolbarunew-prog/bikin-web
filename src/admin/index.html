@@ -447,7 +447,7 @@
 
       // Di ponsel, halaman edit hanya menampilkan form. Pratinjau dibuka lewat tombol "Pratinjau" sebagai layar penuh.
       function pasangPratinjau() {
-        var diEditor = location.hash.indexOf("/entries/") !== -1 && window.matchMedia("(max-width: 767px)").matches;
+        var diEditor = location.hash.indexOf("/entries/") !== -1 && window.matchMedia("(max-width: 799px)").matches;
         document.documentElement.classList.toggle("di-editor", diEditor);
         if (!diEditor) document.documentElement.classList.remove("pratinjau-buka");
         if (!diEditor || document.querySelector(".tombol-pratinjau")) return;
@@ -535,7 +535,7 @@
       window.addEventListener("hashchange", function () {
         // Di ponsel, daftar Pengaturan Situs tidak dipakai (akses lewat popover roda gigi).
         // Kalau alamatnya ke daftar itu (misalnya dari tombol kembali di form), arahkan ke Lini.
-        if (window.matchMedia("(max-width: 767px)").matches && location.hash === "#/collections/pengaturan") {
+        if (window.matchMedia("(max-width: 799px)").matches && location.hash === "#/collections/pengaturan") {
           location.replace("#/collections/lini");
           return;
         }
