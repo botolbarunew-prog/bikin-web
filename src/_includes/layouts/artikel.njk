@@ -47,7 +47,7 @@ layout: layouts/base.njk
 {{ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": crumbs} | dump | safe }}
 </script>
 
-{{ breadcrumb(navCrumbs) }}
+{{ breadcrumb(navCrumbs, true) }}
 
 <article>
 <header class="artikel-head">
