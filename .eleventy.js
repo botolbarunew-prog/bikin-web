@@ -3,8 +3,23 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin/config.yml");
   eleventyConfig.addPassthroughCopy("src/admin/admin.css");
+  eleventyConfig.addPassthroughCopy("src/admin/preview.css");
   eleventyConfig.addPassthroughCopy({"src/_redirects": "_redirects"});
   eleventyConfig.addPassthroughCopy({"src/_headers": "_headers"});
+
+  // Mode lokal untuk admin: hanya saat "npm run dev". Membuat config yang menulis langsung ke file di komputer
+  // lewat decap-server. Config live (src/admin/config.yml) tidak diubah dan tidak ikut ke GitHub.
+  eleventyConfig.on("eleventy.after", ({ dir }) => {
+    if (process.env.ELEVENTY_RUN_MODE !== "serve") return;
+    const fs = require("fs");
+    const path = require("path");
+    const asli = fs.readFileSync("src/admin/config.yml", "utf8");
+    const lokal = asli.replace(
+      /backend:\n {2}name: turbo-github\n {2}turbo_site_id: [^\n]*\n {2}branch: main\n/,
+      "local_backend: true\nbackend:\n  name: github\n  repo: lokal/bikin-web\n  branch: main\n"
+    );
+    fs.writeFileSync(path.join(dir.output, "admin", "config.local.yml"), lokal);
+  });
 
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
   // Alamat situs: SITE_URL (diisi di Cloudflare saat pakai domain sendiri),
