@@ -52,9 +52,9 @@ collections:
     format: frontmatter
     fields:
       - {label: "Nama lini", name: title, widget: string}
-      - {label: "Slug (URL)", name: slug, widget: string, hint: "Huruf kecil dan tanda hubung, contoh: grosir-botol-kebumen"}
-      - {label: "Urutan tampil (1 = paling depan)", name: urutan, widget: number, value_type: int, default: 99}
-      - {label: "Deskripsi singkat (untuk SEO dan kartu)", name: description, widget: text}
+      - {label: "Slug (URL)", name: slug, widget: hidden, required: false}
+      - {label: "Urutan tampil", name: urutan, widget: number, value_type: int, default: 99, hint: "1 = paling depan"}
+      - {label: "Deskripsi singkat", name: description, widget: text, hint: "Dipakai untuk SEO dan kartu"}
       - {label: "Gambar lini (opsional)", name: gambar, widget: image, required: false}
       - {label: "Pesan WA default untuk lini ini", name: pesanWa, widget: text}
       - {label: "Status", name: status, widget: select, options: [aktif, segera], default: segera}
@@ -63,6 +63,11 @@ collections:
   - name: jenis
     label: "Jenis Produk"
     folder: "src/jenis"
+    view_filters:
+      - {label: "Grosir Botol", field: lini, pattern: "^grosir-botol$"}
+      - {label: "Gizi Prima", field: lini, pattern: "^gizi-prima$"}
+      - {label: "Jas Hujan & Topi", field: lini, pattern: "^jas-hujan-topi$"}
+      - {label: "Digital Marketing", field: lini, pattern: "^digital-marketing$"}
     create: true
     slug: "{{slug}}"
     identifier_field: title
@@ -70,15 +75,24 @@ collections:
     format: frontmatter
     fields:
       - {label: "Nama jenis", name: title, widget: string}
-      - {label: "Slug (URL)", name: slug, widget: string}
-      - {label: "Urutan tampil (1 = paling depan)", name: urutan, widget: number, value_type: int, default: 99}
+      - {label: "Slug (URL)", name: slug, widget: hidden, required: false}
+      - {label: "Urutan tampil", name: urutan, widget: number, value_type: int, default: 99, hint: "1 = paling depan"}
       - {label: "Lini", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
-      - {label: "Deskripsi singkat (untuk SEO)", name: description, widget: text}
+      - {label: "Deskripsi singkat", name: description, widget: text, hint: "Dipakai untuk SEO"}
       - {label: "Isi halaman", name: body, widget: markdown, required: false}
 
   - name: produk
     label: "Produk"
     folder: "src/produk"
+    view_filters:
+      - {label: "Grosir Botol", field: lini, pattern: "^grosir-botol$"}
+      - {label: "Gizi Prima", field: lini, pattern: "^gizi-prima$"}
+      - {label: "Jas Hujan & Topi", field: lini, pattern: "^jas-hujan-topi$"}
+      - {label: "Digital Marketing", field: lini, pattern: "^digital-marketing$"}
+      - {label: "Botol Plastik", field: jenis, pattern: "^botol-plastik$"}
+      - {label: "Toples", field: jenis, pattern: "^toples$"}
+      - {label: "Cup Custom", field: jenis, pattern: "^cup-custom$"}
+      - {label: "Kantong Plastik", field: jenis, pattern: "^kantong-plastik$"}
     create: true
     slug: "{{slug}}"
     identifier_field: title
@@ -86,43 +100,51 @@ collections:
     format: frontmatter
     fields:
       - {label: "Nama produk", name: title, widget: string}
-      - {label: "Slug (URL)", name: slug, widget: string}
+      - {label: "Slug (URL)", name: slug, widget: hidden, required: false}
       - {label: "Lini", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Jenis", name: jenis, widget: relation, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
-      - {label: "Deskripsi singkat (untuk SEO dan halaman produk)", name: description, widget: text}
-      - {label: "Spesifikasi kunci untuk kartu (contoh: PET · 250ml – 1L)", name: spek, widget: string, required: false}
+      - {label: "Deskripsi singkat", name: description, widget: text, hint: "Dipakai untuk SEO dan halaman produk"}
+      - {label: "Spesifikasi kunci untuk kartu", name: spek, widget: string, required: false, hint: "Contoh: PET · 250ml – 1L"}
       - {label: "Foto utama", name: foto, widget: image, required: false}
-      - label: "Galeri foto (3 sampai 5 foto)"
+      - label: "Galeri foto"
+        hint: "3 sampai 5 foto"
         name: galeri
         widget: list
         required: false
         field: {label: "Foto", name: foto, widget: image}
-      - label: "Spesifikasi (tabel di halaman produk)"
+      - label: "Spesifikasi"
+        hint: "Tabel di halaman produk"
         name: spesifikasi
         widget: list
         required: false
         fields:
-          - {label: "Nama spesifikasi (misal: Bahan)", name: label, widget: string}
+          - {label: "Nama spesifikasi", name: label, widget: string, hint: "Misal: Bahan"}
           - {label: "Nilai", name: nilai, widget: string}
       - label: "Pilihan varian"
         name: varian
         widget: list
         required: false
         fields:
-          - {label: "Nama grup (misal: Ukuran)", name: nama, widget: string}
+          - {label: "Nama grup", name: nama, widget: string, hint: "Misal: Ukuran"}
           - {label: "Tampilan pilihan", name: tampilan, widget: select, options: [teks, gambar], default: teks}
           - label: "Opsi"
             name: opsi
             widget: list
             fields:
-              - {label: "Nama opsi (misal: 500ml atau putih)", name: nama, widget: string}
-              - {label: "Gambar opsi (isi jika tampilan gambar)", name: gambar, widget: image, required: false}
+              - {label: "Nama opsi", name: nama, widget: string, hint: "Misal: 500ml atau putih"}
+              - {label: "Gambar opsi", name: gambar, widget: image, required: false, hint: "Isi jika tampilan gambar"}
       - {label: "Produk dari lini lain (opsional)", name: produkLintas, widget: relation, collection: produk, multiple: true, required: false, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Isi halaman", name: body, widget: markdown, required: false}
 
   - name: artikel
     label: "Artikel"
     folder: "src/artikel"
+    view_filters:
+      - {label: "Umum", field: lini, pattern: "^$"}
+      - {label: "Grosir Botol", field: lini, pattern: "^grosir-botol$"}
+      - {label: "Gizi Prima", field: lini, pattern: "^gizi-prima$"}
+      - {label: "Jas Hujan & Topi", field: lini, pattern: "^jas-hujan-topi$"}
+      - {label: "Digital Marketing", field: lini, pattern: "^digital-marketing$"}
     create: true
     slug: "{{slug}}"
     identifier_field: title
@@ -130,15 +152,46 @@ collections:
     format: frontmatter
     fields:
       - {label: "Judul", name: title, widget: string}
-      - {label: "Slug (URL)", name: slug, widget: string}
-      - {label: "Lini utama", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
-      - {label: "Jenis terkait (bisa lebih dari satu)", name: jenis, widget: relation, multiple: true, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
-      - {label: "Artikel lintas lini? (URL di /artikel/)", name: lintas, widget: boolean, default: false}
-      - {label: "Meta description (untuk SEO)", name: description, widget: text}
+      - {label: "Slug (URL)", name: slug, widget: hidden, required: false}
+      - {label: "Lini utama", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title], required: false, hint: "Kosongkan kalau artikel umum (tidak terikat satu lini)"}
+      - {label: "Jenis terkait", name: jenis, widget: relation, multiple: true, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title], hint: "Bisa lebih dari satu"}
+      - {label: "Lintas lini", name: lintas, widget: hidden, default: false, required: false}
+      - {label: "Deskripsi SEO", name: description, widget: text, hint: "Ringkasan singkat untuk mesin pencari"}
       - {label: "Tanggal terbit", name: tanggal, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
       - {label: "Tanggal diperbarui (opsional)", name: updatedDate, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false}
-      - {label: "Penulis (kosongkan untuk tim redaksi)", name: author, widget: string, required: false}
-      - {label: "Peran penulis (kosongkan untuk default)", name: authorRole, widget: string, required: false}
+      - {label: "Penulis", name: author, widget: string, required: false, hint: "Kosongkan untuk memakai penulis default"}
+      - {label: "Peran penulis", name: authorRole, widget: string, required: false, hint: "Kosongkan untuk memakai peran default"}
       - {label: "Foto sampul (opsional)", name: foto, widget: image, required: false}
       - {label: "Produk yang dibahas", name: produkTerkait, widget: relation, multiple: true, required: false, collection: produk, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Isi artikel", name: body, widget: markdown}
+
+  - name: halaman
+    label: "Halaman"
+    files:
+      - name: tentang-kami
+        label: "Tentang Kami"
+        file: "src/tentang-kami.md"
+        fields:
+          - {label: "Judul halaman", name: title, widget: string}
+          - {label: "Deskripsi untuk SEO", name: description, widget: text, hint: "Ringkasan singkat untuk mesin pencari"}
+          - {label: "Isi halaman", name: body, widget: markdown}
+          - {label: "Layout", name: layout, widget: hidden, default: "layouts/halaman.njk", required: false}
+          - {label: "Alamat halaman", name: permalink, widget: hidden, default: "/tentang-kami/", required: false}
+      - name: syarat
+        label: "Syarat & Ketentuan"
+        file: "src/syarat.md"
+        fields:
+          - {label: "Judul halaman", name: title, widget: string}
+          - {label: "Deskripsi untuk SEO", name: description, widget: text, hint: "Ringkasan singkat untuk mesin pencari"}
+          - {label: "Isi halaman", name: body, widget: markdown}
+          - {label: "Layout", name: layout, widget: hidden, default: "layouts/halaman.njk", required: false}
+          - {label: "Alamat halaman", name: permalink, widget: hidden, default: "/syarat/", required: false}
+      - name: kebijakan-privasi
+        label: "Kebijakan Privasi"
+        file: "src/kebijakan-privasi.md"
+        fields:
+          - {label: "Judul halaman", name: title, widget: string}
+          - {label: "Deskripsi untuk SEO", name: description, widget: text, hint: "Ringkasan singkat untuk mesin pencari"}
+          - {label: "Isi halaman", name: body, widget: markdown}
+          - {label: "Layout", name: layout, widget: hidden, default: "layouts/halaman.njk", required: false}
+          - {label: "Alamat halaman", name: permalink, widget: hidden, default: "/kebijakan-privasi/", required: false}

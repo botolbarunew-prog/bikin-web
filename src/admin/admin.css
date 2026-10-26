@@ -1,49 +1,1812 @@
-/* Tampilan admin: hitam dan putih dengan palet netral. Navy dan kuning proyek hanya dipakai sedikit untuk fokus dan penanda. */
+/* Tampilan admin, mengikuti referensi TailAdmin (struktur Decap tetap). Palet Apple: hitam, putih, abu. Merah Apple hanya untuk hapus.
+
+   ATURAN TETAP (dipakai di semua elemen):
+   - Jarak kelipatan 8px: 8, 16, 24, 32. Tidak ada nilai lain.
+   - Sudut: kartu dan wadah 16px. Tombol, kolom isian, dan item menu 8px. Tidak ada pill.
+   - Tinggi kontrol (tombol, kolom isian, item menu, tautan) 44px. Baris daftar minimal 56px.
+   - Bayangan: tidak ada. Pemisah memakai garis 1px.
+   - Skala teks: judul halaman 28/700; judul grup 16/700; isi dan menu 14/400-600; label 13/600; keterangan 12/500.
+   - Fokus: garis 2px hitam dengan jarak 2px.
+
+   Target memakai tag, aria-current, dan data-testid, bukan nama kelas acak dari Decap. */
 :root {
   --latar: #F5F5F7;
   --permukaan: #FFFFFF;
   --teks: #1D1D1F;
   --teks-redup: #6E6E73;
   --garis: #D2D2D7;
-  --navy-900: #0A192F;
-  --yellow-accent: #F59E0B;
-  --yellow-bright: #FACC15;
+  --garis-tipis: #E5E5EA;
+  /* Penanda aktif abu-abu: dipakai bersama di filter, tampilan list/grid, pilihan dropdown, dan roda gigi */
+  --penanda-aktif: #E5E5EA;
+  --merah: #FF3B30;
+  --hijau: #248A3D;
+  --jarak-1: 8px;
+  --jarak-2: 16px;
+  --jarak-3: 24px;
+  --sudut-kartu: 16px;
+  --sudut-kontrol: 8px;
+  --tinggi-bar: 72px;
+  --tinggi-kontrol: 44px;
+  --tinggi-baris: 56px;
 }
 
-body {
-  background: var(--latar);
-  color: var(--teks);
-  font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+/* Tanpa bayangan di seluruh admin: pemisah cukup dengan garis tipis */
+#nc-root *,
+#nc-root *::before,
+#nc-root *::after {
+  box-shadow: none !important;
 }
 
 body,
-input,
-textarea,
-select,
-button {
+#nc-root,
+#nc-root input,
+#nc-root textarea,
+#nc-root select,
+#nc-root button {
   font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* Kolom isian putih dengan garis tipis */
-input[type="text"],
-input[type="search"],
-input[type="url"],
-input[type="email"],
-textarea,
-select {
-  min-height: 44px;
-  background: var(--permukaan);
+#nc-root {
+  background: var(--latar);
   color: var(--teks);
-  border: 1px solid var(--garis);
-  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
-/* Fokus: garis kuning proyek, jelas di semua kontrol */
-:focus-visible {
-  outline: 2px solid var(--yellow-accent);
+/* Fokus jelas hanya untuk navigasi keyboard. Klik dengan mouse tidak memunculkan cincin. */
+#nc-root :focus-visible {
+  outline: 2px solid var(--teks);
   outline-offset: 2px;
 }
 
-button {
-  min-height: 44px;
+#nc-root :focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------- Bar atas (daftar dan editor) ----------
+   Tepi kiri bar sejajar dengan tepi kiri menu (x = 18px), supaya kolom kiri halaman rapi. */
+#nc-root header {
+  display: flex;
+  align-items: center;
+  background: var(--permukaan);
+  border-bottom: 1px solid var(--garis);
+  height: var(--tinggi-bar);
+  min-height: var(--tinggi-bar);
+  max-height: var(--tinggi-bar);
+  padding-inline: 18px;
+}
+
+#nc-root header > * {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Kolom cari di bar atas, di kiri Quick add dan profil. Ikon kaca pembesar bawaan Decap tetap dipakai (tidak ditambah lagi). Tinggi 44px, sudut 8px. */
+#nc-root header [class*="SearchContainer"] {
+  flex: 0 0 280px;
+  width: 280px;
+  margin: 0 var(--jarak-2) 0 auto;
+  color: var(--teks-redup);
+}
+
+/* Menu "Search in" (pilih koleksi) dihapus: pencarian selalu di semua koleksi, dan hasilnya dikelompokkan per koleksi */
+#nc-root header [class*="SearchContainer"] > * + * {
+  display: none !important;
+}
+
+/* Kolom cari di sidebar disembunyikan: pencarian hanya dari bar atas */
+#nc-root aside [class*="SearchContainer"] {
+  display: none !important;
+}
+
+#nc-root header [class*="SearchContainer"] input {
+  width: 100%;
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2) 0 40px;
+  background: var(--permukaan);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+  color: var(--teks);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+#nc-root header [class*="SearchContainer"] input::placeholder {
+  color: var(--teks-redup);
+}
+
+#nc-root header [class*="SearchContainer"] input:focus {
+  background-color: var(--permukaan);
+  border-color: var(--teks);
+  outline: none;
+}
+
+/* Tab bawah (menu koleksi) hanya tampil di ponsel */
+.tab-bawah {
+  display: none;
+}
+
+/* Ikon Pengaturan Situs di bar atas hanya untuk ponsel (di desktop sudah ada di sidebar) */
+#nc-root header .roda-gigi {
+  display: none;
+}
+
+#nc-root header .popover-roda {
+  display: none !important;
+}
+
+/* Tautan navigasi: tinggi 44px, aktif berlatar abu */
+#nc-root header a,
+#nc-root header button {
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  border-radius: var(--sudut-kontrol);
+  color: var(--teks-redup);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#nc-root header a[aria-current="page"] {
+  color: var(--teks);
+  background: var(--latar);
+}
+
+/* Tombol Quick add dan Published: hitam, teks dan panah sejajar */
+#nc-root header [role="button"] {
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jarak-1);
+  white-space: nowrap;
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#nc-root header [role="button"]::after {
+  position: static;
+  transform: none;
+  margin-left: var(--jarak-1);
+  vertical-align: middle;
+}
+
+/* Ikon ikut warna teks, bukan warna biru bawaan Decap */
+#nc-root header a span,
+#nc-root aside a span {
+  color: var(--teks-redup);
+}
+
+#nc-root header a[aria-current="page"] span,
+#nc-root aside a[aria-current="page"] span {
+  color: var(--teks);
+}
+
+/* ---------- Toolbar teks paragraf (di dalam form) ---------- */
+#nc-root [class*="ToolbarContainer"]:has([class*="StyledToolbarButton"]) {
+  height: auto;
+  min-height: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--permukaan);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+}
+
+/* Semua tombol toolbar sama: 32x32, ikon 20px, sudut 8px */
+#nc-root [class*="StyledToolbarButton"] {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  margin: 0 2px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--sudut-kontrol);
+  background: transparent;
+  color: var(--teks);
+}
+
+#nc-root [class*="StyledToolbarButton"] svg {
+  width: 20px;
+  height: 20px;
+}
+
+#nc-root [class*="StyledToolbarButton"]:hover {
+  background: var(--latar);
+}
+
+/* Tampilan daftar yang sedang dipakai: tombol berlatar abu, garis tetap seperti tombol lain */
+#nc-root [class*="ViewControlsButton"][aria-pressed="true"] {
+  background: var(--penanda-aktif);
+  border-color: var(--garis);
+}
+
+/* Level judul yang aktif di menu Headings: latar abu, teks tebal, tanda centang di kanan (seperti item terpilih di Sort by) */
+#nc-root [class*="dropdownItem"][aria-pressed="true"] {
+  background: var(--latar);
+  font-weight: 600;
+}
+
+#nc-root [class*="dropdownItem"][aria-pressed="true"]::after {
+  content: "\2713";
+  margin-left: auto;
+  padding-left: var(--jarak-2);
+  color: var(--teks);
+}
+
+/* Format yang aktif di posisi kursor: tombol berlatar abu dan teks hitam tebal */
+#nc-root [class*="StyledToolbarButton"][aria-pressed="true"] {
+  background: var(--garis-tipis);
+  color: var(--teks);
+  font-weight: 700;
+}
+
+/* ---------- Tombol on-off ----------
+   Track 44x24, sudut penuh (bentuk standar switch). Aktif: hitam. Tidak aktif: abu. */
+#nc-root [class*="ToggleContainer"] {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+}
+
+#nc-root [class*="ToggleBackground"] {
+  position: absolute;
+  inset: 0;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--garis) !important;
+}
+
+#nc-root [class*="ToggleContainer"][aria-checked="true"] [class*="ToggleBackground"] {
+  background: var(--teks) !important;
+}
+
+#nc-root [class*="ToggleHandle"] {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--permukaan);
+  transition: left 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Bulatan selalu mulai dari kiri (2px). Saat menyala, Decap menggesernya dengan transform (20px) ke kanan. */
+#nc-root [class*="ToggleHandle"] {
+  left: 2px !important;
+  right: auto !important;
+}
+
+/* ---------- Bar atas editor: tinggi dan warna sama dengan bar daftar (bukan toolbar teks) ---------- */
+#nc-root [class*="ToolbarContainer"]:not(:has([class*="StyledToolbarButton"])) {
+  height: var(--tinggi-bar);
+  min-height: var(--tinggi-bar);
+  background: var(--permukaan);
+  border-bottom: 1px solid var(--garis);
+  padding-inline: 18px;
+}
+
+/* Published: kotak hitam dengan panah, satu baris, sudut 8px. Hanya di bar editor, supaya Sort by tidak ikut hitam. */
+#nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"] {
+  display: inline-flex;
+  align-items: center;
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  border: 0;
+  background: var(--teks);
+  color: var(--permukaan);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"]::after {
+  position: static;
+  transform: none;
+  margin-left: var(--jarak-1);
+  vertical-align: middle;
+}
+
+/* Published (tanpa dropdown, misalnya di koleksi Halaman): hitam seperti Published lainnya */
+#nc-root [class*="PublishedButton"] {
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  background: var(--teks);
+  color: var(--permukaan);
+  border: 0;
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Delete entry: garis merah Apple, tanpa isian merah muda */
+#nc-root [class*="-ToolbarButton-"]:not([class*="PublishedButton"]) {
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  background: var(--permukaan);
+  color: var(--merah);
+  border: 1px solid var(--merah);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* Check for Preview: teks hitam, bukan biru */
+#nc-root [class*="RefreshPreviewButton"] {
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-1);
+  color: var(--teks);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ---------- Relasi (Lini, Jenis): ukuran sama dengan kolom isian lain ---------- */
+#nc-root [class$="-container"] {
+  border: 0 !important;
+  min-height: 0;
+}
+
+#nc-root [class$="-control"] {
+  height: var(--tinggi-kontrol) !important;
+  min-height: var(--tinggi-kontrol) !important;
+  padding: 0 var(--jarak-2) !important;
+  display: flex;
+  align-items: center;
+  background: var(--permukaan);
+  border: 1px solid var(--garis) !important;
+  border-radius: var(--sudut-kontrol) !important;
+  font-size: 14px;
+}
+
+/* Isi di dalam kontrol (nilai terpilih dan kolom ketik) tanpa padding vertikal tambahan */
+#nc-root [class$="-control"] > div {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* ---------- Menu kiri ---------- */
+/* Sidebar seperti TailAdmin: panel putih menempel di kiri, dipisah garis tipis di kanan */
+#nc-root aside {
+  background: var(--permukaan);
+  border: 0;
+  border-right: 1px solid var(--garis-tipis);
+  border-radius: 0;
+  padding: var(--jarak-2);
+}
+
+/* Judul grup menu: label kecil kapital, bukan judul tebal */
+#nc-root aside h2 {
+  color: var(--teks-redup);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: var(--jarak-1) 0 var(--jarak-2);
+  padding-inline: var(--jarak-2);
+}
+
+#nc-root aside ul {
+  display: grid;
+  gap: var(--jarak-1);
+}
+
+#nc-root aside a {
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  color: var(--teks-redup);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--sudut-kontrol);
+  display: flex;
+  align-items: center;
+}
+
+/* Ikon per koleksi (sesuai fungsinya), memakai warna teks lewat mask.
+   Ikon bawaan Decap (sama untuk semua koleksi) disembunyikan. */
+#nc-root aside a[data-testid] > span svg { display: none; }
+
+#nc-root aside a[data-testid] > span {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  background: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+#nc-root aside a[data-testid="pengaturan"] > span { -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNNCA3aDEwTTE4IDdoMk00IDE3aDJNMTAgMTdoMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMTYiIGN5PSI3IiByPSIyIiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=="); mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNNCA3aDEwTTE4IDdoMk00IDE3aDJNMTAgMTdoMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMTYiIGN5PSI3IiByPSIyIiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=="); }
+
+#nc-root aside a[data-testid="lini"] > span { -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMTIgMyAzIDhsOSA1IDktNS05LTVaIiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJtMyAxMyA5IDUgOS01IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4="); mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMTIgMyAzIDhsOSA1IDktNS05LTVaIiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJtMyAxMyA5IDUgOS01IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4="); }
+
+#nc-root aside a[data-testid="jenis"] > span { -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMyAxMlY0aDhsMTAgMTAtOCA4TDMgMTJaIiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48Y2lyY2xlIGN4PSI3LjUiIGN5PSI4LjUiIHI9IjEuNSIgZmlsbD0iYmxhY2siLz48L3N2Zz4="); mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMyAxMlY0aDhsMTAgMTAtOCA4TDMgMTJaIiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48Y2lyY2xlIGN4PSI3LjUiIGN5PSI4LjUiIHI9IjEuNSIgZmlsbD0iYmxhY2siLz48L3N2Zz4="); }
+
+#nc-root aside a[data-testid="produk"] > span { -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMjEgOCAxMiAzIDMgOHY4bDkgNSA5LTVWOFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zIDhsOSA1IDktNU0xMiAxM3Y4IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4="); mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMjEgOCAxMiAzIDMgOHY4bDkgNSA5LTVWOFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zIDhsOSA1IDktNU0xMiAxM3Y4IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4="); }
+
+#nc-root aside a[data-testid="halaman"] > span { -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNNiAzaDEydjE4SDZ6IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNOSA4aDZNOSAxMmg2TTkgMTZoNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4="); mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNNiAzaDEydjE4SDZ6IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNOSA4aDZNOSAxMmg2TTkgMTZoNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4="); }
+
+#nc-root aside a[data-testid="artikel"] > span { -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNNyAzaDdsNSA1djEzSDd6IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMTQgM3Y1aDVNMTAgMTNoNk0xMCAxN2g2IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg=="); mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNNyAzaDdsNSA1djEzSDd6IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMTQgM3Y1aDVNMTAgMTNoNk0xMCAxN2g2IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg=="); }
+
+/* Item aktif seperti TailAdmin: latar abu muda dengan teks gelap, tanpa garis biru bawaan Decap */
+#nc-root aside a[aria-current="page"] {
+  color: var(--teks);
+  font-weight: 600;
+  background: var(--latar);
+  border: 0;
+}
+
+/* Hover di sidebar: latar abu muda dan teks gelap, tanpa biru dan tanpa garis dari Decap */
+#nc-root aside a:hover,
+#nc-root aside a:focus-visible {
+  background: var(--latar) !important;
+  color: var(--teks) !important;
+  border: 0 !important;
+}
+
+#nc-root aside a:hover span,
+#nc-root aside a:focus-visible span {
+  color: var(--teks) !important;
+}
+
+/* Latar seragam sampai bawah layar, dan panel sidebar setinggi area kerja */
+body {
+  background: var(--latar) !important;
+}
+
+#nc-root [class*="CollectionContainer"] {
+  min-height: calc(100vh - var(--tinggi-bar));
+}
+
+#nc-root [class*="SidebarContainer"] {
+  align-self: stretch;
+  min-height: 100%;
+}
+
+#nc-root aside a[aria-current="page"] span {
+  color: var(--teks);
+}
+
+/* ---------- Area utama ---------- */
+#nc-root main h1 {
+  color: var(--teks);
+  font-size: 31px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Kartu daftar: satu padding saja, teks rata kiri, lebar mengisi area konten */
+#nc-root main ul > li {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  background: var(--permukaan);
+  border: 1px solid var(--garis-tipis);
+  border-radius: var(--sudut-kartu);
+  min-height: var(--tinggi-baris);
+}
+
+#nc-root main ul > li:hover {
+  border-color: var(--garis);
+}
+
+#nc-root main ul > li > a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tinggi-baris);
+  padding: var(--jarak-2) var(--jarak-3);
+  color: var(--teks);
+  text-decoration: none;
+}
+
+#nc-root main ul > li h2,
+#nc-root main ul > li h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* Judul grup isian (misalnya "WhatsApp 1") sebagai judul bagian */
+#nc-root main h2,
+#nc-root main h3 {
+  color: var(--teks);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: var(--jarak-3) 0 var(--jarak-2);
+}
+
+/* Tombol sekunder (Sort by, pilihan tampilan): garis tipis, latar putih, teks hitam. Tidak hitam penuh, karena itu tombol utama. */
+#nc-root main [class*="ControlButton"],
+#nc-root main [class*="ViewControlsButton"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jarak-1);
+  height: var(--tinggi-kontrol);
+  min-width: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Published saat ada perubahan belum tersimpan ("Publish"): hijau, sebagai ajakan untuk menyimpan.
+   Setelah tersimpan ("Published") kembali hitam. */
+#nc-root [class*="StyledDropdownButton"].perlu-publish,
+#nc-root [class*="PublishedButton"].perlu-publish {
+  background: var(--hijau);
+  color: #FFFFFF;
+}
+
+/* Hierarki tombol: satu tombol utama hitam per layar (+ Produk atau Published).
+   Quick add dan tombol tambah isi berupa outline netral, tombol hapus tetap merah. */
+#nc-root header [class*="StyledDropdownButton"] {
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+}
+
+#nc-root [class*="AddButton"],
+#nc-root [class*="FileWidgetButton"]:not([class*="FileWidgetButtonRemove"]) {
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+}
+
+#nc-root [class*="FileWidgetButtonRemove"] {
+  background: var(--permukaan);
+  color: var(--merah);
+  border: 1px solid var(--merah);
+  border-radius: var(--sudut-kontrol);
+}
+
+/* Daftar pilihan Sort by: lebarnya mengikuti isi terpanjang, tidak terpotong, dengan tepi dan sudut 8px */
+#nc-root [class*="DropdownList"] {
+  width: max-content;
+  min-width: 100%;
+  margin-top: var(--jarak-1);
+  padding: var(--jarak-1) 0;
+  overflow: visible;
+  background: var(--permukaan);
+  border: 1px solid var(--garis-tipis);
+  border-radius: var(--sudut-kontrol);
+}
+
+#nc-root [class*="dropdownItem"] {
+  display: flex;
+  align-items: center;
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  color: var(--teks);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#nc-root [class*="dropdownItem"]:hover {
+  background: var(--latar);
+}
+
+/* Menu profil (avatar di bar atas, berisi Logout): lebarnya mengikuti isi, tiap item setinggi 44px, teks 14px */
+#nc-root header [class*="DropdownList"] {
+  width: max-content;
+  min-width: 0;
+  margin-top: var(--jarak-1);
+  padding: var(--jarak-1) 0;
+}
+
+#nc-root header [class*="DropdownList"] [class*="dropdownItem"],
+#nc-root header [class*="DropdownList"] button,
+#nc-root header [class*="DropdownList"] a {
+  min-height: var(--tinggi-kontrol);
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-3);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Daftar kartu sejajar dengan kartu judul dan baris kontrol di semua lebar layar: lebar penuh, tanpa margin sisa dari Decap */
+#nc-root main ul:not(.filter-dd-menu) {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+#nc-root main ul:not(.filter-dd-menu) > li {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Kartu grid: jarak ke samping 8px, jarak ke bawah 12px (sama dengan list; samping harus lebih kecil dari bawah) */
+#nc-root main ul > li[class*="GridCard"] {
+  margin-right: var(--jarak-1);
+  margin-bottom: 12px;
+}
+
+/* Desktop: tiga kartu per baris, kolom sejajar dengan tepi kanan konten. Hanya untuk mode grid, bukan list. */
+@media (min-width: 1024px) {
+  #nc-root main ul[class*="CardsGrid"]:has(> li[class*="GridCard"]) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--jarak-1);
+    row-gap: 12px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  #nc-root main ul[class*="CardsGrid"] > li[class*="GridCard"] {
+    width: auto;
+    margin: 0;
+  }
+}
+
+/* Kartu judul halaman punya tinggi sama di semua koleksi, termasuk Pengaturan Situs yang tidak punya tombol */
+#nc-root [class*="CollectionTopContainer"] {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+/* Judul di kiri, tombol tambah di kanan */
+#nc-root [class*="CollectionTopRow"] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Tampilan grid: thumbnail 1:1 di atas, judul rata kiri di bawahnya dengan padding 16px */
+#nc-root a[class*="GridCardLink"] {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  padding: 0;
+  text-align: left;
+}
+
+#nc-root .foto-kartu {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  background: var(--latar);
+  border-radius: var(--sudut-kartu) var(--sudut-kartu) 0 0;
+  overflow: hidden;
+}
+
+#nc-root .foto-kartu img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Area teks: rata kiri, di tengah vertikal, tinggi baris 56px seperti list. Tidak ikut melar mengisi sisa ruang kartu. */
+#nc-root a[class*="GridCardLink"] [class*="CardBody"] {
+  order: 1;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  height: var(--tinggi-baris);
+  min-height: var(--tinggi-baris);
+  padding: 18px var(--jarak-3);
+  text-align: left;
+}
+
+/* Judul di atas, foto di bawah: posisi teks sama dengan kartu yang tidak punya foto */
+#nc-root .foto-kartu {
+  order: 2;
+}
+
+#nc-root a[class*="GridCardLink"] h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Filter asli Decap disembunyikan; digantikan chip Lini dan Jenis di atas baris kontrol */
+.filter-asli {
+  display: none !important;
+}
+
+#nc-root [class*="CollectionControlsContainer"] {
+  flex-wrap: wrap;
+}
+
+/* Dua dropdown filter (Lini, lalu Jenis) dalam satu baris sendiri di atas Sort by, rata kiri */
+/* Urutan baris: Sort by, lalu filter Lini dan Jenis, lalu tombol tampilan */
+.filter-pasangan {
+  order: 1;
+}
+
+.filter-pasangan {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jarak-1);
+}
+
+/* Baris Decap memakai arah terbalik: order kecil berada di kanan */
+[class*="ViewControlsSection"] {
+  order: 0;
+}
+
+[class*="CollectionControlsContainer"] > [class*="StyledWrapper"]:not(.filter-asli) {
+  order: 2;
+}
+
+.filter-dd {
+  position: relative;
+  display: block;
+}
+
+.filter-dd-tombol {
+  display: inline-flex;
+  align-items: center;
+  max-width: 240px;
+  cursor: pointer;
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Teks pilihan dipotong dengan titik-tiga kalau nama lini/jenis panjang */
+.filter-dd-teks {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-dd-tombol::after {
+  content: "";
+  flex: none;
+  width: 0;
+  height: 0;
+  margin-left: var(--jarak-1);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid currentColor;
+}
+
+.filter-dd-tombol[aria-expanded="true"] {
+  border-color: var(--teks);
+}
+
+/* Tombol yang sudah dipakai untuk memfilter: latar abu sebagai penanda aktif, teks lebih tebal */
+.filter-dd-tombol.aktif {
+  background: var(--penanda-aktif);
+  border-color: var(--garis);
+  font-weight: 700;
+}
+
+/* Jenis nonaktif sebelum lini dipilih: redup dan bergaris putus-putus */
+.filter-dd-tombol:disabled {
+  background: var(--latar);
+  color: var(--teks-redup);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+/* Menu dipasang di body saat dibuka, jadi posisinya tetap di atas dan tidak terpotong */
+.filter-dd-menu {
+  position: fixed;
+  z-index: 1000;
+  width: max-content;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--jarak-1) 0;
+  list-style: none;
+  background: var(--permukaan);
+  border: 1px solid var(--garis-tipis);
+  border-radius: var(--sudut-kontrol);
+}
+
+.filter-dd-menu[hidden] {
+  display: none;
+}
+
+.filter-dd-menu li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--jarak-3);
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  color: var(--teks);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-dd-menu li:hover {
+  background: var(--latar);
+}
+
+/* Pilihan yang sedang dipakai: tebal dan bertanda centang, seperti item terpilih di Sort by */
+.filter-dd-menu li[aria-selected="true"] {
+  font-weight: 600;
+  background: var(--penanda-aktif);
+}
+
+.filter-dd-menu li[aria-selected="true"]::after {
+  content: "\2713";
+  color: var(--teks);
+}
+
+/* Baris yang tidak cocok dengan filter disembunyikan */
+.filter-sembunyi {
+  display: none !important;
+}
+
+.filter-kosong {
+  margin: 0;
+  padding: var(--jarak-3) var(--jarak-2);
+  color: var(--teks-redup);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Baris kontrol selalu punya tinggi yang sama, di halaman mana pun (termasuk Pengaturan Situs) */
+#nc-root [class*="CollectionControlsContainer"] {
+  min-height: var(--tinggi-kontrol);
+}
+
+/* Panah di tombol sekunder sejajar tengah teks */
+#nc-root [class*="StyledDropdownButton"]::after {
+  position: static !important;
+  transform: none !important;
+  margin-left: var(--jarak-1);
+  vertical-align: middle;
+}
+
+/* Baris kontrol: Sort by di kiri, pilihan tampilan di kanan, satu baris */
+#nc-root [class*="CollectionControlsContainer"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--jarak-2);
+  margin: var(--jarak-3) 0 var(--jarak-2);
+}
+
+#nc-root [class*="ViewControlsSection"] {
+  display: flex;
+  align-items: center;
+  gap: var(--jarak-1);
+}
+
+/* Area utama memakai seluruh lebar yang tersedia, tidak berhenti di tengah */
+#nc-root main > div,
+#nc-root [class*="CollectionTopContainer"],
+#nc-root [class*="CardsGrid"] {
+  max-width: none;
+  width: 100%;
+}
+
+/* Tombol utama "+ Produk": sejajar dengan judul */
+#nc-root main a[aria-label^="Create entry"] {
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-3);
+  background: var(--teks);
+  color: var(--permukaan);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jarak-1);
+}
+
+/* ---------- Form editor ---------- */
+#nc-root label {
+  display: block;
+  margin: 0 0 var(--jarak-1);
+  padding: 0;
+  background: transparent;
+  color: var(--teks);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+/* Font mono (JetBrains Mono) untuk kode dan spesifikasi teknis, sesuai pedoman */
+#nc-root code,
+#nc-root pre,
+#nc-root kbd {
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 500;
+}
+
+/* Kolom isian: tinggi 44px, teks 14px, sudut 8px */
+#nc-root input[type="search"],
+#nc-root input[type="text"],
+#nc-root input[type="url"],
+#nc-root input[type="email"],
+#nc-root select {
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Area teks: tinggi mengikuti isi, padding sama dengan kolom isian */
+#nc-root textarea {
+  padding: var(--jarak-1) var(--jarak-2);
+  background: var(--permukaan);
+  color: var(--teks);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut-kontrol);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Semua tombol dan tautan kontrol: sudut 8px, tinggi minimal 44px */
+#nc-root button,
+#nc-root a[aria-label^="Create entry"] {
+  border-radius: var(--sudut-kontrol);
+  min-height: var(--tinggi-kontrol);
+}
+
+/* ---------- Transisi dan gerakan ----------
+   Standar proyek: elemen interaktif 0,15 detik dengan kurva yang sama. Tidak ada animasi berulang atau efek memantul.
+   Semua gerakan dimatikan bila pengguna mengaktifkan "kurangi gerakan" di perangkatnya. */
+#nc-root button,
+#nc-root a,
+#nc-root [role="button"],
+#nc-root [class*="dropdownItem"],
+#nc-root [class*="ViewControlsButton"],
+#nc-root li[class*="GridCard"],
+.filter-dd-tombol,
+.filter-dd-menu li,
+.roda-gigi,
+.tab-bawah a,
+.tab-bawah a::before,
+.tombol-pratinjau,
+.tutup-pratinjau {
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pratinjau-muncul {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Tablet (768–1023px): sidebar lebih sempit, kolom cari lebih kecil ---------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Decap menyusun bar atas dari bawah ke atas di lebar ini. Dikembalikan ke satu baris seperti desktop. */
+  #nc-root header > div {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Di bawah 800px Decap menaruh sidebar di atas konten. Di tablet dikembalikan sejajar di kiri, dan daftar koleksi tampil penuh tanpa scroll */
+  #nc-root div:has(> aside) {
+    flex-direction: row !important;
+    align-items: stretch !important;
+  }
+
+  #nc-root aside {
+    width: 250px;
+    flex: 0 0 250px;
+    align-self: stretch;
+    height: auto;
+    max-height: none;
+  }
+
+  #nc-root aside ul {
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Area konten di tablet mengisi sisa lebar di kanan sidebar, tidak berhenti mengikuti isi daftar */
+  #nc-root [class*="CollectionMain"],
+  #nc-root [class*="CollectionMain"] > div {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  #nc-root header [class*="SearchContainer"] {
+    width: 240px;
+    flex-basis: 240px;
+  }
+}
+
+/* ---------- Ponsel (sampai 767px) ----------
+   Bar atas satu baris setinggi 56px: Contents dan Media di kiri; cari (ikon), Quick add (+), dan profil di kanan.
+   Menu koleksi pindah ke bar bawah. Tombol tetap 44px agar mudah disentuh. Tepi kiri-kanan 16px. */
+/* Layar sangat sempit (di bawah 375px): bar atas jadi dua baris, dan Published/Publish jadi ikon.
+   Baris pertama: panah dan status. Baris kedua: Published dan hapus, rata kanan. */
+@media (max-width: 374px) {
+  #nc-root [class*="ToolbarContainer"] {
+    flex-wrap: wrap;
+    height: auto !important;
+    min-height: var(--tinggi-bar);
+    max-height: none !important;
+    row-gap: var(--jarak-1);
+    padding-block: var(--jarak-1);
+  }
+
+  /* Baris kedua (Published dan hapus) rata tengah, dengan jarak 16px agar tidak salah sentuh */
+  #nc-root [class*="ToolbarSectionMain"] {
+    width: 100%;
+    justify-content: center;
+    gap: var(--jarak-2);
+    margin-right: 0;
+  }
+
+  /* Published dan Publish: tombol dropdown di bar atas, dijadikan ikon 44px */
+  #nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"] {
+    position: relative;
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    min-height: var(--tinggi-kontrol);
+    padding: 0 !important;
+    font-size: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Panah dropdown tetap ada, kecil di pojok kanan bawah, supaya ikon tetap di tengah */
+  #nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"]::after {
+    position: absolute !important;
+    top: auto !important;
+    left: auto !important;
+    right: 4px !important;
+    bottom: 4px !important;
+    margin: 0 !important;
+    font-size: 10px !important;
+    display: inline-block !important;
+  }
+
+  #nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"]::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background: center / contain no-repeat;
+    /* Published: ikon centang */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12l3 3 5-6'/%3E%3C/svg%3E");
+  }
+
+  /* Publish (ada perubahan belum diterbitkan, kelas perlu-publish dari index.html): ikon panah ke atas */
+  #nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"].perlu-publish::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M14 3v5h5'/%3E%3Cpath d='M16 14v6M13 17l3-3 3 3'/%3E%3C/svg%3E");
+  }
+}
+
+/* Tablet dan desktop: area tombol kembali hanya selebar isinya, tidak melebar memenuhi bar */
+@media (min-width: 768px) {
+  #nc-root [class*="ToolbarSectionBackLink"] {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Kolom isian 16px di ponsel: di iPhone, teks di bawah 16px membuat layar membesar saat kolom diketuk */
+  #nc-root input[type="search"],
+  #nc-root input[type="text"],
+  #nc-root input[type="url"] {
+    font-size: 16px;
+  }
+
+  #nc-root header {
+    height: 64px;
+    min-height: 64px;
+    max-height: 64px;
+    padding: 0 var(--jarak-2);
+  }
+
+  #nc-root header > div {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 0;
+  }
+
+  #nc-root header a,
+  #nc-root header button {
+    padding: 0 var(--jarak-1);
+  }
+
+  /* Quick add: tinggal tombol + (teksnya disembunyikan, caret dibuang) */
+  /* Tombol + di bar atas dihapus di ponsel: halaman sudah punya tombol + Produk/Lini/dst. di bawah judul */
+  #nc-root header [class*="AppHeaderActions"] > :first-child {
+    display: none;
+  }
+
+  /* Semua aksi di bar atas: ikon 24px dalam area sentuh 44px, tanpa kotak, sejajar di tengah tinggi bar */
+  #nc-root header [class*="AppHeaderActions"] {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  #nc-root header [class*="StyledDropdownButton"] {
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    padding: 0;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    font-size: 0;
+    color: transparent;
+  }
+
+  #nc-root header [class*="AvatarDropdownButton"] {
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Tombol yang bisa disentuh pakai kursor tangan */
+  #nc-root header [class*="SearchContainer"],
+  #nc-root header .roda-gigi,
+  #nc-root header [class*="AvatarDropdownButton"] {
+    cursor: pointer;
+  }
+
+  #nc-root header .roda-gigi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--teks-redup);
+    border-radius: var(--sudut-kontrol);
+  }
+
+  /* Penanda aktif saat halaman Pengaturan terbuka, atau saat popover sedang dibuka lewat ketukan.
+     Berbentuk lingkaran 32px di tengah area sentuh 44px, sama seperti avatar profil di sebelahnya. */
+  #nc-root header .roda-gigi {
+    position: relative;
+  }
+
+  #nc-root header .roda-gigi::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  #nc-root header .roda-gigi svg {
+    position: relative;
+    z-index: 1;
+  }
+
+  #nc-root header .roda-gigi.aktif,
+  #nc-root header .roda-gigi[aria-expanded="true"] {
+    color: var(--teks);
+  }
+
+  #nc-root header .roda-gigi.aktif::before,
+  #nc-root header .roda-gigi[aria-expanded="true"]::before {
+    background: var(--penanda-aktif);
+  }
+
+  /* Popover Pengaturan: keluar dari bawah tombol roda gigi, isinya sama dengan halaman Pengaturan Situs */
+  /* Aturan bar atas (flex mendatar, rata kiri-kanan) tidak boleh berlaku di popover: isinya ditumpuk ke bawah */
+  #nc-root header .popover-roda {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    position: absolute;
+    top: 64px;
+    right: var(--jarak-2);
+    z-index: 70;
+    width: calc(100vw - 32px);
+    max-width: 343px;
+    padding: var(--jarak-2);
+    background: var(--latar);
+    border-radius: var(--sudut-kartu);
+    box-shadow: none;
+  }
+
+  #nc-root header .popover-roda[hidden] {
+    display: none !important;
+  }
+
+  /* Susunan seperti halaman aslinya: judul di kartu putih, lalu daftar di bawahnya */
+  #nc-root header .popover-judul {
+    margin: 0 0 var(--jarak-2);
+    padding: var(--jarak-3);
+    background: var(--permukaan);
+    border-radius: var(--sudut-kartu);
+    color: var(--teks);
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  #nc-root header .popover-kartu {
+    display: flex;
+    align-items: center;
+    min-height: var(--tinggi-baris);
+    padding: var(--jarak-2) var(--jarak-3);
+    background: var(--permukaan);
+    color: var(--teks);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--garis-tipis);
+    border-radius: var(--sudut-kartu);
+  }
+
+  #nc-root header .popover-kartu:hover {
+    border-color: var(--garis);
+  }
+
+
+  #nc-root header [class*="StyledDropdownButton"]::before {
+    content: "+";
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--teks);
+  }
+
+  #nc-root header [class*="StyledDropdownButton"]::after {
+    display: none;
+  }
+
+  /* Hierarki bar atas: menu aktif paling gelap. Ikon cari dan roda gigi sama-sama abu-abu dan ukuran 24px, tidak bersaing dengan menu */
+  #nc-root header [class*="SearchContainer"] {
+    color: var(--teks-redup);
+  }
+
+  #nc-root header [class*="SearchContainer"] svg,
+  #nc-root header .roda-gigi svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+  }
+
+  /* Kolom cari: hanya ikon. Saat disentuh (kelas cari-buka di bar atas), melebar dan menimpa isi bar */
+  #nc-root header [class*="SearchContainer"] {
+    flex: 0 0 var(--tinggi-kontrol);
+    width: var(--tinggi-kontrol);
+    margin: 0 0 0 auto;
+  }
+
+  #nc-root header [class*="SearchContainer"] input {
+    width: 0;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #nc-root header.cari-buka [class*="SearchContainer"] {
+    position: absolute;
+    top: 10px;
+    left: var(--jarak-2);
+    right: 104px;
+    width: auto;
+    flex: none;
+    margin: 0;
+    z-index: 60;
+  }
+
+  #nc-root header.cari-buka [class*="SearchContainer"] input {
+    width: 100%;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0 var(--jarak-2) 0 40px;
+    border: 1px solid var(--garis);
+    background: var(--permukaan);
+  }
+
+  /* Menu koleksi di bar bawah: enam kolom sama lebar, ikon di atas label. Menempel di bawah layar. */
+  #nc-root [class*="SidebarContainer"] {
+    align-self: auto;
+    min-height: 0;
+  }
+
+  #nc-root aside {
+    position: fixed;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 80px;
+    flex: none;
+    padding: 0;
+    background: var(--permukaan);
+    border: 0;
+    border-top: 1px solid var(--garis-tipis);
+    border-radius: 0;
+  }
+
+  #nc-root aside h2 {
+    display: none;
+  }
+
+  /* Lima menu, lebar sama, setiap menu mengisi tinggi bar */
+  #nc-root aside ul {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    height: 100%;
+    margin: 0;
+    gap: 0;
+  }
+
+  #nc-root aside ul > li {
+    height: 100%;
+    min-width: 0;
+  }
+
+  /* Ikon 24dp di atas label 12px. Menu aktif diberi indikator abu di belakang ikon (gaya Material).
+     Pengaturan Situs dipindah ke bar atas, jadi tidak tampil di sini. */
+  #nc-root aside li:has(> a[data-testid="pengaturan"]) {
+    display: none;
+  }
+
+  /* Ikon di posisi tetap (8px dari atas), label di bawahnya, sehingga penanda aktif bisa dipusatkan di ikon */
+  #nc-root aside a {
+    position: relative;
+    touch-action: manipulation;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    min-height: 0;
+    padding: 8px 0 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent !important;
+    cursor: pointer;
+    color: var(--teks-redup);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 500;
+    text-align: center;
+    white-space: normal;
+    word-break: keep-all;
+  }
+
+  /* Penanda aktif: kapsul 64x32 di belakang ikon 24px, berpusat pada ikon (gaya Material) */
+  #nc-root aside a::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    width: 64px;
+    height: 32px;
+    margin-left: -32px;
+    border-radius: 16px;
+    background: transparent;
+  }
+
+  #nc-root aside a > span {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  #nc-root aside a[aria-current="page"] {
+    color: var(--teks);
+    font-weight: 600;
+  }
+
+  #nc-root aside a[aria-current="page"]::before {
+    background: var(--latar);
+  }
+
+  /* Jenis Produk tampil sebagai "Jenis" di ponsel. Teks asli Decap disembunyikan, lalu diganti dengan teks ini. */
+  #nc-root aside a[data-testid="jenis"] {
+    font-size: 0;
+  }
+
+  #nc-root aside a[data-testid="jenis"]::after {
+    content: "Jenis";
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: inherit;
+  }
+
+  #nc-root [class*="CollectionContainer"] {
+    min-height: 0;
+  }
+
+  /* Editor di ponsel: hanya form yang tampil. Pratinjau dibuka lewat tombol "Pratinjau" sebagai layar penuh. */
+  #nc-root [class*="EditorContainer"] {
+    min-width: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Form tidak boleh lebih lebar dari layar: lebar Decap (dari gaya split pane) dibatasi di ponsel */
+  #nc-root [class*="EditorContainer"] div {
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Bar atas editor di ponsel: "Check for Preview" dan judul "Writing in ... collection" disembunyikan supaya Published dan Delete muat */
+  #nc-root [class*="PreviewButtonContainer"],
+  #nc-root [class*="BackCollection"] {
+    display: none !important;
+  }
+
+  /* Delete di ponsel jadi ikon tempat sampah merah 44px. Published tetap teks. Keduanya di kanan bar, sejajar dengan status "Changes saved". */
+  /* Kiri (panah dan status) boleh menyusut dan dipotong, kanan (Published dan Delete) tetap utuh */
+  /* Bar atas editor dari Decap dipatok 800px. Di ponsel dipaksa mengikuti lebar layar */
+  #nc-root [class*="ToolbarContainer"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* Bar atas (yang memuat panah dan status): padding kanan dihapus, jadi Published dan Delete rata dengan margin 16px */
+  #nc-root [class*="ToolbarContainer"]:has([class*="ToolbarSectionBackLink"]) {
+    padding-right: 0 !important;
+  }
+
+  #nc-root [class*="ToolbarSectionBackLink"] {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  #nc-root [class*="ToolbarSectionBackLink"] * {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Status di ponsel jadi ikon saja, gaya sama dengan tombol Delete: kotak 44px bergaris tepi.
+     Teks tetap ada untuk pembaca layar, tapi disembunyikan secara visual.
+     Tersimpan: centang hijau. Belum tersimpan: tanda seru merah. */
+  #nc-root [class*="BackStatus"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    min-height: var(--tinggi-kontrol);
+    padding: 0;
+    font-size: 0;
+    color: transparent;
+    background: transparent;
+    border: 1px solid #248A3D;
+    border-radius: var(--sudut-kontrol);
+  }
+
+  #nc-root [class*="BackStatus"]:not([class*="textBadgeSuccess"]) {
+    border-color: var(--merah);
+  }
+
+  #nc-root [class*="BackStatus"]::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background: center / contain no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23248A3D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z'/%3E%3Cpath d='M7 3v5h8V3M7 21v-7h10v7'/%3E%3C/svg%3E");
+  }
+
+  #nc-root [class*="BackStatus"]:not([class*="textBadgeSuccess"])::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF3B30' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z'/%3E%3Cpath d='M7 3v5h8V3M7 21v-7h10v7'/%3E%3C/svg%3E");
+  }
+
+  #nc-root [class*="ToolbarSectionMain"] {
+    display: flex;
+    align-items: center;
+    gap: var(--jarak-1);
+    flex: 0 0 auto;
+    margin-left: auto;
+    margin-right: var(--jarak-2);
+  }
+
+  /* Avatar profil di bar atas editor disembunyikan di ponsel, supaya ruang cukup untuk status "Changes saved" */
+  #nc-root [class*="ToolbarSectionMeta"] {
+    display: none !important;
+  }
+
+  #nc-root button[class*="DeleteButton"] {
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    min-height: var(--tinggi-kontrol);
+    padding: 0 !important;
+    font-size: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #nc-root button[class*="DeleteButton"]::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background: center / contain no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF3B30' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14'/%3E%3C/svg%3E");
+  }
+
+  /* Sync scrolling hanya berguna saat form dan pratinjau tampil berdampingan, jadi di ponsel tidak diperlukan */
+  #nc-root button[title="Sync scrolling"] {
+    display: none !important;
+  }
+
+  #nc-root .Resizer,
+  #nc-root button[title="Toggle preview"] {
+    display: none !important;
+  }
+
+  /* Kolom form juga memakai kelas PreviewPaneContainer (diwarisi dari Decap), jadi dikecualikan dengan :not */
+  #nc-root [class*="PreviewPaneContainer"]:not([class*="ControlPaneContainer"]) {
+    display: none !important;
+  }
+
+  html.pratinjau-buka #nc-root [class*="PreviewPaneContainer"]:not([class*="ControlPaneContainer"]) {
+    animation: pratinjau-muncul 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    overflow-y: auto;
+    padding: 80px var(--jarak-2) var(--jarak-2);
+    background: var(--latar);
+  }
+
+  .tombol-pratinjau,
+  .tutup-pratinjau {
+    display: none;
+  }
+
+  /* Tombol pratinjau dan tutup: ikon saja, 44px, di pojok kanan bawah (di atas bar bawah) */
+  html.di-editor .tombol-pratinjau,
+  html.pratinjau-buka .tutup-pratinjau {
+    display: inline-flex;
+    position: fixed;
+    right: var(--jarak-2);
+    bottom: 96px;
+    z-index: 401;
+    align-items: center;
+    justify-content: center;
+    width: var(--tinggi-kontrol);
+    height: var(--tinggi-kontrol);
+    padding: 0;
+    border: 0;
+    border-radius: var(--sudut-kontrol);
+    background: var(--teks);
+    color: var(--permukaan);
+    cursor: pointer;
+  }
+
+  html.di-editor .tombol-pratinjau svg,
+  html.pratinjau-buka .tutup-pratinjau svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  html.pratinjau-buka .tombol-pratinjau {
+    display: none;
+  }
+
+  /* Sentuhan di menu bawah tidak memberi latar biru atau abu seperti di desktop */
+  #nc-root aside a:hover,
+  #nc-root aside a:focus-visible {
+    background: transparent !important;
+    color: var(--teks-redup) !important;
+  }
+
+  #nc-root aside a[aria-current="page"]:hover {
+    color: var(--teks) !important;
+  }
+
+  /* Isi halaman: tepi 16px dari layar (wadah Decap sudah punya 8px), dan ruang di atas bar bawah */
+  #nc-root [class*="AppMainContainer"] {
+    padding-inline: var(--jarak-1);
+    padding-bottom: 96px;
+  }
+
+  /* Judul dan tombol tambah: tombol turun ke bawah judul bila tidak muat */
+  #nc-root [class*="CollectionTopRow"] {
+    flex-wrap: wrap;
+    gap: var(--jarak-2);
+  }
+
+  #nc-root main h1 {
+    font-size: 25px;
+  }
+
+  /* Tab bawah di ponsel: lima menu sama lebar. Sidebar Decap disembunyikan di ponsel. */
+  #nc-root aside {
+    display: none !important;
+  }
+
+  .tab-bawah {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    height: 80px;
+    background: var(--permukaan);
+    border-top: 1px solid var(--garis-tipis);
+  }
+
+  .tab-bawah a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding-top: 16px;
+    color: var(--teks-redup);
+    font-family: "Instrument Sans", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+
+  /* Penanda aktif: kapsul 64x32 di belakang ikon 24px, berpusat pada ikon */
+  .tab-bawah a::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    width: 64px;
+    height: 32px;
+    margin-left: -32px;
+    border-radius: 16px;
+    background: transparent;
+  }
+
+  .tab-bawah svg {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  .tab-bawah a span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tab-bawah a[aria-current="page"] {
+    color: var(--teks);
+    font-weight: 600;
+  }
+
+  .tab-bawah a[aria-current="page"]::before {
+    background: var(--latar);
+  }
+
+  /* Tab yang diketuk tidak diberi tepi hitam. Tepi tetap muncul hanya untuk navigasi keyboard. */
+  .tab-bawah a:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  .tab-bawah a:focus-visible {
+    outline: 2px solid var(--teks);
+    outline-offset: -2px;
+  }
+
+  /* Baris kontrol di ponsel: Sort by dan tampilan di baris pertama, filter Lini dan Jenis dua kolom di baris kedua */
+  #nc-root [class*="CollectionControlsContainer"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jarak-1);
+    margin: var(--jarak-2) 0 var(--jarak-1);
+  }
+
+  #nc-root [class*="CollectionControlsContainer"] > [class*="StyledWrapper"]:not(.filter-asli) {
+    order: 1;
+  }
+
+  /* Pilihan list/grid tetap di kanan, sejajar Sort by di kiri. Di halaman Pengaturan Situs disembunyikan. */
+  #nc-root [class*="CollectionControlsContainer"] > [class*="ViewControlsSection"] {
+    order: 2;
+    margin-left: auto;
+  }
+
+  html.halaman-pengaturan #nc-root [class*="ViewControlsSection"] {
+    display: none;
+  }
+
+  #nc-root .filter-pasangan {
+    order: 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--jarak-1);
+    width: 100%;
+  }
+
+  #nc-root .filter-dd,
+  #nc-root .filter-dd-tombol {
+    width: 100%;
+    max-width: none;
+  }
+
+  #nc-root .filter-dd-tombol {
+    justify-content: space-between;
+  }
 }

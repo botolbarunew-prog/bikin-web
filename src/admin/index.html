@@ -7,14 +7,603 @@
   <title>Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
   <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="cms-config-url" href="/admin/config.yml" type="text/yaml">
 </head>
 <body>
+  <script>
+    // Menandai halaman yang sedang dibuka di <html data-route>, supaya CSS bisa menyesuaikan tampilan per halaman
+    function tandaiRute() {
+      document.documentElement.dataset.route = location.hash;
+    }
+    window.addEventListener("hashchange", tandaiRute);
+    tandaiRute();
+
+    // Penanda aktif toolbar teks, seperti Word: tombol menyala kalau kursor (atau teks yang diblok) memakai format itu.
+    // Membaca tag HTML di sekitar kursor di dalam editor Slate.
+    (function () {
+      var formatTag = {
+        "Bold": ["STRONG", "B"],
+        "Italic": ["EM", "I"],
+        "Strikethrough": ["S", "DEL", "STRIKE"],
+        "Code": ["CODE"],
+        "Link": ["A"],
+        "Headings": ["H1", "H2", "H3", "H4", "H5", "H6"],
+        "Quote": ["BLOCKQUOTE"],
+        "Bulleted List": ["UL"],
+        "Numbered List": ["OL"]
+      };
+
+      function tandai() {
+        var sel = window.getSelection();
+        var aktif = {};
+        var el = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement) : null;
+        var editor = el && el.closest ? el.closest("[data-slate-editor]") : null;
+
+        var levelJudul = null;
+        if (editor) {
+          while (el && el !== editor) {
+            Object.keys(formatTag).forEach(function (nama) {
+              if (formatTag[nama].indexOf(el.tagName) !== -1) aktif[nama] = true;
+            });
+            if (/^H[1-6]$/.test(el.tagName) && !levelJudul) levelJudul = el.tagName;
+            el = el.parentElement;
+          }
+        }
+
+        // Menu Headings: level judul di posisi kursor ditandai, seperti item terpilih di Sort by
+        document.querySelectorAll('[class*="dropdownItem"]').forEach(function (item) {
+          var teks = item.textContent.trim();
+          var cocok = levelJudul && teks === "Heading " + levelJudul.charAt(1);
+          item.setAttribute("aria-pressed", cocok ? "true" : "false");
+        });
+
+        document.querySelectorAll('[class*="StyledToolbarButton"][title]').forEach(function (tombol) {
+          tombol.setAttribute("aria-pressed", aktif[tombol.getAttribute("title")] ? "true" : "false");
+        });
+
+        // Tombol tampilan daftar (list / grid): yang sedang dipakai ditandai, sesuai pilihan yang disimpan Decap
+        var gaya = null;
+        try { gaya = localStorage.getItem("decap-cms.entries.viewStyle"); } catch (e) { gaya = null; }
+        document.querySelectorAll('[class*="ViewControlsButton"][aria-label]').forEach(function (tombol) {
+          var label = tombol.getAttribute("aria-label");
+          var aktifGaya = (label === "List view option" && gaya === "VIEW_STYLE_LIST") ||
+                          (label === "Grid view option" && gaya === "VIEW_STYLE_GRID");
+          tombol.setAttribute("aria-pressed", aktifGaya ? "true" : "false");
+        });
+      }
+
+      document.addEventListener("selectionchange", tandai);
+
+      // Foto untuk kartu grid Produk: judul dicocokkan dengan data situs (dibuat saat build di produk-thumbs.json)
+      var fotoPerJudul = null;
+      fetch("/admin/produk-thumbs.json", { cache: "no-cache" })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          fotoPerJudul = {};
+          data.forEach(function (p) { fotoPerJudul[p.judul] = p.foto; });
+          pasangFoto();
+        })
+        .catch(function () { fotoPerJudul = null; });
+
+      function pasangFoto() {
+        if (!fotoPerJudul || location.hash.indexOf("#/collections/produk") !== 0) return;
+        document.querySelectorAll('a[class*="GridCardLink"]').forEach(function (kartu) {
+          if (kartu.querySelector(".foto-kartu")) return;
+          var judul = kartu.querySelector("h2");
+          if (!judul) return;
+          var foto = fotoPerJudul[judul.textContent.trim()] || "/assets/placeholder/foto-belum-tersedia.svg";
+          var wadah = document.createElement("div");
+          wadah.className = "foto-kartu";
+          var img = document.createElement("img");
+          img.src = foto;
+          img.alt = "";
+          img.loading = "lazy";
+          wadah.appendChild(img);
+          kartu.insertBefore(wadah, kartu.firstChild);
+        });
+      }
+
+      // ---------- Filter lini dan jenis ----------
+      // Dua dropdown (Lini, lalu Jenis). Hanya satu pilihan per dropdown. Jenis aktif setelah lini dipilih.
+      // Daftar dicocokkan langsung dengan data situs (pilihan-filter.json), tidak lewat filter bawaan Decap.
+      var filterState = { lini: null, jenis: null };
+      var filterKol = null;
+      var filterData = null;
+      var menuTerbuka = null;
+
+      function kolekSi() {
+        var h = location.hash;
+        if (h.indexOf("#/collections/produk") === 0) return "produk";
+        if (h.indexOf("#/collections/artikel") === 0) return "artikel";
+        if (h.indexOf("#/collections/jenis") === 0) return "jenis";
+        return null;
+      }
+
+      function filterAktif() { return filterState.lini !== null || filterState.jenis !== null; }
+
+      function cocok(entri, kol) {
+        if (kol === "produk") {
+          if (filterState.lini !== null && entri.lini !== filterState.lini) return false;
+          if (filterState.jenis !== null && entri.jenis !== filterState.jenis) return false;
+          return true;
+        }
+        if (kol === "artikel") {
+          if (filterState.lini === "__umum") return !entri.lini;
+          if (filterState.lini !== null) return entri.lini === filterState.lini;
+          return true;
+        }
+        if (kol === "jenis") {
+          if (filterState.lini !== null && filterState.lini !== "__umum") return entri.lini === filterState.lini;
+          return true;
+        }
+        return true;
+      }
+
+      function labelLini(slug) {
+        if (slug === "__umum") return "Umum";
+        var l = filterData.lini.find(function (x) { return x.slug === slug; });
+        return l ? l.judul : "";
+      }
+
+      function labelJenis(slug) {
+        var j = filterData.jenis.find(function (x) { return x.slug === slug; });
+        return j ? j.judul : "";
+      }
+
+      function terapkanFilter() {
+        var kol = kolekSi();
+        if (!kol || !filterData) return;
+        var daftarData = kol === "produk" ? filterData.produk : kol === "artikel" ? filterData.artikel : filterData.jenis;
+        var peta = {};
+        daftarData.forEach(function (e) { peta[e.judul] = e; });
+
+        var daftarLi = document.querySelectorAll("#nc-root main ul:not(.filter-dd-menu) > li");
+        var tampak = 0;
+        daftarLi.forEach(function (li) {
+          var h = li.querySelector("h2");
+          var judul = h ? h.textContent.trim() : "";
+          var entri = peta[judul];
+          var tampil = !filterAktif() || (entri && cocok(entri, kol));
+          li.classList.toggle("filter-sembunyi", !tampil);
+          if (tampil) tampak++;
+        });
+
+        // Keterangan kosong hanya ditulis ulang kalau keadaannya berubah (supaya tidak memicu pengamat terus-menerus)
+        var ada = document.querySelector(".filter-kosong");
+        var perluKeterangan = filterAktif() && daftarLi.length > 0 && tampak === 0;
+        var daftarUl = document.querySelector("#nc-root main ul:not(.filter-dd-menu)");
+        if (perluKeterangan && !ada && daftarUl) {
+          var teks = kol === "jenis" ? "Tidak ada jenis." :
+                     kol === "artikel" ? "Tidak ada artikel." :
+                     "Tidak ada produk.";
+          var p = document.createElement("p");
+          p.className = "filter-kosong";
+          p.textContent = teks;
+          // Keterangan tampil di area list, di tengah (margin disamakan dengan list agar pusatnya sama)
+          p.style.marginLeft = getComputedStyle(daftarUl).marginLeft;
+          daftarUl.parentElement.insertBefore(p, daftarUl.nextSibling);
+        } else if (!perluKeterangan && ada) {
+          ada.remove();
+        }
+      }
+
+      // Menu dilepas dari wadahnya saat dibuka (lihat bukaMenu), jadi dikembalikan ke tombolnya saat ditutup
+      function tutupMenu() {
+        if (menuTerbuka) {
+          menuTerbuka.hidden = true;
+          menuTerbuka.remove();
+          menuTerbuka._tombol.setAttribute("aria-expanded", "false");
+          menuTerbuka = null;
+        }
+      }
+
+      function bukaMenu(menu, tombol) {
+        tutupMenu();
+        menu._tombol = tombol;
+        document.body.appendChild(menu);
+        menu.hidden = false;
+        var r = tombol.getBoundingClientRect();
+        menu.style.top = (r.bottom + 8) + "px";
+        menu.style.minWidth = r.width + "px";
+        // Geser ke kiri kalau menu melewati tepi kanan layar
+        var kiri = Math.min(r.left, window.innerWidth - menu.offsetWidth - 16);
+        menu.style.left = Math.max(16, kiri) + "px";
+        tombol.setAttribute("aria-expanded", "true");
+        menuTerbuka = menu;
+      }
+
+      window.addEventListener("resize", tutupMenu);
+      window.addEventListener("scroll", tutupMenu, true);
+
+      // Satu dropdown: tombol + daftar pilihan tunggal (ditandai seperti item terpilih di Sort by)
+      // Tombol menampilkan pilihan yang dipakai ("Lini: Grosir Botol"), atau ajakan kalau belum memilih
+      function buatDropdown(ajakan, awalan, pilihan, nilai, pilihSaat, nonaktif) {
+        var wadah = document.createElement("div");
+        wadah.className = "filter-dd";
+
+        var tombol = document.createElement("button");
+        tombol.type = "button";
+        tombol.className = "filter-dd-tombol";
+        tombol.setAttribute("aria-haspopup", "listbox");
+        tombol.setAttribute("aria-expanded", "false");
+        var yangTerpilih = pilihan.find(function (p) { return p.nilai === nilai; });
+        var teksTombol = yangTerpilih && nilai !== null ? awalan + ": " + yangTerpilih.label : ajakan;
+        var teks = document.createElement("span");
+        teks.className = "filter-dd-teks";
+        teks.textContent = teksTombol;
+        tombol.title = teksTombol;
+        tombol.appendChild(teks);
+        tombol.disabled = !!nonaktif;
+        // Tombol tampak aktif kalau sudah ada pilihan (bukan "Semua")
+        if (nilai !== null && nilai !== undefined) tombol.classList.add("aktif");
+
+        var menu = document.createElement("ul");
+        menu.className = "filter-dd-menu";
+        menu.setAttribute("role", "listbox");
+        menu.hidden = true;
+
+        pilihan.forEach(function (p) {
+          var li = document.createElement("li");
+          li.setAttribute("role", "option");
+          li.setAttribute("aria-selected", p.nilai === nilai ? "true" : "false");
+          li.textContent = p.label;
+          li.addEventListener("click", function () {
+            tutupMenu();
+            pilihSaat(p.nilai);
+          });
+          menu.appendChild(li);
+        });
+
+        tombol.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (menuTerbuka === menu) { tutupMenu(); return; }
+          bukaMenu(menu, tombol);
+        });
+
+        wadah.appendChild(tombol);
+        wadah.appendChild(menu);
+        return wadah;
+      }
+
+      function gambarFilter() {
+        var kol = kolekSi();
+        var wadah = document.querySelector(".filter-pasangan");
+        if (!wadah || !kol) return;
+        wadah.innerHTML = "";
+
+        var opsiLini = [{ nilai: null, label: "Semua" }];
+        filterData.lini.forEach(function (l) { opsiLini.push({ nilai: l.slug, label: l.judul }); });
+        if (kol === "artikel") opsiLini.push({ nilai: "__umum", label: "Umum" });
+
+        wadah.appendChild(buatDropdown("Pilih lini", "Lini", opsiLini, filterState.lini, function (nilai) {
+          filterState.lini = nilai;
+          filterState.jenis = null;
+          terapkanFilter();
+          gambarFilter();
+        }, false));
+
+        if (kol === "produk") {
+          var liniDipilih = filterState.lini !== null && filterState.lini !== "__umum";
+          var opsiJenis = [{ nilai: null, label: "Semua" }];
+          if (liniDipilih) {
+            filterData.jenis.filter(function (j) { return j.lini === filterState.lini; })
+              .forEach(function (j) { opsiJenis.push({ nilai: j.slug, label: j.judul }); });
+          }
+          var jenisKosong = liniDipilih && opsiJenis.length === 1;
+          wadah.appendChild(buatDropdown("Pilih jenis", "Jenis", opsiJenis, filterState.jenis, function (nilai) {
+            filterState.jenis = nilai;
+            terapkanFilter();
+            gambarFilter();
+          }, !liniDipilih || jenisKosong));
+        }
+      }
+
+      // Membangun dua dropdown di baris kontrol (di antara Sort by dan pilihan tampilan)
+      function pasangFilter() {
+        if (!filterData) return;
+        var kol = kolekSi();
+        var kontrol = document.querySelector('[class*="CollectionControlsContainer"]');
+        var pasanganLama = document.querySelector(".filter-pasangan");
+        if (!kol || !kontrol) {
+          if (pasanganLama) pasanganLama.remove();
+          filterKol = null;
+          return;
+        }
+
+        // Filter bawaan Decap disembunyikan, digantikan dropdown di atas
+        var teksAsli = [].find.call(document.querySelectorAll("#nc-root main *"), function (e) {
+          return e.children.length === 0 && e.textContent.trim() === "Filter by";
+        });
+        if (teksAsli) {
+          var pembungkus = teksAsli.closest('[class*="StyledWrapper"]');
+          if (pembungkus) pembungkus.classList.add("filter-asli");
+        }
+
+        if (pasanganLama && filterKol === kol) return;
+        if (filterKol !== kol) {
+          filterState = { lini: null, jenis: null };
+          tutupMenu();
+        }
+        filterKol = kol;
+        if (!pasanganLama) {
+          var wadah = document.createElement("div");
+          wadah.className = "filter-pasangan";
+          var viewAsli = kontrol.querySelector('[class*="ViewControlsSection"]');
+          if (viewAsli) kontrol.insertBefore(wadah, viewAsli); else kontrol.appendChild(wadah);
+        }
+        gambarFilter();
+        terapkanFilter();
+      }
+
+      // Klik di luar menu menutupnya
+      document.addEventListener("click", function () { tutupMenu(); });
+
+      // Di form produk, pilihan Jenis hanya menampilkan jenis dari Lini yang dipilih.
+      // Dicocokkan lewat judul (dari pilihan-filter.json), karena opsi Decap dibuat saat menu dibuka.
+      function saringJenisForm() {
+        if (kolekSi() !== "produk" || !window.pilihanFilter) return;
+        var cariKolom = function (teks) {
+          var label = [].find.call(document.querySelectorAll("label"), function (l) { return l.textContent.trim() === teks; });
+          return label ? document.getElementById(label.htmlFor) : null;
+        };
+        var inputLini = cariKolom("Lini");
+        if (!inputLini) return;
+        var nilaiLini = inputLini.closest('[class*="ControlContainer"]');
+        nilaiLini = nilaiLini && nilaiLini.querySelector('[class*="singleValue"]');
+        var judulLini = nilaiLini ? nilaiLini.textContent.trim() : "";
+        var lini = window.pilihanFilter.lini.find(function (l) { return l.judul === judulLini; });
+        var sluglini = lini ? lini.slug : null;
+        var liniDariJenis = {};
+        window.pilihanFilter.jenis.forEach(function (j) { liniDariJenis[j.judul] = j.lini; });
+        document.querySelectorAll('[id^="react-select-"][id*="-option-"]').forEach(function (opsi) {
+          var judul = opsi.textContent.trim();
+          if (!Object.prototype.hasOwnProperty.call(liniDariJenis, judul)) return;
+          opsi.style.display = !sluglini || liniDariJenis[judul] === sluglini ? "" : "none";
+        });
+      }
+
+      // Tombol Published berubah jadi "Publish" saat ada perubahan belum tersimpan: diberi warna hijau sebagai ajakan
+      function tandaiPublish() {
+        document.querySelectorAll('[class*="ToolbarContainer"] [class*="StyledDropdownButton"], [class*="PublishedButton"]').forEach(function (b) {
+          b.classList.toggle("perlu-publish", b.textContent.trim() === "Publish");
+          if (!b.title) b.title = b.textContent.trim();
+        });
+      }
+
+      // Kolom cari dipindah dari sidebar ke bar atas, dan placeholder-nya dibuat lebih jelas.
+      // Kolomnya tetap milik Decap (pencarian jalan seperti biasa), hanya posisinya yang dipindah.
+      function pindahkanCari() {
+        var kotak = document.querySelector('#nc-root [class*="SearchContainer"]');
+        var bar = document.querySelector("#nc-root header > div");
+        if (!kotak || !bar) return;
+        // Letakkan tepat sebelum Quick add dan profil, supaya kedua tombol itu tetap di sisi kanan
+        var aksi = bar.querySelector('[class*="AppHeaderActions"]');
+        if (kotak.parentElement !== bar || (aksi && kotak.nextElementSibling !== aksi)) {
+          try {
+            bar.insertBefore(kotak, aksi || null);
+          } catch (e) {
+            return;
+          }
+        }
+        var isian = kotak.querySelector("input");
+        if (isian && isian.placeholder !== "Cari produk, artikel, atau lini") {
+          isian.placeholder = "Cari produk, artikel, atau lini";
+        }
+      }
+
+      // Toolbar dibuat ulang oleh editor saat kursor pindah, jadi penanda dan filter dipasang lagi setiap ada perubahan DOM
+      new MutationObserver(function () {
+        tandai();
+        pasangFoto();
+        if (!filterData && window.pilihanFilter) filterData = window.pilihanFilter;
+        pasangFilter();
+        terapkanFilter();
+        saringJenisForm();
+        tandaiPublish();
+        pindahkanCari();
+        pasangRodaGigi();
+        pasangTabBawah();
+        pasangPratinjau();
+      }).observe(document.body, { childList: true, subtree: true });
+      window.addEventListener("hashchange", pasangPratinjau);
+
+      // Pencarian berlaku untuk koleksi yang sedang dibuka. Saat pindah koleksi, kolom cari dikosongkan.
+      // Hasil pencarian (alamat .../search/...) tidak dikosongkan.
+      // Tab bawah di ponsel dibuat sendiri di luar Decap: tautan biasa (alamat #/collections/...),
+      // jadi berpindah halaman tidak bergantung pada komponen sidebar Decap yang tidak merespons ketukan.
+      var tabBawah = [
+        { k: "lini", label: "Lini", ikon: '<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>' },
+        { k: "jenis", label: "Jenis", ikon: '<path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.5"/>' },
+        { k: "produk", label: "Produk", ikon: '<path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5M12 13v8"/>' },
+        { k: "artikel", label: "Artikel", ikon: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>' },
+        { k: "halaman", label: "Halaman", ikon: '<path d="M6 3h12v18H6z"/><path d="M9 8h6M9 12h6M9 16h4"/>' }
+      ];
+
+      function pasangTabBawah() {
+        var nav = document.querySelector("nav.tab-bawah");
+        if (!nav) {
+          nav = document.createElement("nav");
+          nav.className = "tab-bawah";
+          nav.setAttribute("aria-label", "Menu koleksi");
+          nav.innerHTML = tabBawah
+            .map(function (t) {
+              return (
+                '<a href="#/collections/' + t.k + '" data-testid="' + t.k + '">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + t.ikon + "</svg>" +
+                "<span>" + t.label + "</span></a>"
+              );
+            })
+            .join("");
+          document.body.appendChild(nav);
+        }
+        var koleksiAktif = location.hash.split("/")[2];
+        nav.querySelectorAll("a").forEach(function (a) {
+          if (a.getAttribute("data-testid") === koleksiAktif) a.setAttribute("aria-current", "page");
+          else a.removeAttribute("aria-current");
+        });
+      }
+
+      // Di ponsel, halaman edit hanya menampilkan form. Pratinjau dibuka lewat tombol "Pratinjau" sebagai layar penuh.
+      function pasangPratinjau() {
+        var diEditor = location.hash.indexOf("/entries/") !== -1 && window.matchMedia("(max-width: 767px)").matches;
+        document.documentElement.classList.toggle("di-editor", diEditor);
+        if (!diEditor) document.documentElement.classList.remove("pratinjau-buka");
+        if (!diEditor || document.querySelector(".tombol-pratinjau")) return;
+        var buka = document.createElement("button");
+        buka.type = "button";
+        buka.className = "tombol-pratinjau";
+        buka.setAttribute("aria-label", "Lihat pratinjau");
+        buka.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.557 11.492C21.13 10 16.849 6 12.395 6c-4.8 0-8.844 4-10.184 5.492a.798.798 0 0 0 0 1.081C3.55 14.043 7.616 18 12.395 18c4.756 0 8.8-3.914 10.162-5.405a.783.783 0 0 0 0-1.103Zm-10.14 4.692a4.152 4.152 0 0 1 0-8.303 4.152 4.152 0 0 1 4.15 4.151c0 2.292-1.88 4.152-4.15 4.152Zm0-2.79a1.362 1.362 0 1 0 0-2.724 1.362 1.362 0 0 0 0 2.725Z"/></svg>';
+        buka.addEventListener("click", function () {
+          document.documentElement.classList.add("pratinjau-buka");
+        });
+        var tutup = document.createElement("button");
+        tutup.type = "button";
+        tutup.className = "tutup-pratinjau";
+        tutup.setAttribute("aria-label", "Tutup pratinjau");
+        tutup.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>';
+        tutup.addEventListener("click", function () {
+          document.documentElement.classList.remove("pratinjau-buka");
+        });
+        document.body.appendChild(buka);
+        document.body.appendChild(tutup);
+      }
+
+      // Di ponsel, Pengaturan Situs tidak ada di bar bawah. Ikonnya ditaruh di bar atas, di sebelah profil.
+      // Roda gigi membuka popover kecil di bawah tombolnya. Isinya sama dengan halaman Pengaturan Situs,
+      // jadi satu klik lagi langsung ke form Data perusahaan.
+      function pasangRodaGigi() {
+        var bar = document.querySelector("#nc-root header");
+        var aksi = document.querySelector('#nc-root header [class*="AppHeaderActions"]');
+        if (!bar || !aksi) return;
+        var roda = aksi.querySelector(".roda-gigi");
+        if (!roda) {
+          roda = document.createElement("button");
+          roda.type = "button";
+          roda.className = "roda-gigi";
+          roda.setAttribute("aria-label", "Pengaturan Situs");
+          roda.setAttribute("aria-expanded", "false");
+          roda.innerHTML =
+            '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>';
+          aksi.insertBefore(roda, aksi.lastElementChild);
+        }
+        if (!bar.querySelector(".popover-roda")) {
+          var pop = document.createElement("div");
+          pop.className = "popover-roda";
+          pop.hidden = true;
+          pop.innerHTML =
+            '<p class="popover-judul">Pengaturan Situs</p><a class="popover-kartu" href="#/collections/pengaturan/entries/site">Data perusahaan, kontak, dan WhatsApp</a>';
+          bar.appendChild(pop);
+        }
+        var diPengaturan = location.hash.indexOf("#/collections/pengaturan") === 0;
+        roda.classList.toggle("aktif", diPengaturan);
+        // Halaman Pengaturan memakai tata letak sendiri (tanpa pilihan list/grid)
+        document.documentElement.classList.toggle("halaman-pengaturan", diPengaturan);
+      }
+
+      // Di ponsel, kolom cari hanya ikon. Saat ikon disentuh, kolom melebar dan menimpa bar atas.
+      document.addEventListener("click", function (e) {
+        var bar = document.querySelector("#nc-root header");
+        if (!bar) return;
+        var pop = bar.querySelector(".popover-roda");
+        var tombolRoda = e.target.closest(".roda-gigi");
+        if (pop && tombolRoda) {
+          var terbuka = pop.hidden;
+          pop.hidden = !terbuka;
+          tombolRoda.setAttribute("aria-expanded", String(terbuka));
+        } else if (pop && !pop.hidden) {
+          pop.hidden = true;
+          var rodaAsli = bar.querySelector(".roda-gigi");
+          if (rodaAsli) rodaAsli.setAttribute("aria-expanded", "false");
+        }
+        var kotak = e.target.closest('#nc-root header [class*="SearchContainer"]');
+        if (!kotak) {
+          bar.classList.remove("cari-buka");
+          return;
+        }
+        if (!bar.classList.contains("cari-buka")) {
+          bar.classList.add("cari-buka");
+          var isianCari = kotak.querySelector("input");
+          if (isianCari) isianCari.focus();
+        }
+      });
+
+      window.addEventListener("hashchange", function () {
+        // Di ponsel, daftar Pengaturan Situs tidak dipakai (akses lewat popover roda gigi).
+        // Kalau alamatnya ke daftar itu (misalnya dari tombol kembali di form), arahkan ke Lini.
+        if (window.matchMedia("(max-width: 767px)").matches && location.hash === "#/collections/pengaturan") {
+          location.replace("#/collections/lini");
+          return;
+        }
+        var barCari = document.querySelector("#nc-root header");
+        if (barCari) barCari.classList.remove("cari-buka");
+        var popBuka = document.querySelector(".popover-roda");
+        if (popBuka) popBuka.hidden = true;
+        pasangRodaGigi();
+        pasangTabBawah();
+        if (location.hash.indexOf("/search/") !== -1) return;
+        var isian = document.querySelector("#nc-root header input");
+        if (!isian || isian.value === "") return;
+        var isiAsli = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
+        isiAsli.call(isian, "");
+        isian.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    })();
+  </script>
+  <script>
+    // Di komputer sendiri (localhost), admin memakai config lokal yang menulis ke file. Di situs live tidak berubah.
+    if (location.hostname === "localhost") {
+      document.querySelector('link[rel="cms-config-url"]').href = "/admin/config.local.yml";
+    }
+  </script>
   <script src="https://unpkg.com/decap-cms@3.17.0/dist/decap-cms.js"></script>
   <script>
     // Pratinjau memakai gaya situs, supaya isi terlihat seperti di halaman sebenarnya
     CMS.registerPreviewStyle('/assets/css/style.css');
+    CMS.registerPreviewStyle('/admin/preview.css');
+
+    // Slug dibuat otomatis dari judul, hanya untuk entri baru. Entri lama tidak diubah supaya alamat halamannya tetap sama.
+    function buatSlug(teks) {
+      return teks
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    // Data pilihan filter dan peta jenis → lini, dibuat saat build (pilihan-filter.json)
+    fetch("/admin/pilihan-filter.json", { cache: "no-cache" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        window.pilihanFilter = data;
+        window.jenisKeLini = {};
+        data.jenis.forEach(function (j) { window.jenisKeLini[j.slug] = j.lini; });
+      })
+      .catch(function () { window.jenisKeLini = null; });
+
+    CMS.registerEventListener({
+      name: "preSave",
+      handler: ({ entry }) => {
+        let data = entry.get("data");
+        if (!data.get("slug") && data.get("title")) {
+          data = data.set("slug", buatSlug(data.get("title")));
+        }
+        // Artikel (punya kolom tanggal): kalau lini dikosongkan, artikel otomatis dianggap umum (lintas lini)
+        if (data.has("tanggal")) {
+          data = data.set("lintas", !data.get("lini"));
+        }
+        // Produk: lini diisi otomatis dari jenis yang dipilih (jenis sudah terikat ke satu lini)
+        if (window.jenisKeLini && data.has("jenis") && !data.has("tanggal")) {
+          var lini = window.jenisKeLini[data.get("jenis")];
+          if (lini !== undefined) data = data.set("lini", lini);
+        }
+        return data;
+      },
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,5 @@
+---
+permalink: /admin/produk-thumbs.json
+eleventyExcludeFromCollections: true
+---
+[{% for p in collections.produk %}{"judul": {{ p.data.title | dump | safe }}, "foto": {{ (p.data.foto or "/assets/placeholder/foto-belum-tersedia.svg") | dump | safe }}}{% if not loop.last %},{% endif %}{% endfor %}]
