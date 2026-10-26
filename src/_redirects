@@ -1,3 +1,7 @@
 # URL artikel lama (sebelum dibuat bersih) dialihkan permanen ke URL baru
 /grosir-botol-kebumen/botol-plastik/cara-memilih-botol-plastik-untuk-kopi/  /artikel/cara-memilih-botol-plastik-untuk-kopi/  301
 /grosir-botol-kebumen/botol-plastik/botol-atau-toples-untuk-kue-lebaran/  /artikel/botol-atau-toples-untuk-kue-lebaran/  301
+
+# Lini Grosir Botol (slug lama dengan Kebumen) dialihkan ke slug baru
+/grosir-botol-kebumen  /grosir-botol/  301
+/grosir-botol-kebumen/*  /grosir-botol/:splat  301
