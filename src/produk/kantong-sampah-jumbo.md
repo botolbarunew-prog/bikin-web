@@ -1,7 +1,7 @@
 ---
 title: Kantong Sampah Jumbo
 slug: kantong-sampah-jumbo
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: kantong-plastik
 description: Kantong sampah jumbo ukuran 90 × 110 cm, tersedia dalam warna hitam dan orange, dijual per kilogram.
 spek: "Kantong plastik · Jumbo · 90×110 cm"

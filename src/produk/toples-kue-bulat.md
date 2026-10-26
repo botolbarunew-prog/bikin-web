@@ -1,7 +1,7 @@
 ---
 title: Toples Kue Bulat
 slug: toples-kue-bulat
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: toples
 description: Toples kue bulat bundar untuk kue lebaran, tersedia dalam ukuran 250 gram dan 500 gram.
 spek: "Toples plastik · Bulat · 250gr – 500gr"

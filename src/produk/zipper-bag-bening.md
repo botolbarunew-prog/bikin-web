@@ -1,7 +1,7 @@
 ---
 title: Zipper Bag Bening
 slug: zipper-bag-bening
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: kantong-plastik
 description: Zipper bag bening tersedia dalam ukuran portrait dan landscape, mulai 12×15 cm hingga 45×35 cm, dengan minimal pesanan 100 pcs.
 spek: "Zipper bag bening · 12×15 – 45×35 cm"

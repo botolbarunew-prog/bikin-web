@@ -1,7 +1,7 @@
 ---
 title: Botol Juice / Jus / Jamu
 slug: botol-juice
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: botol-plastik
 description: Botol Juice ukuran 500 ml dengan pilihan tutup putih dan hitam, bisa dipakai untuk kemasan juice, jus, jamu, dan sejenisnya.
 spek: "Botol plastik · 500ml"

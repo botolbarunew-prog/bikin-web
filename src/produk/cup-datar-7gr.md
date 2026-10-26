@@ -1,7 +1,7 @@
 ---
 title: Cup Starindo Datar 12–16 oz (7 gr)
 slug: cup-datar-7gr
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: cup-custom
 description: Cup Starindo datar ukuran 12, 14, dan 16 oz dengan berat 7 gram, termasuk sablon 2 sisi depan dan belakang.
 spek: "Cup plastik · 12–16 oz · 7 gr"

@@ -1,7 +1,7 @@
 ---
 title: Botol Almond
 slug: botol-almond
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: botol-plastik
 description: Botol Almond ukuran 250 ml dengan pilihan tutup putih dan hitam, untuk kemasan minuman dan cairan lainnya.
 spek: "Botol plastik · 250ml"

@@ -1,7 +1,7 @@
 ---
 title: Toples Tabung Tebal
 slug: toples-tabung-tebal
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: toples
 description: Toples tabung tebal tersedia dalam sembilan pilihan ukuran, dari 200 ml hingga 1300 ml.
 spek: "Toples plastik · 200ml – 1300ml"

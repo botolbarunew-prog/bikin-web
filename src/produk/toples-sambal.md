@@ -1,7 +1,7 @@
 ---
 title: Toples Sambal
 slug: toples-sambal
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: toples
 description: Toples sambal tersedia dalam ukuran 150 gram, 200 gram, 250 gram, dan 350 gram.
 spek: "Toples plastik · 150gr – 350gr"

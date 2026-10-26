@@ -1,7 +1,7 @@
 ---
 title: Zipper Bag Buram (Doff)
 slug: zipper-bag-buram
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: kantong-plastik
 description: Zipper bag buram (doff) tersedia dalam ukuran portrait dan landscape, mulai 12×15 cm hingga 45×35 cm, dengan minimal pesanan 100 pcs.
 spek: "Zipper bag buram · 12×15 – 45×35 cm"

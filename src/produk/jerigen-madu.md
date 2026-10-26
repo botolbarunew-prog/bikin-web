@@ -1,7 +1,7 @@
 ---
 title: Jerigen Madu
 slug: jerigen-madu
-lini: grosir-botol-kebumen
+lini: grosir-botol
 jenis: botol-plastik
 description: Jerigen Madu tersedia dalam ukuran 500 ml dan 1000 ml, untuk kemasan madu.
 spek: "Jerigen plastik · 500ml – 1L"
