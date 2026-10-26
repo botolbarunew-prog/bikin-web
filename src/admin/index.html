@@ -370,6 +370,14 @@
           b.classList.toggle("perlu-publish", b.textContent.trim() === "Publish");
           if (!b.title) b.title = b.textContent.trim();
         });
+        // Tombol "Check for Preview" di editor: jadi ikon saja di layar sedang, namanya jadi tooltip
+        document.querySelectorAll('[class*="PreviewButtonContainer"] button').forEach(function (b) {
+          if (!b.title) b.title = b.textContent.trim();
+        });
+        // Tab di bar atas (Contents, Media, Deployed): namanya jadi tooltip saat teksnya disembunyikan di layar sempit
+        document.querySelectorAll('#nc-root header nav a').forEach(function (a) {
+          if (!a.title) a.title = a.textContent.trim();
+        });
       }
 
       // Kolom cari dipindah dari sidebar ke bar atas, dan placeholder-nya dibuat lebih jelas.
@@ -430,7 +438,7 @@
           nav.innerHTML = tabBawah
             .map(function (t) {
               return (
-                '<a href="#/collections/' + t.k + '" data-testid="' + t.k + '">' +
+                '<a href="#/collections/' + t.k + '" data-testid="' + t.k + '" title="' + t.label + '">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + t.ikon + "</svg>" +
                 "<span>" + t.label + "</span></a>"
               );
@@ -531,6 +539,13 @@
           if (isianCari) isianCari.focus();
         }
       });
+
+      // Halaman Deploys tidak punya kolom cari. Kelas di <html> dipakai CSS untuk menyembunyikannya, termasuk saat halaman dimuat ulang.
+      function tandaiHalamanDeploy() {
+        document.documentElement.classList.toggle("tanpa-cari", /deploy/i.test(location.hash));
+      }
+      tandaiHalamanDeploy();
+      window.addEventListener("hashchange", tandaiHalamanDeploy);
 
       window.addEventListener("hashchange", function () {
         // Di ponsel, daftar Pengaturan Situs tidak dipakai (akses lewat popover roda gigi).
