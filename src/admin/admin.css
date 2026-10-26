@@ -1115,13 +1115,25 @@ body {
   }
 }
 
-/* Di bawah 400px nama tab (Contents, Media, Deployed) dan nama tab bawah (Lini, Jenis, dst) disembunyikan, ikonnya tetap. Nama tampil sebagai tooltip. */
-@media (max-width: 399px) {
-  #nc-root header nav a {
+/* Di bawah 399px tab atas (Contents, Media, Deployed) dan tab bawah jadi ikon saja, kecuali yang aktif (tetap berteks).
+   Nama tampil sebagai tooltip. Tiap ikon berada di kotak 44px agar pas di jari dan posisinya rata. */
+@media (max-width: 398px) {
+  #nc-root header nav a:not([aria-current="page"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tinggi-kontrol);
+    padding: 0;
     font-size: 0;
   }
 
-  .tab-bawah a span {
+  #nc-root header nav a:not([aria-current="page"]) svg {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+  }
+
+  .tab-bawah a:not([aria-current="page"]) span {
     font-size: 0;
   }
 }
