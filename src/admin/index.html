@@ -412,6 +412,8 @@
         tandaiPublish();
         pindahkanCari();
         pasangRodaGigi();
+        tandaiLabelIkon();
+        pasangMenuRingkas();
         pasangTabBawah();
         pasangPratinjau();
       }).observe(document.body, { childList: true, subtree: true });
@@ -540,6 +542,103 @@
         }
       });
 
+      // Contents dan Media dicari lewat teksnya di seluruh bar atas (bisa berupa tautan atau tombol, tergantung Decap).
+      function cariLabelKoleksi(header) {
+        return [].filter.call(header.querySelectorAll("a, button"), function (el) {
+          if (el.closest(".menu-koleksi, .menu-aksi, .popover-menu")) return false;
+          return /^(Contents|Media)$/.test(el.textContent.trim());
+        });
+      }
+
+      // Di layar 398px ke bawah, Contents dan Media jadi ikon saja (kecuali yang aktif). Tooltip dipasang di sini juga.
+      function tandaiLabelIkon() {
+        var header = document.querySelector("#nc-root header");
+        if (!header) return;
+        cariLabelKoleksi(header).forEach(function (el) {
+          el.classList.add("ikon-saja-398");
+          if (!el.title) el.title = el.textContent.trim();
+        });
+      }
+
+      // Di layar sangat sempit (349px ke bawah), Contents dan Media disatukan jadi tombol Koleksi,
+      // dan cari serta roda gigi disatukan jadi tombol titik tiga. Isinya tautan dan aksi yang sama dengan aslinya.
+      // Tombol ini hanya tampil lewat CSS di layar sempit, jadi di layar lebar tidak terlihat.
+      function pasangMenuRingkas() {
+        var header = document.querySelector("#nc-root header");
+        var nav = header && header.querySelector("nav");
+        var aksi = header && header.querySelector('[class*="AppHeaderActions"]');
+        if (!nav || !aksi) return;
+        if (!nav.querySelector(".menu-koleksi")) {
+          var koleksi = document.createElement("div");
+          koleksi.className = "menu-koleksi";
+          koleksi.innerHTML =
+            '<button type="button" class="menu-pemicu" aria-label="Koleksi" title="Koleksi" aria-expanded="false">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg></button>' +
+            '<div class="popover-menu" hidden></div>';
+          nav.insertBefore(koleksi, nav.firstChild);
+          var isiKoleksi = koleksi.querySelector(".popover-menu");
+          cariLabelKoleksi(header).forEach(function (el) {
+            el.classList.add("ada-di-menu");
+            isiKoleksi.appendChild(buatItemMenu(el.textContent.trim(), el));
+          });
+        }
+        if (!aksi.querySelector(".menu-aksi")) {
+          var menuAksi = document.createElement("div");
+          menuAksi.className = "menu-aksi";
+          menuAksi.innerHTML =
+            '<button type="button" class="menu-pemicu" aria-label="Cari dan pengaturan" title="Cari dan pengaturan" aria-expanded="false">' +
+            '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>' +
+            '<div class="popover-menu" hidden><button type="button" class="menu-item menu-cari">Cari</button>' +
+            '<button type="button" class="menu-item" data-aksi="pengaturan">Pengaturan Situs</button></div>';
+          aksi.insertBefore(menuAksi, aksi.lastElementChild);
+        }
+      }
+
+      // Item di popover menu ringkas. Contents dan Media diteruskan ke tombol aslinya (klik ditiru), supaya Decap tetap menanganinya.
+      function buatItemMenu(label, asli) {
+        var item = document.createElement("button");
+        item.type = "button";
+        item.className = "menu-item";
+        item.textContent = label;
+        item._asli = asli;
+        return item;
+      }
+
+      // Klik tombol menu ringkas membuka atau menutup popovernya. Klik di luar menu menutup semuanya.
+      document.addEventListener("click", function (e) {
+        var pemicu = e.target.closest(".menu-pemicu");
+        var item = e.target.closest("#nc-root header .menu-item");
+        document.querySelectorAll("#nc-root header .popover-menu").forEach(function (p) {
+          if (!pemicu || p !== pemicu.parentElement.querySelector(".popover-menu")) p.hidden = true;
+        });
+        if (pemicu) {
+          var pop = pemicu.parentElement.querySelector(".popover-menu");
+          var bukaSekarang = pop.hidden;
+          pop.hidden = !bukaSekarang;
+          pemicu.setAttribute("aria-expanded", String(bukaSekarang));
+          if (bukaSekarang) {
+            // Item Contents/Media menandai halaman yang sedang dibuka, sama seperti tombol aslinya
+            pop.querySelectorAll(".menu-item").forEach(function (it) {
+              it.classList.toggle("aktif", !!(it._asli && it._asli.hasAttribute("aria-current")));
+            });
+          }
+          return;
+        }
+        if (!item) return;
+        if (item._asli) {
+          item._asli.click();
+        } else if (item.classList.contains("menu-cari")) {
+          var bar = document.querySelector("#nc-root header");
+          bar.classList.add("cari-buka");
+          var isianCari = bar.querySelector('[class*="SearchContainer"] input');
+          if (isianCari) isianCari.focus();
+        } else if (item.getAttribute("data-aksi") === "pengaturan") {
+          // Dari roda gigi: buka halaman Pengaturan dulu, jangan langsung ke form. Penanda ini membuat pengalihan ke Lini dilewati.
+          window.dariRodaGigi = true;
+          location.hash = "#/collections/pengaturan";
+        }
+      });
+
       // Halaman Deploys tidak punya kolom cari. Kelas di <html> dipakai CSS untuk menyembunyikannya, termasuk saat halaman dimuat ulang.
       function tandaiHalamanDeploy() {
         document.documentElement.classList.toggle("tanpa-cari", /deploy/i.test(location.hash));
@@ -550,7 +649,10 @@
       window.addEventListener("hashchange", function () {
         // Di ponsel, daftar Pengaturan Situs tidak dipakai (akses lewat popover roda gigi).
         // Kalau alamatnya ke daftar itu (misalnya dari tombol kembali di form), arahkan ke Lini.
-        if (window.matchMedia("(max-width: 767px)").matches && location.hash === "#/collections/pengaturan") {
+        // Kecuali saat datang dari roda gigi, yang memang membuka halaman Pengaturan.
+        var dariRoda = window.dariRodaGigi;
+        window.dariRodaGigi = false;
+        if (!dariRoda && window.matchMedia("(max-width: 767px)").matches && location.hash === "#/collections/pengaturan") {
           location.replace("#/collections/lini");
           return;
         }

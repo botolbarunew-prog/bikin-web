@@ -1118,6 +1118,21 @@ body {
 /* Di bawah 399px tab atas (Contents, Media, Deployed) dan tab bawah jadi ikon saja, kecuali yang aktif (tetap berteks).
    Nama tampil sebagai tooltip. Tiap ikon berada di kotak 44px agar pas di jari dan posisinya rata. */
 @media (max-width: 398px) {
+  #nc-root header .ikon-saja-398:not([aria-current="page"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tinggi-kontrol);
+    padding: 0;
+    font-size: 0;
+  }
+
+  #nc-root header .ikon-saja-398:not([aria-current="page"]) svg {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+  }
+
   #nc-root header nav a:not([aria-current="page"]) {
     display: inline-flex;
     align-items: center;
@@ -1315,6 +1330,136 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   /* Publish (ada perubahan belum diterbitkan, kelas perlu-publish dari index.html): ikon panah ke atas */
   #nc-root [class*="ToolbarContainer"] [class*="StyledDropdownButton"].perlu-publish::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M14 3v5h5'/%3E%3Cpath d='M16 14v6M13 17l3-3 3 3'/%3E%3C/svg%3E");
+  }
+}
+
+/* Menu ringkas (dibuat lewat index.html): di layar sangat sempit, Contents dan Media jadi satu tombol Koleksi,
+   dan cari serta roda gigi jadi satu tombol titik tiga. Di layar lebih lebar tombol ini disembunyikan. */
+.menu-koleksi,
+.menu-aksi {
+  display: none;
+  position: relative;
+}
+
+#nc-root header .menu-pemicu {
+  width: var(--tinggi-kontrol);
+  height: var(--tinggi-kontrol);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sudut-kontrol);
+  background: transparent;
+  color: var(--teks-redup);
+  cursor: pointer;
+}
+
+.menu-pemicu svg {
+  width: 20px;
+  height: 20px;
+}
+
+.popover-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 70;
+  min-width: 200px;
+  padding: var(--jarak-1) 0;
+  background: var(--permukaan);
+  border: 1px solid var(--garis-tipis);
+  border-radius: var(--sudut-kartu);
+  box-shadow: 0 4px 12px rgba(10, 25, 47, 0.08);
+}
+
+/* Tombol Koleksi ada di kiri bar, jadi popovernya dibuka ke kanan agar tidak terpotong layar */
+#nc-root header .menu-koleksi .popover-menu {
+  left: 0;
+  right: auto;
+}
+
+#nc-root header .popover-menu .menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  border: 0;
+  background: transparent;
+  color: var(--teks);
+  font-family: "Instrument Sans", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#nc-root header .popover-menu .menu-item.aktif {
+  background: var(--latar);
+}
+
+@media (max-width: 348px) {
+  #nc-root header .ada-di-menu,
+  #nc-root header .roda-gigi,
+  #nc-root header [class*="SearchContainer"] {
+    display: none !important;
+  }
+
+  #nc-root header .menu-koleksi,
+  #nc-root header .menu-aksi {
+    display: inline-flex;
+  }
+
+  /* Cari dari menu titik tiga: kolom cari melebar di atas bar, sama seperti saat ikon cari disentuh */
+  #nc-root header.cari-buka [class*="SearchContainer"] {
+    display: flex !important;
+    position: absolute;
+    top: 10px;
+    left: var(--jarak-2);
+    right: var(--jarak-2);
+    z-index: 60;
+    width: auto;
+    flex: none;
+    margin: 0;
+  }
+
+  #nc-root header.cari-buka [class*="SearchContainer"] input {
+    width: 100%;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0 var(--jarak-2) 0 40px;
+  }
+
+  /* Di bawah 349px, bar bawah hanya ikon, termasuk menu yang aktif (tooltip tetap ada) */
+  .tab-bawah a[aria-current="page"] span {
+    font-size: 0;
+  }
+}
+
+/* 399–483px: bar atas ponsel dibiarkan membungkus. Contents, Media, dan Deployed turun ke baris kedua (seperti bawaan Decap).
+   Aturan tinggi 64px dan nowrap di blok ponsel dilepas khusus di rentang ini. */
+@media (min-width: 399px) and (max-width: 483px) {
+  #nc-root header {
+    height: auto;
+    min-height: 64px;
+    max-height: none;
+    padding-block: var(--jarak-1);
+  }
+
+  #nc-root header > div {
+    flex-wrap: wrap;
+    row-gap: var(--jarak-1);
+  }
+
+  #nc-root header nav {
+    flex-wrap: wrap;
+    row-gap: var(--jarak-1);
+  }
+
+  #nc-root header nav a {
+    white-space: normal;
   }
 }
 
