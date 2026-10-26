@@ -375,8 +375,9 @@
           if (!b.title) b.title = b.textContent.trim();
         });
         // Tab di bar atas (Contents, Media, Deployed): namanya jadi tooltip saat teksnya disembunyikan di layar sempit
+        // Selalu diperbarui: teks Deployed bisa berubah jadi Building, dan tooltip harus ikut berubah
         document.querySelectorAll('#nc-root header nav a').forEach(function (a) {
-          if (!a.title) a.title = a.textContent.trim();
+          a.title = a.textContent.trim();
         });
       }
 
@@ -559,6 +560,14 @@
           el.classList.add("ikon-saja-398", "ada-di-menu");
           if (!el.title) el.title = el.textContent.trim();
         });
+        // Deployed tidak punya ikon sendiri (hanya titik status), jadi diberi ikon awan. Ikon ini hanya tampil saat tidak aktif.
+        var deploy = header.querySelector('a[href*="deploy"]');
+        if (deploy && !deploy.querySelector(".ikon-deploy")) {
+          deploy.insertAdjacentHTML(
+            "afterbegin",
+            '<svg class="ikon-deploy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>'
+          );
+        }
       }
 
       // Di layar sangat sempit (349px ke bawah), Contents dan Media disatukan jadi tombol Koleksi,

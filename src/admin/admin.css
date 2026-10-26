@@ -1127,7 +1127,9 @@ body {
     font-size: 0;
   }
 
-  #nc-root header .ikon-saja-398:not([aria-current="page"]) svg {
+  #nc-root header .ikon-saja-398:not([aria-current="page"]) svg,
+  #nc-root header a[href*="deploy"]:not([aria-current="page"]) .ikon-deploy {
+    display: block;
     width: 20px;
     height: 20px;
     flex: 0 0 20px;
@@ -1333,6 +1335,11 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   }
 }
 
+/* Ikon awan Deployed hanya dipakai di layar sempit (lihat blok 398px) */
+#nc-root header .ikon-deploy {
+  display: none;
+}
+
 /* Menu ringkas (dibuat lewat index.html): di layar sangat sempit, Contents dan Media jadi satu tombol Koleksi,
    dan cari serta roda gigi jadi satu tombol titik tiga. Di layar lebih lebar tombol ini disembunyikan. */
 .menu-koleksi,
@@ -1425,7 +1432,13 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
+    height: 100%;
     gap: var(--jarak-1);
+  }
+
+  #nc-root header nav li {
+    display: flex;
+    align-items: center;
   }
 
   /* Cari dari menu titik tiga: kolom cari melebar di atas bar, sama seperti saat ikon cari disentuh */
