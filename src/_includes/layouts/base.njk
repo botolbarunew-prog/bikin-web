@@ -50,11 +50,12 @@
       </label>
 
       <nav class="site-nav" aria-label="Menu utama">
+        <div class="menu-isi">
         <a href="/"{% if page.url == "/" %} aria-current="page"{% endif %}>Beranda</a>
 
         <div class="dropdown">
-          <button type="button" class="dropdown-tombol" aria-haspopup="true">Unit Bisnis</button>
-          <div class="dropdown-panel">
+          <button type="button" class="dropdown-tombol" aria-expanded="false" aria-controls="unit-bisnis-panel">Unit Bisnis</button>
+          <div class="dropdown-panel" id="unit-bisnis-panel">
             <ul>
               {% for g in site.divisi %}
                 {% for slug in g.units %}
@@ -71,7 +72,10 @@
         <a href="/katalog/"{% if page.url == "/katalog/" %} aria-current="page"{% endif %}>Katalog Produk</a>
         <a href="/artikel/"{% if page.url == "/artikel/" %} aria-current="page"{% endif %}>Artikel &amp; Panduan</a>
         <a href="/tentang-kami/"{% if page.url == "/tentang-kami/" %} aria-current="page"{% endif %}>Tentang Kami</a>
-        <a class="btn-header" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}" target="_blank" rel="noopener">Hubungi Kami</a>
+        </div>
+        <div class="menu-bawah">
+          <a class="btn-header" href="https://wa.me/{{ site.whatsapp_1.number }}?text={{ site.pesanDefault | urlencode }}" target="_blank" rel="noopener">Hubungi Kami</a>
+        </div>
       </nav>
     </div>
   </header>
@@ -117,5 +121,6 @@
   </a>
   <script src="/assets/js/gambar.js" defer></script>
   <script src="/assets/js/layanan.js" defer></script>
+  <script src="/assets/js/menu.js" defer></script>
 </body>
 </html>

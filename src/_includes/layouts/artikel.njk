@@ -113,7 +113,6 @@ layout: layouts/base.njk
 </article>
 
 {% set artikelSerupa = collections.artikel | whereIncludes("data.jenis", jenis[0]) | exclude(page.url) %}
-{% if artikelSerupa.length %}
 <section class="related">
   <div class="bagian-judul">
     <h2>Artikel terkait</h2>
@@ -121,13 +120,16 @@ layout: layouts/base.njk
       <a class="tombol-outline tombol-kecil" href="/artikel/">Lihat semua</a>
     {% endif %}
   </div>
-  <div class="grid">
-    {% for a in artikelSerupa | limit(3) %}
-      {{ kartuArtikel(a) }}
-    {% endfor %}
-  </div>
+  {% if artikelSerupa.length %}
+    <div class="grid">
+      {% for a in artikelSerupa | limit(3) %}
+        {{ kartuArtikel(a) }}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="related-kosong">Belum ada artikel terkait untuk topik ini.</p>
+  {% endif %}
 </section>
-{% endif %}
 
 <script>
   document.querySelectorAll('[data-salin]').forEach(function (b) {

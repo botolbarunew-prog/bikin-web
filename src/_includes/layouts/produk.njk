@@ -158,50 +158,39 @@ layout: layouts/base.njk
 {% set produkSejenis = produkSemua | limit(3) %}
 {% set artikelSemua = collections.artikel | whereIncludes("data.jenis", jenis) %}
 {% set artikelTerkait = artikelSemua | limit(3) %}
-{% set produkLintasTampil = collections.produk | whereIn("data.slug", produkLintas or []) | limit(2) %}
 
-{% if produkSejenis.length or artikelTerkait.length or produkLintasTampil.length %}
 <section class="related">
+  <div class="bagian-judul">
+    <h2>Produk sejenis</h2>
+    {% if produkSemua.length > 3 %}
+      <a class="tombol-outline tombol-kecil" href="{{ jenisObj.url }}">Lihat semua</a>
+    {% endif %}
+  </div>
   {% if produkSejenis.length %}
-    <div class="bagian-judul">
-      <h2>Produk sejenis</h2>
-      {% if produkSemua.length > 3 %}
-        <a class="tombol-outline tombol-kecil" href="{{ jenisObj.url }}">Lihat semua</a>
-      {% endif %}
-    </div>
     <div class="grid">
       {% for p in produkSejenis %}
         {{ kartuProduk(p, liniObj.data.title) }}
       {% endfor %}
     </div>
+  {% else %}
+    <p class="related-kosong">Belum ada produk sejenis.</p>
   {% endif %}
 
+  <div class="bagian-judul">
+    <h2>Artikel terkait</h2>
+    {% if artikelSemua.length > 3 %}
+      <a class="tombol-outline tombol-kecil" href="/artikel/">Lihat semua</a>
+    {% endif %}
+  </div>
   {% if artikelTerkait.length %}
-    <div class="bagian-judul">
-      <h2>Artikel terkait</h2>
-      {% if artikelSemua.length > 3 %}
-        <a class="tombol-outline tombol-kecil" href="/artikel/">Lihat semua</a>
-      {% endif %}
-    </div>
     <div class="grid">
       {% for a in artikelTerkait %}
         {{ kartuArtikel(a) }}
       {% endfor %}
     </div>
-  {% endif %}
-
-  {% if produkLintasTampil.length %}
-    <div class="bagian-judul">
-      <h2>Dari lini lain</h2>
-    </div>
-    <div class="grid">
-      {% for p in produkLintasTampil %}
-        {% set liniLain = collections.lini | find("data.slug", p.data.lini) %}
-        {{ kartuProduk(p, liniLain.data.title) }}
-      {% endfor %}
-    </div>
+  {% else %}
+    <p class="related-kosong">Belum ada artikel terkait.</p>
   {% endif %}
 </section>
-{% endif %}
 
 <script src="/assets/js/produk.js" defer></script>
