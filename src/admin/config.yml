@@ -134,7 +134,6 @@ collections:
             fields:
               - {label: "Nama opsi", name: nama, widget: string, hint: "Misal: 500ml atau putih"}
               - {label: "Gambar opsi", name: gambar, widget: image, required: false, hint: "Isi jika tampilan gambar"}
-      - {label: "Produk dari lini lain (opsional)", name: produkLintas, widget: relation, collection: produk, multiple: true, required: false, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Isi halaman", name: body, widget: markdown, required: false}
 
   - name: artikel

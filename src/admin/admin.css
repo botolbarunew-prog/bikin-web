@@ -151,7 +151,7 @@ body,
 
 #nc-root header a[aria-current="page"] {
   color: var(--teks);
-  background: var(--latar);
+  background: var(--penanda-aktif);
 }
 
 /* Tombol Quick add dan Published: hitam, teks dan panah sejajar */
@@ -232,7 +232,7 @@ body,
 
 /* Level judul yang aktif di menu Headings: latar abu, teks tebal, tanda centang di kanan (seperti item terpilih di Sort by) */
 #nc-root [class*="dropdownItem"][aria-pressed="true"] {
-  background: var(--latar);
+  background: var(--penanda-aktif);
   font-weight: 600;
 }
 
@@ -245,7 +245,7 @@ body,
 
 /* Format yang aktif di posisi kursor: tombol berlatar abu dan teks hitam tebal */
 #nc-root [class*="StyledToolbarButton"][aria-pressed="true"] {
-  background: var(--garis-tipis);
+  background: var(--penanda-aktif);
   color: var(--teks);
   font-weight: 700;
 }
@@ -453,7 +453,7 @@ body,
 #nc-root aside a[aria-current="page"] {
   color: var(--teks);
   font-weight: 600;
-  background: var(--latar);
+  background: var(--penanda-aktif);
   border: 0;
 }
 
@@ -1093,7 +1093,7 @@ body {
     position: absolute;
     top: 10px;
     left: var(--jarak-2);
-    right: 104px;
+    right: 120px;
     width: auto;
     flex: none;
     margin: 0;
@@ -1355,6 +1355,45 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   }
 }
 
+/* Tab atas tidak dibuat pudar. Tidak aktif: hitam, berat 500. Aktif: berat 600 dengan latar penanda abu (--penanda-aktif). */
+#nc-root header nav a,
+#nc-root header nav button,
+#nc-root header nav a span,
+#nc-root header nav button span {
+  color: var(--teks);
+}
+
+#nc-root header nav a,
+#nc-root header nav button {
+  font-weight: 500;
+}
+
+#nc-root header nav a[aria-current="page"],
+#nc-root header nav button[aria-current="page"] {
+  font-weight: 600;
+  background: var(--penanda-aktif);
+}
+
+/* Status Deployed dan Building: warna sama dengan tabel Deploys (hijau dan cokelat), berlaku untuk teks dan titik */
+#nc-root header nav a.status-deployed,
+#nc-root header nav a.status-deployed span {
+  color: #005614;
+}
+
+#nc-root header nav a.status-building,
+#nc-root header nav a.status-building span {
+  color: #754E00;
+}
+
+#nc-root header nav a[class*="status-"] [class*="DotIcon"] {
+  background-color: currentColor !important;
+}
+
+/* Roket saat tidak aktif tetap hitam, sama seperti ikon Contents dan Media (warna status hanya di teks dan bullet) */
+#nc-root header nav a .ikon-deploy {
+  color: var(--teks) !important;
+}
+
 /* Ikon awan Deployed hanya dipakai di layar sempit (lihat blok 398px) */
 #nc-root header .ikon-deploy {
   display: none;
@@ -1431,7 +1470,7 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
 }
 
 #nc-root header .popover-menu .menu-item.aktif {
-  background: var(--latar);
+  background: var(--penanda-aktif);
 }
 
 @media (max-width: 348px) {
@@ -1505,14 +1544,36 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     font-size: 0;
   }
 
-  .tab-bawah {
+  /* Pakai nav.tab-bawah agar menang atas aturan dasar di bawah (yang tinggi 80px dan padding 16px) */
+  nav.tab-bawah {
     height: 56px;
   }
 
-  .tab-bawah a {
+  nav.tab-bawah a {
     gap: 0;
     padding-top: 0;
     justify-content: center;
+  }
+
+  /* Hanya ikon: teks dibuang dari tata letak, dan penanda aktif berpusat di sekeliling ikon */
+  nav.tab-bawah a span {
+    display: none;
+  }
+
+  nav.tab-bawah a::before {
+    top: 50%;
+    left: 50%;
+    width: 48px;
+    height: 32px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 16px;
+    background: transparent;
+  }
+
+  /* Hanya tab yang aktif yang diberi latar */
+  nav.tab-bawah a[aria-current="page"]::before {
+    background: var(--penanda-aktif);
   }
 }
 
@@ -1564,7 +1625,7 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   #nc-root header [class*="AppHeaderActions"] {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: var(--jarak-1);
   }
 
   #nc-root header [class*="StyledDropdownButton"] {
@@ -1592,6 +1653,12 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   #nc-root header .roda-gigi,
   #nc-root header [class*="AvatarDropdownButton"] {
     cursor: pointer;
+  }
+
+  /* Profil: lingkaran 32px di tengah kotak 44px, sama seperti roda gigi di sebelah kirinya */
+  #nc-root header [class*="AvatarDropdownButton"] svg {
+    width: 32px;
+    height: 32px;
   }
 
   #nc-root header .roda-gigi {
@@ -1714,8 +1781,8 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
 
   #nc-root header [class*="SearchContainer"] svg,
   #nc-root header .roda-gigi svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     stroke-width: 2;
   }
 
@@ -1724,6 +1791,12 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     flex: 0 0 var(--tinggi-kontrol);
     width: var(--tinggi-kontrol);
     margin: 0 0 0 auto;
+  }
+
+  /* Ikon cari 20px, sama dengan ikon lain di kanan bar */
+  #nc-root header [class*="SearchContainer"] svg {
+    width: 20px;
+    height: 20px;
   }
 
   #nc-root header [class*="SearchContainer"] input {
@@ -1739,7 +1812,7 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     position: absolute;
     top: 10px;
     left: var(--jarak-2);
-    right: 104px;
+    right: 120px;
     width: auto;
     flex: none;
     margin: 0;
@@ -1853,7 +1926,7 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   }
 
   #nc-root aside a[aria-current="page"]::before {
-    background: var(--latar);
+    background: var(--penanda-aktif);
   }
 
   /* Jenis Produk tampil sebagai "Jenis" di ponsel. Teks asli Decap disembunyikan, lalu diganti dengan teks ini. */
@@ -2146,7 +2219,7 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
   }
 
   .tab-bawah a[aria-current="page"]::before {
-    background: var(--latar);
+    background: var(--penanda-aktif);
   }
 
   /* Tab yang diketuk tidak diberi tepi hitam. Tepi tetap muncul hanya untuk navigasi keyboard. */
@@ -2172,10 +2245,16 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     order: 1;
   }
 
-  /* Pilihan list/grid tetap di kanan, sejajar Sort by di kiri. Di halaman Pengaturan Situs disembunyikan. */
+  /* Pilihan list/grid tetap di kanan, sejajar Sort by di kiri, dan tidak turun ke baris baru. */
   #nc-root [class*="CollectionControlsContainer"] > [class*="ViewControlsSection"] {
     order: 2;
     margin-left: auto;
+    flex: 0 0 auto;
+    width: auto;
+  }
+
+  #nc-root [class*="CollectionControlsContainer"] > [class*="StyledWrapper"]:not(.filter-asli) {
+    flex: 0 0 auto;
   }
 
   #nc-root .filter-pasangan {
@@ -2184,6 +2263,13 @@ html.tanpa-cari #nc-root header [class*="SearchContainer"] {
     grid-template-columns: 1fr 1fr;
     gap: var(--jarak-1);
     width: 100%;
+  }
+
+  /* Di layar sangat sempit (300px ke bawah), filter Lini dan Jenis turun satu per baris */
+  @media (max-width: 300px) {
+    #nc-root .filter-pasangan {
+      grid-template-columns: 1fr;
+    }
   }
 
   #nc-root .filter-dd,

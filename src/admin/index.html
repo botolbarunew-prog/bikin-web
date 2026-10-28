@@ -559,9 +559,20 @@
         cariLabelKoleksi(header).forEach(function (el) {
           el.classList.add("ikon-saja-398", "ada-di-menu");
           if (!el.title) el.title = el.textContent.trim();
+          // Media tidak punya penanda aktif dari Decap, jadi ditandai sendiri saat alamatnya #/media
+          if (el.textContent.trim() === "Media") {
+            if (/^#\/media/.test(location.hash)) el.setAttribute("aria-current", "page");
+            else el.removeAttribute("aria-current");
+          }
         });
         // Deployed tidak punya ikon sendiri (hanya titik status), jadi diberi ikon awan. Ikon ini hanya tampil saat tidak aktif.
         var deploy = header.querySelector('a[href*="deploy"]');
+        if (deploy) {
+          // Warna status sama dengan tabel Deploys: hijau untuk Deployed, cokelat untuk Building
+          var sedangBuild = /Building/i.test(deploy.textContent);
+          deploy.classList.toggle("status-building", sedangBuild);
+          deploy.classList.toggle("status-deployed", !sedangBuild);
+        }
         if (deploy && !deploy.querySelector(".ikon-deploy")) {
           deploy.insertAdjacentHTML(
             "afterbegin",
@@ -598,7 +609,7 @@
           menuAksi.className = "menu-aksi";
           menuAksi.innerHTML =
             '<button type="button" class="menu-pemicu" aria-label="Cari dan pengaturan" title="Cari dan pengaturan" aria-expanded="false">' +
-            '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>' +
+            '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>' +
             '<div class="popover-menu" hidden><button type="button" class="menu-item menu-cari">Cari</button>' +
             '<button type="button" class="menu-item" data-aksi="pengaturan">Pengaturan Situs</button></div>';
           aksi.insertBefore(menuAksi, aksi.lastElementChild);
