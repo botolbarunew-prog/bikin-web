@@ -48,6 +48,7 @@
 
 body {
   margin: 0;
+  overflow-x: clip;
   font-family: var(--font-ui);
   font-size: 1rem;
   line-height: 1.65;
@@ -97,6 +98,9 @@ ul, ol { margin: 0; }
 }
 
 main.wrap { padding-block: var(--sp-7) var(--sp-8); }
+
+/* Di beranda, pita hero langsung di bawah header. Tidak ada jarak kosong di atasnya */
+main.wrap:has(.hero) { padding-top: 0; }
 
 .badge-mono,
 .spek,
@@ -170,7 +174,7 @@ main.wrap { padding-block: var(--sp-7) var(--sp-8); }
   left: 0;
   z-index: 999;
   flex-direction: column;
-  padding: 80px var(--sp-4) var(--sp-6);
+  padding: 0 var(--sp-4);
   background: #0A192F;
   overflow-y: auto;
 }
@@ -184,14 +188,45 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 .site-header .brand { position: relative; z-index: 1000; }
 
 
-/* Di HP: tombol Hubungi Kami selalu di dasar menu */
-@media (max-width: 899px) {
-  .site-nav .btn-header { margin-top: auto; }
-  .site-nav > a:not(.btn-header) { font-size: 1.25rem; }
+/* Menu hamburger (bukan satu baris): tombol Hubungi Kami selalu di dasar menu. Kelas menu-lebar dipasang script saat menu muat di header */
+/* Menu hamburger: bagian atas (sejajar logo dan tombol X) dan bagian bawah (Hubungi Kami) tetap di tempat. Hanya daftar di tengah yang digulir */
+/* Overlay mulai tepat di bawah header, jadi scrollbar tidak menimpa logo atau tombol X.
+   Hanya daftar menu (.menu-isi) yang digulir. Scrollbar-nya berhenti di atas tombol Hubungi Kami */
+html:not(.menu-lebar) .site-nav {
+  top: 64px;
+  padding-top: 0;
+  overflow: hidden;
 }
 
+html:not(.menu-lebar) .menu-isi {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0 calc(-1 * var(--sp-4));
+  padding: 0 var(--sp-4);
+  overflow-y: auto;
+}
+
+html:not(.menu-lebar) .menu-isi > * { flex-shrink: 0; }
+
+html:not(.menu-lebar) .menu-bawah {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin: auto calc(-1 * var(--sp-4)) 0;
+  padding: var(--sp-4) var(--sp-4) var(--sp-6);
+  background: #0A192F;
+}
+
+html:not(.menu-lebar) .menu-bawah .btn-header { margin-top: 0; }
+
+html.menu-lebar .menu-isi,
+html.menu-lebar .menu-bawah { display: contents; }
+html:not(.menu-lebar) .site-nav > .menu-isi > a:not(.btn-header) { font-size: 1.25rem; }
+
 /* Di HP: tautan utama 1.125rem dengan area sentuh 44px. Urutannya: tautan utama, unit bisnis, lalu tombol pesan. */
-.site-nav > a:not(.btn-header),
+.site-nav > .menu-isi > a:not(.btn-header),
 .dropdown-tombol {
   display: flex;
   align-items: center;
@@ -211,30 +246,29 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 
 /* Hover hanya untuk perangkat dengan kursor. Di HP, status hover setelah ketukan akan tertinggal dan terlihat seperti garis aktif. */
 @media (hover: hover) {
-  .site-nav > a:hover { border-bottom-color: var(--yellow-bright); }
+  .site-nav > .menu-isi > a:hover { border-bottom-color: var(--yellow-bright); }
+  /* Menu hamburger: hover sama dengan daftar lini, yaitu latar navy-800 tanpa garis */
+  html:not(.menu-lebar) .site-nav > .menu-isi > a:not(.btn-header):hover,
+  html:not(.menu-lebar) .dropdown-tombol:hover { background: var(--navy-800); border-bottom-color: transparent; }
 }
 
 /* Menu aktif: hanya garis kuning, tanpa latar */
-.site-nav > a[aria-current="page"] { border-bottom-color: var(--yellow-bright); }
+.site-nav > .menu-isi > a[aria-current="page"] { border-bottom-color: var(--yellow-bright); }
 
-/* Desktop: garis kuning sejajar dengan dasar tombol Hubungi Kami. Semua item setinggi 44px dan sejajar tengah dengan tombol. */
-@media (min-width: 900px) {
-  .site-nav > a:not(.btn-header),
-  .dropdown-tombol,
-  .site-nav .btn-header {
-    height: 44px;
-    padding-block: 0;
-    box-sizing: border-box;
-  }
-
-  .site-nav > a:hover { border-bottom-color: rgba(255, 255, 255, .4); }
-
-  .site-nav > a[aria-current="page"]:hover { border-bottom-color: var(--yellow-bright); }
-
-  .dropdown { display: flex; }
-
-  .dropdown:has(a[aria-current="page"]) > .dropdown-tombol { border-bottom-color: var(--yellow-bright); }
+/* Menu satu baris (kelas menu-lebar): garis kuning sejajar dengan dasar tombol Hubungi Kami. Semua item setinggi 44px */
+html.menu-lebar .site-nav > .menu-isi > a:not(.btn-header),
+html.menu-lebar .dropdown-tombol,
+html.menu-lebar .site-nav .btn-header {
+  height: 44px;
+  padding-block: 0;
+  box-sizing: border-box;
 }
+
+html.menu-lebar .site-nav > .menu-isi > a:hover { border-bottom-color: rgba(255, 255, 255, .4); }
+
+html.menu-lebar .site-nav > .menu-isi > a[aria-current="page"]:hover { border-bottom-color: var(--yellow-bright); }
+
+html.menu-lebar .dropdown:has(a[aria-current="page"]) > .dropdown-tombol { border-bottom-color: var(--yellow-bright); }
 
 
 /* Label grup unit bisnis di HP tidak bisa diklik, hanya penanda kelompok */
@@ -269,54 +303,66 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 .dropdown-panel a:hover,
 .dropdown-panel a[aria-current="page"] { background: var(--navy-800); }
 
-/* Di HP, "Unit Bisnis" setara dengan menu utama (Beranda, Katalog, dst). Unit-unitnya menjadi sub-menu di bawahnya. */
-@media (max-width: 899px) {
-  .dropdown-tombol {
-    min-height: 44px;
-    padding: var(--sp-3) var(--sp-2);
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0;
-    text-transform: none;
-    color: #fff;
-  }
-
-  .dropdown-panel {
-    margin-left: var(--sp-2);
-    padding: 0 0 var(--sp-3) var(--sp-4);
-    border-left: 1px solid rgba(255, 255, 255, .15);
-  }
-
-  .dropdown-panel a {
-    min-height: 44px;
-    padding: var(--sp-2) var(--sp-3);
-    font-size: .9375rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, .85);
-  }
+/* Menu hamburger (bukan satu baris): "Unit Bisnis" setara dengan menu utama. Unit-unitnya menjadi sub-menu yang bisa dibuka dan ditutup */
+html:not(.menu-lebar) .dropdown-tombol {
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--sp-3) var(--sp-2);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
 }
 
-/* Di HP, menu aktif (termasuk unit bisnis yang aktif) ditandai garis kecil kuning di sisi kiri, tanpa garis bawah dan latar.
-   Garisnya memakai ::before, bukan box-shadow, karena box-shadow menimbulkan garis tipis di bawah item di Chrome. */
-@media (max-width: 899px) {
-  .site-nav > a[aria-current="page"],
-  .dropdown-panel a[aria-current="page"] {
-    position: relative;
-    background: none;
-    border-bottom-color: transparent;
-    border-radius: 0;
-  }
+html:not(.menu-lebar) .dropdown-tombol::after {
+  content: "";
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .15s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  .site-nav > a[aria-current="page"]::before,
-  .dropdown-panel a[aria-current="page"]::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--yellow-bright);
-  }
+html:not(.menu-lebar) .dropdown.terbuka > .dropdown-tombol::after { transform: translateY(2px) rotate(-135deg); }
+
+html:not(.menu-lebar) .dropdown:not(.terbuka) > .dropdown-panel { display: none; }
+
+html:not(.menu-lebar) .dropdown-panel {
+  margin-left: var(--sp-2);
+  /* 11px, bukan 12px: jarak teks lini terakhir ke "Katalog Produk" pas 40px */
+  padding: 0 0 11px var(--sp-4);
+  border-left: 1px solid rgba(255, 255, 255, .15);
+}
+
+html:not(.menu-lebar) .dropdown-panel a {
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: .9375rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, .85);
+}
+
+/* Menu hamburger: menu aktif (termasuk unit bisnis yang aktif) cukup dibedakan dengan teks kuning dan lebih tebal. Tanpa garis, tanpa latar */
+html:not(.menu-lebar) .site-nav > .menu-isi > a[aria-current="page"],
+html:not(.menu-lebar) .dropdown-panel a[aria-current="page"] {
+  background: none;
+  border-bottom-color: transparent;
+  border-radius: 0;
+  color: var(--yellow-bright);
+  font-weight: 700;
+}
+
+html:not(.menu-lebar) .site-nav > .menu-isi > a[aria-current="page"]::before,
+html:not(.menu-lebar) .dropdown-panel a[aria-current="page"]::before {
+  content: none;
+  background: var(--yellow-bright);
 }
 
 .btn-header {
@@ -338,10 +384,26 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 
 /* ---------- 4. Footer ---------- */
 .site-footer {
+  position: relative;
+  isolation: isolate;
   margin-top: 0;
   background: var(--navy-900);
   color: #CBD5E1;
   font-size: .875rem;
+}
+
+/* Lengkung navy di atas footer, sama seperti lengkung hero. Kotak form yang turun sampai footer tertutup lengkung ini */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -32px;
+  left: 0;
+  width: 100%;
+  /* 1px masuk ke badan footer, supaya tidak ada celah putih di tepi bawah lengkung */
+  height: 33px;
+  background: var(--navy-900);
+  border-radius: 50% 50% 0 0 / 32px 32px 0 0;
+  z-index: -1;
 }
 
 /* Dua kolom footer: kiri berisi nama dan kontak, kanan berisi form. Keduanya rata atas. */
@@ -406,6 +468,35 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 .footer-pembeli .footer-judul { margin: 0 0 var(--sp-3); }
 
 /* Beranda: judul dan kalimat pengantar tiap bagian rata tengah. Isi bagian tetap rata kiri. */
+/* Kata yang berganti di judul artikel: sudut 4px sesuai aturan badge, warna dari latar dan aksen lini */
+.kata-ganti {
+  display: inline-block;
+  vertical-align: baseline;
+  padding: 0 var(--sp-2);
+  border-radius: var(--radius-ui);
+  /* Sedikit lebih lembut dari judul di sekitarnya (700), supaya kata ini terasa sebagai bagian yang berganti */
+  font-weight: 500;
+  /* Tanpa fade: teks langsung berganti, latar dan lebarnya yang bergerak halus.
+     Tidak boleh turun baris saat lebar sedang berubah, supaya bullet tidak ikut naik */
+  white-space: nowrap;
+  transition: width .5s var(--ease), background-color .5s var(--ease), color .5s var(--ease);
+}
+
+/* Bullet kecil di kiri kata. Warnanya ikut warna teks, yaitu aksen lini */
+.kata-ganti::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--sp-2);
+  vertical-align: middle;
+  border-radius: var(--radius-ui);
+  background: currentColor;
+}
+
+/* Jarak antar seksi 64px, sama dengan seksi lain di beranda */
+.judul-tengah { margin-top: var(--sp-8); }
+
 .judul-tengah > h2,
 .judul-tengah > .lead {
   text-align: center;
@@ -426,7 +517,7 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 }
 
 .judul-tengah .grid > *,
-.judul-tengah .langkah-list > li { flex: 0 1 300px; max-width: 100%; }
+.judul-tengah .langkah-list > li { flex: 1 1 0; max-width: 360px; }
 
 /* Layar kecil: kartu selebar konten, sejajar dengan kolom pencarian dan form */
 @media (max-width: 599px) {
@@ -434,16 +525,9 @@ body:has(.menu-check:checked) .wa-float { display: none; }
   .judul-tengah .langkah-list > li { flex-basis: 100%; }
 }
 
-.judul-tengah .produk-cari input {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
 .judul-tengah .filter-baris { justify-content: center; }
 .judul-tengah .produk-kosong { text-align: center; }
-.judul-tengah .langkah-list li { align-items: center; text-align: center; }
+.judul-tengah .langkah-list li { align-items: center; justify-content: center; text-align: center; }
 
 /* Form beranda: lebar penuh seperti sebelumnya, teks dan label rata kiri */
 .layanan-penuh .form-pembeli input,
@@ -460,34 +544,270 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 .hero-visual { margin: 0; }
 .hero-visual .placeholder { aspect-ratio: 1 / 1; border-radius: var(--radius-card); }
 
+/* Cover flow lini di hero: satu kartu di tengah, yang lain miring di kiri dan kanan. Posisinya diatur lewat --d (jarak dari kartu aktif) */
+.cf {
+  position: relative;
+  overflow: hidden;
+  perspective: 1000px;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* Tinggi area mengikuti lebar kartu (kartu persegi ditambah ruang untuk judul), jadi di HP dan layar lebar jaraknya ke titik tetap pas */
+.cf-jalur {
+  position: relative;
+  height: 0;
+  /* Ruang untuk judul lini: 40px, cukup untuk judul 8px di bawah kartu, sehingga titik-titik tidak terlalu jauh */
+  padding-bottom: calc(56% + 40px);
+}
+
+.cf-kartu {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 56%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  color: var(--navy-900);
+  text-decoration: none;
+  transform: translateX(calc(-50% + var(--d, 0) * 55%)) rotateY(calc(var(--d, 0) * -40deg)) scale(calc(1 - var(--abs, 0) * .12));
+  opacity: calc(1 - var(--abs, 0) * .3);
+  z-index: calc(10 - var(--abs, 0));
+  transition: transform .5s cubic-bezier(0.4, 0, 0.2, 1), opacity .5s cubic-bezier(0.4, 0, 0.2, 1), border-color .15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cf-kartu.cf-jauh { opacity: 0; pointer-events: none; }
+
+.cf-kartu .foto {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.cf-kartu .foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Judul ditaruh di bawah kartu, rata tengah. Tetap ikut bergerak bersama kartunya */
+.cf-judul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--sp-2);
+  /* Hanya judul kartu aktif yang terlihat. Kartu belakang tidak menampilkan judul sama sekali */
+  opacity: calc(1 - var(--abs, 0));
+  transition: opacity .5s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #fff;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.cf-kartu:hover {
+  border-color: #1E3A8A;
+  box-shadow: 0 4px 12px rgba(10, 25, 47, .08);
+}
+
+.cf-kartu:focus-visible { outline: 2px solid #F59E0B; outline-offset: 2px; }
+
+/* Penanda di bawah cover flow: titik, yang aktif lebih panjang dan kuning */
+.cf-titik {
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.cf-titik button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.cf-titik button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: var(--radius-ui);
+  background: #94A3B8;
+  transition: width .15s cubic-bezier(0.4, 0, 0.2, 1), margin .15s cubic-bezier(0.4, 0, 0.2, 1), background .15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cf-titik button[aria-current="true"]::before {
+  width: 24px;
+  margin: -4px 0 0 -12px;
+  background: var(--yellow-bright);
+}
+
+.cf-titik button:focus-visible { outline: 2px solid #F59E0B; outline-offset: 2px; }
+
+/* Pengguna yang mengatur gerak dikurangi: kartu langsung berpindah, tanpa animasi dan tanpa putar otomatis */
+@media (prefers-reduced-motion: reduce) {
+  .cf-kartu { transition: none; }
+}
+
 @media (min-width: 900px) {
   .hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-8); }
+}
+
+/* Di HP urutannya: label, judul, visual lini, lalu paragraf dan tombol. Di desktop tetap dua kolom */
+@media (max-width: 899px) {
+  .hero-grid { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .hero-teks { display: contents; }
+
+  /* Judul, paragraf, dan tombol rata tengah di HP. Visual tetap selebar layar */
+  /* Jarak antar kelompok 32px (judul, visual, lalu paragraf dan tombol). Di dalam kelompok 8 sampai 16px */
+  .hero p.eyebrow { order: 1; max-width: none; margin: var(--sp-2) auto; text-align: center; }
+  .hero h1 { order: 2; margin: 0 auto var(--sp-6); text-align: center; }
+  .hero-visual { order: 3; margin: 0 0 var(--sp-6); }
+  .hero-lead { order: 4; margin: 0 auto var(--sp-4); text-align: center; }
+  /* Dua tombol hero selebar kolom teks dan bertumpuk, dengan jarak 16px. Lebarnya sama supaya terbaca sebagai satu pasangan */
+  .hero .hero-aksi { order: 5; flex-direction: column; align-items: center; margin: 0; }
+  .hero .hero-aksi > * { width: 240px; max-width: 100%; flex: none; }
 }
 
 /* Produk di beranda: pencarian, filter jenis, dan daftar terbatas */
 .produk-beranda { margin-top: 64px; }
 
-.produk-cari { margin-top: var(--sp-4); }
+.produk-beranda > h2 { text-wrap: balance; }
+
+/* Lebarnya diatur script di beranda, sesuai lebar judul di atasnya */
+.produk-beranda .produk-cari { max-width: 100%; }
+
+/* Kolom cari: lebarnya sama dengan judul di atasnya. Awalnya tanpa kotak, hanya ikon dan teks yang mengetik */
+.produk-cari {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  width: 100%;
+  max-width: 640px;
+  min-height: 44px;
+  margin: var(--sp-4) auto 0;
+  /* Saat dituju dari tombol "Lihat produk", kolom cari berada di bawah header, dengan sedikit jarak */
+  scroll-margin-top: 88px;
+  border: 1.5px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color .35s var(--ease), background-color .35s var(--ease);
+}
+
+/* Terbuka: kotak putih muncul, teks mengetik hilang, dan kolom isian melebar dengan animasi */
+.produk-cari.terbuka {
+  border-color: var(--border-subtle);
+  background: var(--bg-surface);
+  cursor: text;
+}
+
+.cari-tombol {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--navy-900);
+  cursor: pointer;
+}
+
+.cari-tombol:focus-visible {
+  outline: 2px solid var(--yellow-accent);
+  outline-offset: 2px;
+}
+
+.cari-ketik {
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--text-muted);
+  transition: max-width .35s var(--ease), opacity .2s var(--ease);
+}
+
+.produk-cari.terbuka .cari-ketik { max-width: 0; opacity: 0; }
+
+/* Tombol X untuk menghapus teks pencarian. Kursornya berubah jadi tangan saat didekatkan */
+.cari-hapus {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color .15s var(--ease);
+}
+
+.cari-hapus:hover { color: var(--navy-900); }
+
+.cari-hapus[hidden] { display: none; }
+
+.cari-hapus:focus-visible {
+  outline: 2px solid var(--yellow-accent);
+  outline-offset: 2px;
+}
+
+/* Kursor ketik yang berkedip di belakang teks yang mengetik */
+.cari-ketik::after {
+  content: "|";
+  margin-left: 2px;
+  color: var(--navy-700);
+  animation: kedip-kursor 1s steps(1) infinite;
+}
+
+@keyframes kedip-kursor {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cari-ketik::after { animation: none; }
+}
 
 .produk-cari input {
-  width: 100%;
-  max-width: 480px;
-  min-height: 44px;
-  padding: var(--sp-2) var(--sp-3);
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 0;
+  text-align: center;
+  height: 44px;
+  padding: 0;
+  opacity: 0;
   font: inherit;
   font-size: 1rem;
   color: var(--navy-900);
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-subtle);
-  border-radius: 4px;
-  transition: border-color .15s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  border: 0;
+  outline: none;
+  transition: max-width .35s var(--ease), opacity .25s var(--ease), padding .35s var(--ease);
 }
 
-.produk-cari input:hover { border-color: var(--navy-700); }
+.produk-cari.terbuka input {
+  max-width: 100%;
+  padding: 0 var(--sp-3) 0 0;
+  opacity: 1;
+}
 
-.produk-cari input:focus-visible {
-  outline: 2px solid var(--yellow-accent);
-  outline-offset: 2px;
+/* Tombol X bawaan browser disembunyikan, supaya hanya tombol X dari situs yang tampil */
+.produk-cari input::-webkit-search-cancel-button,
+.produk-cari input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
 }
 
 .filter-baris {
@@ -576,13 +896,17 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 .lini-berjalan {
   overflow: hidden;
   margin-top: var(--sp-5);
+  /* Tepi kiri dan kanan memudar, supaya kartu yang terpotong terlihat masih berlanjut */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
 }
 
 .lini-jalur {
   display: flex;
   gap: var(--sp-3);
   width: max-content;
-  animation: lini-jalan 32s linear infinite;
+  /* Durasi disesuaikan dengan lebar kartu yang baru, supaya kecepatan geraknya tetap sama */
+  animation: lini-jalan 46s linear infinite;
 }
 
 /* Salinan kedua dipakai agar putaran terlihat mulus, dan tidak ikut dibaca pembaca layar */
@@ -598,8 +922,8 @@ body:has(.menu-check:checked) .wa-float { display: none; }
 
 /* Semua kartu lini setinggi sama. Orientasi bergantian: ganjil tegak (A), genap melebar (B). */
 .lini-kartu {
-  flex: 0 0 200px;
-  height: 320px;
+  flex: 0 0 min(320px, 72vw);
+  height: 440px;
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
@@ -616,7 +940,11 @@ body:has(.menu-check:checked) .wa-float { display: none; }
   overflow: hidden;
 }
 
-.lini-kartu:nth-child(2n) { flex-basis: 300px; }
+.lini-kartu:nth-child(2n) { flex-basis: min(400px, 90vw); }
+
+@media (max-width: 599px) {
+  .lini-kartu { height: 380px; }
+}
 
 .lini-kartu h3 {
   margin: 0;
@@ -629,24 +957,54 @@ body:has(.menu-check:checked) .wa-float { display: none; }
   color: var(--text-muted);
 }
 
-/* Pengguna yang mengatur gerak dikurangi: kartu tidak berjalan, cukup digeser manual */
+/* Pengguna yang mengatur gerak dikurangi: kartu tidak berjalan, digeser manual ke kiri atau kanan.
+   Ukuran kartu dibuat supaya sekitar 2-3 lini terlihat sekaligus. Salinan kedua tetap ada agar bisa diputar (lihat script di beranda). */
 @media (prefers-reduced-motion: reduce) {
-  .lini-jalur { animation: none; width: auto; }
-  .lini-berjalan { overflow-x: auto; }
-  .lini-salinan { display: none; }
+  .lini-jalur { animation: none; }
+  .lini-berjalan {
+    overflow-x: auto;
+    /* Scroll bar disembunyikan. Geser dengan sentuhan atau trackpad tetap bisa */
+    scrollbar-width: none;
+  }
+  .lini-berjalan::-webkit-scrollbar { display: none; }
+  .lini-salinan { display: contents; }
+  .lini-kartu,
+  .lini-kartu:nth-child(2n) {
+    flex: 0 0 min(320px, calc((100vw - 56px) / 2.5));
+    height: 320px;
+  }
 }
 
 /* Bagian Layanan Pembeli di beranda: form lengkap, terang, di atas footer */
 .layanan-penuh {
-  padding-block: 64px;
-  margin-top: 64px;
+  /* Kotak ini dipanjangkan 48px ke bawah, sehingga bagian bawahnya tertutup latar navy footer */
+  padding-block: 64px 112px;
+  margin: 64px 0 -48px;
   background: var(--bg-surface);
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
   scroll-margin-top: 96px;
 }
 
 .layanan-penuh .wrap { max-width: 640px; }
+
+/* Di HP, form punya kotak putih sendiri: tidak selebar layar, dengan sudut membulat dan isi yang diberi jarak dari tepinya */
+@media (max-width: 899px) {
+  .layanan-penuh {
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    padding-inline: var(--sp-card);
+  }
+}
+
+/* Form naik dari bawah saat digulir ke sana, dan turun lagi saat digulir ke atas (diatur oleh script di beranda) */
+.layanan-penuh.siap-muncul {
+  transform: translateY(48px);
+  opacity: 0;
+  transition: transform .9s var(--ease), opacity .9s var(--ease);
+}
+
+.layanan-penuh.siap-muncul.muncul {
+  transform: none;
+  opacity: 1;
+}
 
 .layanan-penuh h2 { margin: 0 0 var(--sp-2); }
 .layanan-penuh .lead { margin: 0 auto var(--sp-5); }
@@ -670,12 +1028,14 @@ body:has(.menu-check:checked) .wa-float { display: none; }
   width: 44px;
   height: 44px;
   color: var(--navy-900);
-  border: 1.5px solid var(--navy-900);
+  /* Garis dan latar sama dengan kartu artikel. Sudut tetap 4px sesuai aturan tombol */
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-ui);
-  transition: background .15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color .15s var(--ease), transform .15s var(--ease);
 }
 
-.artikel-lihat:hover { background: var(--placeholder); }
+.artikel-lihat:hover { border-color: var(--navy-700); transform: translateY(-2px); }
 
 .artikel-lihat:focus-visible {
   outline: 2px solid var(--yellow-accent);
@@ -1317,12 +1677,32 @@ button,
 .kartu-lini .badge { align-self: flex-start; margin-top: auto; }
 
 /* ---------- 9. Beranda ---------- */
+/* Hero: pita navy selebar layar dengan tepi bawah melengkung lembut. Teks putih di atas pita */
 .hero {
-  background: var(--navy-900);
+  position: relative;
+  isolation: isolate;
   color: #fff;
-  border-radius: var(--radius-card);
-  padding: var(--sp-7) var(--sp-5);
-  margin-bottom: var(--sp-7);
+  padding-block: var(--sp-8) var(--sp-4);
+  /* Jarak ke seksi berikutnya 64px dari ujung lengkung (lengkung 32px ikut di bawah hero) */
+  margin-bottom: calc(var(--sp-8) + 32px);
+}
+
+/* Pita navy selebar halaman (pembungkus .hero-pita). Lebarnya 100% dari pembungkus, jadi tidak ikut terhitung lebar scroll bar */
+.hero-pita {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-pita::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: -32px;
+  left: calc((100% - var(--lebar-halaman, 100vw)) / 2);
+  width: var(--lebar-halaman, 100vw);
+  background: var(--navy-900);
+  border-radius: 0 0 50% 50% / 0 0 32px 32px;
+  z-index: -1;
 }
 
 .hero .eyebrow {
@@ -1844,18 +2224,41 @@ button,
   flex-direction: column;
   gap: var(--sp-2);
   padding: var(--sp-card);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  /* Kartu navy dengan teks putih, supaya langkah pemesanan terasa sebagai bagian penting */
+  color: #fff;
+  background: var(--navy-900);
+  border: 1px solid var(--navy-900);
   border-radius: var(--radius-card);
 }
 
 .langkah-no {
   font-family: var(--font-mono);
   font-weight: 600;
-  color: var(--navy-700);
+  color: var(--yellow-bright);
 }
 
+/* Kartu langkah memudar pelan di tempat. Saat masuk layar muncul kiri ke kanan, saat keluar layar memudar kanan ke kiri (diatur script di beranda) */
+.langkah-list.siap-muncul li {
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+}
+
+.langkah-list.siap-muncul li:nth-child(1) { transition-delay: .4s; }
+.langkah-list.siap-muncul li:nth-child(2) { transition-delay: .2s; }
+.langkah-list.siap-muncul li:nth-child(3) { transition-delay: 0s; }
+
+.langkah-list.siap-muncul.muncul li { opacity: 1; }
+.langkah-list.siap-muncul.muncul li:nth-child(1) { transition-delay: 0s; }
+.langkah-list.siap-muncul.muncul li:nth-child(2) { transition-delay: .2s; }
+.langkah-list.siap-muncul.muncul li:nth-child(3) { transition-delay: .4s; }
+
 .related { margin-top: var(--sp-8); }
+
+/* Keterangan saat bagian terkait belum punya isi */
+.related-kosong {
+  margin: var(--sp-3) 0 0;
+  color: var(--text-muted);
+}
 
 /* ---------- 12. Halaman artikel & prose ---------- */
 .artikel-head { margin-bottom: var(--sp-6); }
@@ -1997,81 +2400,94 @@ button,
 
 /* ---------- 13. Responsif ---------- */
 @media (min-width: 720px) {
-  .hero { padding: var(--sp-8) var(--sp-7); }
+  .hero { padding-block: var(--sp-8) var(--sp-4); }
   .lini-hero { grid-template-columns: 1fr 1fr; }
 }
 
 @media (min-width: 900px) {
-  .menu-btn { display: none; }
+  /* Di desktop, dua tombol hero berdampingan dengan lebar yang sama */
+  .hero .hero-aksi > * { flex: 0 0 200px; width: 200px; }
 
-  .site-nav {
-    display: flex;
-    position: static;
-    overflow: visible;
-    padding-top: 0;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--sp-1);
-    padding: 0;
-    background: transparent;
-    border: 0;
-  }
+}
 
-  .site-nav > a { font-size: 1rem; }
+/* Menu satu baris (kelas menu-lebar, dipasang script saat menu muat di header dan tidak menabrak logo) */
+html.menu-lebar .menu-btn { display: none; }
 
-  .dropdown { position: relative; order: 0; }
+html.menu-lebar .site-nav {
+  display: flex;
+  position: static;
+  overflow: visible;
+  padding-top: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
 
-  .dropdown-tombol {
-    pointer-events: auto;
-    padding: 0 var(--sp-2);
-    min-height: 44px;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: normal;
-    text-transform: none;
-    color: #fff;
-  }
+html.menu-lebar .site-nav > .menu-isi > a { font-size: 1rem; }
 
-  .dropdown-tombol::after {
-    content: "";
-    margin-left: var(--sp-2);
-    width: 6px;
-    height: 6px;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(45deg) translateY(-2px);
-  }
+/* Menu tidak boleh turun baris */
+html.menu-lebar .site-nav > .menu-isi > a,
+html.menu-lebar .dropdown-tombol,
+html.menu-lebar .site-nav .btn-header,
+html.menu-lebar .site-header .brand { white-space: nowrap; }
 
-  /* Hover dan fokus sama dengan menu lain (garis putih tipis); kuning hanya untuk menu aktif */
-  .dropdown:hover > .dropdown-tombol,
-  .dropdown:focus-within > .dropdown-tombol { border-bottom-color: rgba(255, 255, 255, .4); }
+html.menu-lebar .dropdown { display: flex; position: relative; order: 0; }
 
-  .dropdown-panel {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    z-index: 50;
-    min-width: 280px;
-    padding: var(--sp-3);
-    background: var(--navy-900);
-    border: 1px solid rgba(255, 255, 255, .14);
-    border-radius: var(--radius-card);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
-  }
+html.menu-lebar .dropdown-tombol {
+  pointer-events: auto;
+  padding: 0 var(--sp-2);
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  color: #fff;
+}
 
-  /* Panel unit bisnis muncul saat kursor atau fokus keyboard ada di tombolnya */
-  .dropdown:hover > .dropdown-panel,
-  .dropdown:focus-within > .dropdown-panel { display: block; }
+html.menu-lebar .dropdown-tombol::after {
+  content: "";
+  margin-left: var(--sp-2);
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+/* Hover dan fokus sama dengan menu lain (garis putih tipis); kuning hanya untuk menu aktif */
+html.menu-lebar .dropdown:hover > .dropdown-tombol,
+html.menu-lebar .dropdown:focus-within > .dropdown-tombol { border-bottom-color: rgba(255, 255, 255, .4); }
+
+html.menu-lebar .dropdown-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  min-width: 280px;
+  padding: var(--sp-3);
+  background: var(--navy-900);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+}
+
+/* Panel unit bisnis muncul saat kursor atau fokus keyboard ada di tombolnya */
+html.menu-lebar .dropdown:hover > .dropdown-panel,
+html.menu-lebar .dropdown:focus-within > .dropdown-panel { display: block; }
+
+html.menu-lebar .btn-header { width: auto; min-height: 40px; margin: 0 0 0 var(--sp-3); padding: var(--sp-2) var(--sp-4); }
+
+html.menu-lebar .site-header .bar { min-height: 72px; }
+
+@media (min-width: 900px) {
 
   /* Hak cipta di kiri, Syarat dan Privasi di kanan; ruang di kanan dijaga agar tidak tertutup tombol WA */
   .footer-bawah { justify-content: space-between; padding-right: 88px; }
 
-  /* Tombol header desktop lebih kecil, sejajar dengan tautan menu */
-  .btn-header { width: auto; min-height: 40px; margin: 0 0 0 var(--sp-3); padding: var(--sp-2) var(--sp-4); }
-
-  /* Bilah header lebih lega di desktop */
-  .site-header .bar { min-height: 72px; }
 
   .footer-grid { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: var(--sp-8); }
   .footer-pembeli { justify-self: end; }
@@ -2084,7 +2500,7 @@ button,
 }
 
 @media (max-width: 599px) {
-  .hero { padding: var(--sp-6) var(--sp-4); }
+  .hero { padding-block: var(--sp-6); }
   main.wrap { padding-top: var(--sp-6); }
 
   /* Footer HP: satu kolom, profil di atas lalu form */
@@ -2096,6 +2512,5 @@ button,
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition: none !important;
-    transform: none !important;
   }
 }
