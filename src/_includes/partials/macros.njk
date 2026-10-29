@@ -17,10 +17,19 @@
 </nav>
 {%- endmacro %}
 
+{# Foto dengan versi WebP (dibuat saat build dari foto upload). Foto asli dipakai sebagai cadangan. #}
+{% macro fotoWebp(src, alt) -%}
+{% set webp = src | webpSrc %}
+<picture>
+  {% if webp %}<source srcset="{{ webp }}" type="image/webp">{% endif %}
+  <img src="{{ src }}" alt="{{ alt }}" loading="lazy" decoding="async" width="800" height="800">
+</picture>
+{%- endmacro %}
+
 {# Gambar dengan fallback. Jika belum ada foto, tampil placeholder teknis (ikon garis navy dan label mono). #}
 {% macro gambar(src, alt, label) -%}
 {% if src %}
-<img src="{{ src }}" alt="{{ alt }}" loading="lazy" decoding="async" width="800" height="800">
+{{ fotoWebp(src, alt) }}
 {% else %}
 <div class="placeholder" role="img" aria-label="{{ alt or 'Foto belum tersedia' }}">
   <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
