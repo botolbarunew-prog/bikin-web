@@ -1,7 +1,7 @@
 ---
 layout: layouts/base.njk
 ---
-{% from "partials/macros.njk" import kartuProduk, kartuArtikel, breadcrumb, gambar %}
+{% from "partials/macros.njk" import kartuProduk, kartuArtikel, breadcrumb, gambar, fotoWebp %}
 {% set liniObj = collections.lini | find("data.slug", lini) %}
 {% set jenisObj = collections.jenis | find("data.slug", jenis) %}
 {% set nomor = lini | waFor(site) %}
@@ -48,19 +48,19 @@ layout: layouts/base.njk
           {% for o in g.opsi %}
             {% if o.gambar %}
               <figure class="slide" data-src="{{ o.gambar }}">
-                <img src="{{ o.gambar }}" alt="{{ title }}, {{ g.nama }} {{ o.nama }}" loading="lazy" width="800" height="800">
+                {{ fotoWebp(o.gambar, title + ", " + g.nama + " " + o.nama) }}
               </figure>
             {% endif %}
           {% endfor %}
         {% endfor %}
         {% if fotoUtama %}
           <figure class="slide" data-src="{{ fotoUtama }}">
-            <img src="{{ fotoUtama }}" alt="{{ title }}" loading="lazy" width="800" height="800">
+            {{ fotoWebp(fotoUtama, title) }}
           </figure>
         {% endif %}
         {% for g in galeri %}
           <figure class="slide" data-src="{{ g }}">
-            <img src="{{ g }}" alt="{{ title }} (foto {{ loop.index }})" loading="lazy" width="800" height="800">
+            {{ fotoWebp(g, title + " (foto " + loop.index + ")") }}
           </figure>
         {% endfor %}
         {% if not fotoUtama and not (galeri and galeri.length) %}
