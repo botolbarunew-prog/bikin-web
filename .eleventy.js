@@ -21,6 +21,33 @@ module.exports = function (eleventyConfig) {
     fs.writeFileSync(path.join(dir.output, "admin", "config.local.yml"), lokal);
   });
 
+  // Foto upload (JPG/PNG) dibuat versi WebP saat build: lebar maksimal 1200px, kualitas 80.
+  // Foto asli tetap ada di situs sebagai cadangan. Fullscreen produk memakai foto asli (data-src).
+  eleventyConfig.on("eleventy.after", async ({ dir }) => {
+    const fs = require("fs");
+    const path = require("path");
+    const sharp = require("sharp");
+    const asal = "src/assets/uploads";
+    if (!fs.existsSync(asal)) return;
+    const tujuan = path.join(dir.output, "assets", "uploads");
+    fs.mkdirSync(tujuan, { recursive: true });
+    const berkas = fs.readdirSync(asal).filter((n) => /\.(jpe?g|png)$/i.test(n));
+    await Promise.all(
+      berkas.map((n) =>
+        sharp(path.join(asal, n))
+          .rotate()
+          .resize({ width: 1200, withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toFile(path.join(tujuan, n.replace(/\.(jpe?g|png)$/i, ".webp")))
+      )
+    );
+  });
+
+  // Alamat versi WebP dari alamat foto asli. Kosong jika bukan JPG/PNG (misalnya placeholder SVG)
+  eleventyConfig.addFilter("webpSrc", (s = "") =>
+    /\.(jpe?g|png)$/i.test(String(s)) ? String(s).replace(/\.(jpe?g|png)$/i, ".webp") : ""
+  );
+
   eleventyConfig.addGlobalData("year", () => new Date().getFullYear());
   // Alamat situs: SITE_URL (diisi di Cloudflare saat pakai domain sendiri),
   // lalu URL bawaan Cloudflare Pages, lalu alamat cadangan
