@@ -226,16 +226,23 @@ permalink: /
     function bukaCari() {
       if (wadahCari.classList.contains('terbuka')) return;
       clearTimeout(jedaKetik);
-      wadahCari.classList.add('terbuka');
+      // Teks yang sedang mengetik memudar sendiri, lalu kotak melebar dan kolom isian muncul
+      ubahKeadaan(true);
       tombolCari.setAttribute('aria-expanded', 'true');
       cari.focus();
     }
 
     function tutupCari() {
       if (cari.value !== '' || document.activeElement === cari) return;
-      wadahCari.classList.remove('terbuka');
+      ubahKeadaan(false);
       tombolCari.setAttribute('aria-expanded', 'false');
-      mulaiKetik();
+      if (!gerakCari) { mulaiKetik(); return; }
+      // Teks tampil utuh selama kotak melebar (0,35 detik), lalu diam sebentar sebelum mulai menghapus dan mengetik lagi
+      clearTimeout(jedaKetik);
+      ketikCari.textContent = kataCari;
+      jumlahHuruf = kataCari.length;
+      arahKetik = -1;
+      jedaKetik = setTimeout(langkahKetik, 700);
     }
 
     // Tombol X: muncul saat kolom berisi teks, dan menghapus teksnya
@@ -323,18 +330,58 @@ permalink: /
     aturLebarHalaman();
     window.addEventListener('resize', aturLebarHalaman);
 
-    // Kolom cari di beranda selebar judul di atasnya (baris terpanjang, termasuk saat judul turun baris)
+    // Kolom cari di beranda: saat tertutup, lebarnya mengikuti isinya (lewat CSS). Saat terbuka, selebar judul di atasnya (baris terpanjang, termasuk saat judul turun baris)
     var judulProduk = document.querySelector('.produk-beranda > h2');
     var kolomCari = document.querySelector('.produk-beranda .produk-cari');
-    function aturLebarCari() {
-      if (!judulProduk || !kolomCari) return;
+    function lebarJudul() {
       var rentang = document.createRange();
       rentang.selectNodeContents(judulProduk);
-      kolomCari.style.width = rentang.getBoundingClientRect().width + 'px';
+      return rentang.getBoundingClientRect().width;
+    }
+    function aturLebarCari() {
+      if (!judulProduk || !kolomCari) return;
+      if (!wadahCari.classList.contains('terbuka')) { kolomCari.style.width = ''; return; }
+      kolomCari.style.width = lebarJudul() + 'px';
     }
     aturLebarCari();
     window.addEventListener('resize', aturLebarCari);
     if (document.fonts) document.fonts.ready.then(aturLebarCari);
+
+    // Buka atau tutup kolom cari. Lebarnya dianimasikan dari lebar sekarang ke lebar tujuan (selebar judul saat buka, mengikuti isi saat tutup)
+    // Lebar kotak tertutup dihitung dari ikon, teks kalimat penuh, dan kursor (tanpa menunggu transisi teks)
+    var ukurKetik = document.createElement('canvas').getContext('2d');
+    function lebarTertutup() {
+      var gayaKetik = window.getComputedStyle(ketikCari);
+      ukurKetik.font = gayaKetik.fontWeight + ' ' + gayaKetik.fontSize + ' ' + gayaKetik.fontFamily;
+      var teks = ukurKetik.measureText(kataCari).width + ukurKetik.measureText('|').width + 2;
+      return 44 + 8 + Math.min(200, teks) + 12 + 3;
+    }
+
+    var jedaLebar = null;
+    function ubahKeadaan(buka) {
+      if (!gerakCari || !judulProduk || !kolomCari) {
+        wadahCari.classList.toggle('terbuka', buka);
+        aturLebarCari();
+        return;
+      }
+      var dari = kolomCari.getBoundingClientRect().width;
+      wadahCari.classList.toggle('terbuka', buka);
+      var ke = buka ? lebarJudul() : lebarTertutup();
+      kolomCari.style.transition = 'none';
+      kolomCari.style.width = dari + 'px';
+      kolomCari.getBoundingClientRect();
+      kolomCari.style.transition = 'width .35s cubic-bezier(0.4, 0, 0.2, 1)';
+      kolomCari.style.width = ke + 'px';
+      // Selama animasi, isi yang lebih lebar dari kotak (teks dan contoh di kolom isian) dipotong, tidak keluar dari kotak
+      kolomCari.style.overflow = 'hidden';
+      clearTimeout(jedaLebar);
+      jedaLebar = setTimeout(function () {
+        kolomCari.style.transition = '';
+        kolomCari.style.overflow = '';
+        if (!buka) kolomCari.style.width = '';
+        if (buka) aturContohCari();
+      }, 350);
+    }
 
     // Judul artikel: satu kata berganti sesuai lini (kata dan warnanya mengikuti warna lini). Tidak berganti jika gerak dikurangi.
     var kataGanti = document.querySelector('[data-kata-ganti]');
