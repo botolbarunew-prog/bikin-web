@@ -59,7 +59,8 @@
       b.className = "thumb";
       b.setAttribute("aria-label", "Lihat foto " + (i + 1) + " dari " + jumlah);
       var img = document.createElement("img");
-      img.src = src;
+      // Thumbnail memakai versi WebP yang lebih kecil (dibuat saat build)
+      img.src = src.replace(/\.(jpe?g|png)$/i, ".webp");
       img.alt = "";
       img.loading = "lazy";
       b.appendChild(img);
