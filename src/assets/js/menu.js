@@ -23,12 +23,12 @@
   var html = document.documentElement;
   var bar = document.querySelector('.site-header .bar');
   var brand = document.querySelector('.site-header .brand');
-  var nav = document.querySelector('.site-nav');
-  if (!bar || !brand || !nav) return;
+  var isi = document.querySelector('.site-nav .menu-isi');
+  if (!bar || !brand || !isi) return;
 
   function aturMenuLebar() {
     html.classList.add('menu-lebar');
-    var muat = bar.scrollWidth <= bar.clientWidth && nav.getBoundingClientRect().left - brand.getBoundingClientRect().right >= 24;
+    var muat = bar.scrollWidth <= bar.clientWidth && isi.getBoundingClientRect().left - brand.getBoundingClientRect().right >= 24;
     html.classList.toggle('menu-lebar', muat);
   }
 

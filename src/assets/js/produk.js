@@ -291,7 +291,7 @@
         var grup = input.getAttribute("data-grup");
         var index = input.getAttribute("data-index");
 
-        pilihan.push(grup + " " + input.value);
+        pilihan.push(grup + ": " + input.value);
 
         var hasil = document.querySelector('[data-hasil="' + index + '"]');
         if (hasil) hasil.textContent = input.value;
@@ -308,7 +308,7 @@
     }
 
     var teks = dasar;
-    if (pilihan.length) teks += " Pilihan: " + pilihan.join(", ") + ".";
+    if (pilihan.length) teks += " " + pilihan.join(", ") + ".";
     teks += " Bisa info stok dan harga grosirnya?";
 
     tombolPesan.setAttribute("href", "https://wa.me/" + nomor + "?text=" + encodeURIComponent(teks));
