@@ -7,6 +7,10 @@ layout: layouts/base.njk
 
 {{ breadcrumb([{"name": "Beranda", "url": "/"}, {"name": title, "url": page.url}]) }}
 
+{% if tampilan == "layanan" %}
+{% include "partials/layanan.njk" %}
+{% else %}
+
 <div class="lini-hero">
   <div>
     <h1>{{ title }}</h1>
@@ -39,14 +43,17 @@ layout: layouts/base.njk
   </section>
 
   {% set artikelLini = collections.artikel | where("data.lini", slug) %}
-  {% if artikelLini.length %}
   <section>
     <h2>Artikel</h2>
-    <div class="grid">
-      {% for a in artikelLini %}
-        {{ kartuArtikel(a) }}
-      {% endfor %}
-    </div>
+    {% if artikelLini.length %}
+      <div class="grid">
+        {% for a in artikelLini %}
+          {{ kartuArtikel(a) }}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Artikel untuk lini ini belum tersedia. Artikel akan ditampilkan di sini setelah dipublikasikan.</p>
+    {% endif %}
   </section>
-  {% endif %}
+{% endif %}
 {% endif %}

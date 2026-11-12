@@ -1,0 +1,29 @@
+{# Isi halaman layanan (Digital Marketing). Dipakai lini.njk jika tampilan = "layanan". Layanan bukan produk: tidak ada harga, dan ajakannya kerja sama, bukan pesanan. #}
+{% from "partials/macros.njk" import tombolWa, kartuArtikel %}
+{% set pesanKerjaSama = "Halo Admin, saya tertarik bekerja sama di layanan " + title + "." %}
+{% set dokumentasi = collections.artikel | where("data.lini", slug) %}
+
+<div class="lini-hero">
+  <div>
+    <h1>{{ title }}</h1>
+    {% if description %}<p class="lead">{{ description }}</p>{% endif %}
+    <p>{{ tombolWa(nomor, pesanKerjaSama, "Ajukan kerja sama via WhatsApp") }}</p>
+  </div>
+</div>
+
+{% if content %}
+  <div class="prose">{{ content | safe }}</div>
+{% endif %}
+
+<section>
+  <h2>Pelatihan</h2>
+  {% if dokumentasi.length %}
+    <div class="grid">
+      {% for a in dokumentasi %}
+        {{ kartuArtikel(a) }}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Dokumentasi pelatihan belum tersedia. Kegiatan yang sudah berlangsung dan jadwal yang sudah pasti akan ditampilkan di sini.</p>
+  {% endif %}
+</section>

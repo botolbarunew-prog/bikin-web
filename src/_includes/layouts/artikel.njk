@@ -102,6 +102,16 @@ layout: layouts/base.njk
           {{ kartuProduk(p, liniObj.data.title) }}
         {% endfor %}
       </div>
+    {% elif lini %}
+      {% set produkLini = collections.produk | where("data.lini", lini) | limit(3) %}
+      {% if produkLini.length %}
+        <div class="sidebar-kotak">
+          <h2>Produk {{ liniObj.data.title }}</h2>
+          {% for p in produkLini %}
+            {{ kartuProduk(p, liniObj.data.title) }}
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endif %}
 
     <div class="sidebar-kotak nudge">

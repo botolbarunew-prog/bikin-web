@@ -7,7 +7,7 @@ layout: layouts/base.njk
 {% set nomor = lini | waFor(site) %}
 {% set urlProduk = siteUrl + page.url %}
 {% set fotoUtama = foto or (galeri[0] if galeri else "") %}
-{% set pesanDasar = "Halo Admin, saya ingin memesan " + title + "." %}
+{% set pesanDasar = "Halo Admin, saya tertarik memesan " + title + " di website." %}
 {% set brandObj = {"@type": "Brand", "name": liniObj.data.title} %}
 
 {% set navCrumbs = [
