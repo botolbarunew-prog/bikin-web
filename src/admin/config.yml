@@ -59,6 +59,7 @@ collections:
       - {label: "Gambar lini (opsional)", name: gambar, widget: image, required: false}
       - {label: "Pesan WA default untuk lini ini", name: pesanWa, widget: text}
       - {label: "Status", name: status, widget: select, options: [aktif, segera], default: segera}
+      - {label: "Tampilan (jangan diubah)", name: tampilan, widget: hidden, required: false}
       - {label: "Isi halaman", name: body, widget: markdown, required: false}
 
   - name: jenis
@@ -94,6 +95,18 @@ collections:
       - {label: "Toples", field: jenis, pattern: "^toples$"}
       - {label: "Cup Custom", field: jenis, pattern: "^cup-custom$"}
       - {label: "Kantong Plastik", field: jenis, pattern: "^kantong-plastik$"}
+      - {label: "Jas Hujan PVC 0.25", field: jenis, pattern: "^jas-hujan-pvc-025$"}
+      - {label: "Jas Hujan PVC 0.18", field: jenis, pattern: "^jas-hujan-pvc-018$"}
+      - {label: "Jas Hujan Taslan", field: jenis, pattern: "^jas-hujan-taslan$"}
+      - {label: "Topi Pramuka", field: jenis, pattern: "^topi-pramuka$"}
+      - {label: "Topi Organisasi & Instansi", field: jenis, pattern: "^topi-organisasi-instansi$"}
+      - {label: "Topi & Seragam Sekolah", field: jenis, pattern: "^topi-seragam-sekolah$"}
+      - {label: "Aksesori", field: jenis, pattern: "^aksesori$"}
+      - {label: "Protein Segar & Olahan", field: jenis, pattern: "^protein-segar-olahan$"}
+      - {label: "Karbohidrat", field: jenis, pattern: "^karbohidrat$"}
+      - {label: "Vitamin & Mineral", field: jenis, pattern: "^vitamin-mineral$"}
+      - {label: "Susu", field: jenis, pattern: "^susu$"}
+      - {label: "Sembako & Bumbu", field: jenis, pattern: "^sembako-bumbu$"}
     create: true
     slug: "{{slug}}"
     identifier_field: title
