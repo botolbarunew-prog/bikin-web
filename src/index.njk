@@ -21,10 +21,10 @@ permalink: /
     <div class="cf" data-cover-flow>
       <div class="cf-jalur">
         {% for l in collections.lini | limit(4) %}
-          <a class="cf-kartu" href="{{ l.url }}" data-cf-kartu>
+          <div class="cf-kartu" data-cf-kartu>
             <div class="foto">{{ gambar(l.data.gambar, l.data.title, null) }}</div>
             <span class="cf-judul">{{ l.data.title }}</span>
-          </a>
+          </div>
         {% endfor %}
       </div>
       <div class="cf-titik" role="group" aria-label="Pilih lini">
@@ -108,7 +108,7 @@ permalink: /
 {% set artikelTerbaru = collections.artikel | limit(3) %}
 {% if artikelTerbaru.length %}
 <section class="judul-tengah">
-  <h2>Panduan untuk memilih <span class="kata-ganti" data-kata-ganti style="background: #E8EEF9; color: #1E3A8A;">kemasan</span> yang tepat.</h2>
+  <h2>Panduan untuk memilih <span class="kata-ganti" data-kata-ganti>kemasan</span> yang tepat.</h2>
   <div class="artikel-wadah">
     <div class="grid artikel-geser" data-geser>
       {% for a in artikelTerbaru %}
@@ -150,13 +150,13 @@ permalink: /
     var BATAS = 3;
     var cari = document.getElementById('cari-beranda');
 
-    // Contoh di kolom cari dipilih dari yang paling lengkap yang masih muat di lebar kolom. Teksnya tidak pernah terpotong
+    // Contoh di kolom cari dipilih dari yang paling lengkap yang masih muat di lebar isian. Teksnya tidak pernah terpotong
     var contohCari = ['Cari produk, misalnya botol atau toples', 'Cari produk, misalnya botol', 'Cari produk'];
     var ukurTeks = document.createElement('canvas').getContext('2d');
     function aturContohCari() {
-      // Kolom input tertutup saat belum dibuka, jadi lebarnya diukur dari kotak pencarian: dikurangi tombol ikon dan jaraknya
+      // Lebar isian yang sebenarnya (sudah dikurangi tombol ikon dan X). Saat tertutup isiannya nol, jadi jatuh ke teks paling pendek
       var gaya = window.getComputedStyle(cari);
-      var tersedia = cari.closest('.produk-cari').clientWidth - 44 - 8 - parseFloat(gaya.paddingRight) - 8;
+      var tersedia = cari.clientWidth - 8;
       ukurTeks.font = gaya.fontWeight + ' ' + gaya.fontSize + ' ' + gaya.fontFamily;
       var pilihan = contohCari.find(function (teks) { return ukurTeks.measureText(teks).width <= tersedia; }) || contohCari[contohCari.length - 1];
       cari.placeholder = pilihan;
@@ -194,11 +194,13 @@ permalink: /
     cari.addEventListener('input', segarkan);
 
     // Kolom cari: awalnya hanya ikon dengan teks "Coba cari..." yang mengetik dan menghapus berulang.
+    // Di layar sempit (399px ke bawah) teksnya disembunyikan, jadi tertutup hanya tampil ikon.
     // Ikon atau teksnya diklik: kolom terbuka dengan animasi. Di mode tanpa animasi, teksnya diam.
     var wadahCari = document.querySelector('[data-cari]');
     var tombolCari = wadahCari.querySelector('.cari-tombol');
     var ketikCari = wadahCari.querySelector('[data-cari-ketik]');
     var gerakCari = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var layarSempit = window.matchMedia('(max-width: 399px)');
     var kataCari = 'Coba cari sesuatu...';
     var jumlahHuruf = 0;
     var arahKetik = 1;
@@ -348,9 +350,11 @@ permalink: /
     if (document.fonts) document.fonts.ready.then(aturLebarCari);
 
     // Buka atau tutup kolom cari. Lebarnya dianimasikan dari lebar sekarang ke lebar tujuan (selebar judul saat buka, mengikuti isi saat tutup)
-    // Lebar kotak tertutup dihitung dari ikon, teks kalimat penuh, dan kursor (tanpa menunggu transisi teks)
+    // Lebar kotak tertutup dihitung dari ikon, teks kalimat penuh, dan kursor (tanpa menunggu transisi teks).
+    // Di layar sempit cukup ikon dan border 1.5px di kiri dan kanan
     var ukurKetik = document.createElement('canvas').getContext('2d');
     function lebarTertutup() {
+      if (layarSempit.matches) return 44 + 3;
       var gayaKetik = window.getComputedStyle(ketikCari);
       ukurKetik.font = gayaKetik.fontWeight + ' ' + gayaKetik.fontSize + ' ' + gayaKetik.fontFamily;
       var teks = ukurKetik.measureText(kataCari).width + ukurKetik.measureText('|').width + 2;
@@ -460,7 +464,8 @@ permalink: /
           // Posisi dan putaran dihitung langsung di sini, bukan lewat variabel CSS
           k.style.transform = 'translateX(calc(-50% + ' + (d * 55) + '%)) rotateY(' + (-d * 40) + 'deg) scale(' + (1 - Math.abs(d) * 0.12) + ')';
           k.classList.toggle('cf-jauh', Math.abs(d) > 1);
-          k.tabIndex = i === aktifCover ? 0 : -1;
+          // Kursor tangan hanya di kartu samping, karena hanya itu yang bisa diklik untuk pindah
+          k.classList.toggle('cf-bisa-pindah', i !== aktifCover);
         });
         titikCover.forEach(function (t, i) {
           t.setAttribute('aria-current', String(i === aktifCover));
@@ -485,8 +490,8 @@ permalink: /
       kartuCover.forEach(function (k, i) {
         k.addEventListener('click', function (e) {
           if (geserBaru) { e.preventDefault(); geserBaru = false; return; }
-          // Kartu samping diklik: pindah ke kartu itu dulu. Kartu yang sudah di tengah membuka halaman lininya.
-          if (i !== aktifCover) { e.preventDefault(); pilihCover(i); }
+          // Kartu samping diklik: pindah ke kartu itu. Kartu yang sudah di tengah tidak melakukan apa-apa.
+          if (i !== aktifCover) pilihCover(i);
         });
       });
 
