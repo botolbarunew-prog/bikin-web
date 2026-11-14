@@ -118,6 +118,7 @@ collections:
       - {label: "Lini", name: lini, widget: relation, collection: lini, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Jenis", name: jenis, widget: relation, collection: jenis, search_fields: [title], value_field: slug, display_fields: [title]}
       - {label: "Deskripsi singkat", name: description, widget: text, hint: "Dipakai untuk SEO dan halaman produk"}
+      - {label: "Judul untuk mesin pencari", name: seoJudul, widget: string, required: false, hint: "Kosongkan jika cukup memakai nama produk. Contoh: Botol Almond 250 ml PET"}
       - {label: "Spesifikasi kunci untuk kartu", name: spek, widget: string, required: false, hint: "Contoh: PET · 250ml – 1L"}
       - {label: "Foto utama", name: foto, widget: image, required: false}
       - label: "Galeri foto"
